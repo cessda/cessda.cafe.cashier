@@ -7,21 +7,29 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Cashier.Contexts;
 using Cashier.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Cashier.Controllers
 {
     [Route("queued-jobs")]
     [ApiController]
+    [ApiConventionType(typeof(DefaultApiConventions))]
     public class QueuedJobsController : ControllerBase
     {
         private readonly CoffeeDbContext _context;
+        private readonly ILogger _logger;
 
-        public QueuedJobsController(CoffeeDbContext context)
+        public QueuedJobsController(CoffeeDbContext context, ILogger<QueuedJobsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: queued-jobs
+        /// <summary>
+        /// Get a list of queued jobs
+        /// </summary>
+        /// <returns>List of queued jobs</returns>
         [HttpGet]
         public async Task<ActionResult<CoffeeCount>> GetCoffees()
         {

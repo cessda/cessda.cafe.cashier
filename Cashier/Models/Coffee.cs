@@ -5,6 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Cashier.Models
 {
+    /// <summary>
+    /// List of allowed coffees
+    /// </summary>
     public enum ECoffeeTypes : byte
     {
         COFFEE,
@@ -18,6 +21,9 @@ namespace Cashier.Models
         HOT_WATER
     }
 
+    /// <summary>
+    /// Coffee state
+    /// </summary>
     public enum ECoffeeState : byte
     {
         QUEUED,
@@ -27,13 +33,14 @@ namespace Cashier.Models
 
     public class CoffeeCount
     {
+
         public CoffeeCount(List<Coffee> coffees)
         {
             count = coffees.Count;
             Coffees = coffees;
         }
 
-        public int count { get; set; }
+        public int count { get; private set; }
         public virtual ICollection<Coffee> Coffees { get; set; }
     }
 

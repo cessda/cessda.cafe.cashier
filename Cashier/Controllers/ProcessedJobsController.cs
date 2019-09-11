@@ -7,18 +7,22 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Cashier.Contexts;
 using Cashier.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Cashier.Controllers
 {
     [Route("processed-jobs")]
     [ApiController]
+    [ApiConventionType(typeof(DefaultApiConventions))]
     public class ProcessedJobsController : ControllerBase
     {
         private readonly CoffeeDbContext _context;
+        private readonly ILogger _logger;
 
-        public ProcessedJobsController(CoffeeDbContext context)
+        public ProcessedJobsController(CoffeeDbContext context, ILogger<ProcessedJobsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: processed-jobs

@@ -7,20 +7,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Cashier.Contexts;
 using Cashier.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Cashier.Controllers
 {
-    [Route("[controller]")]
+    [Route("place-order")]
     [ApiController]
-    public class OrdersController : ControllerBase
+    [ApiConventionType(typeof(DefaultApiConventions))]
+    public class PlaceOrderController : ControllerBase
     {
         private readonly CoffeeDbContext _context;
+        private readonly ILogger _logger;
 
-        public OrdersController(CoffeeDbContext context)
+        public PlaceOrderController(CoffeeDbContext context, ILogger<PlaceOrderController> logger)
         {
             _context = context;
+            _logger = logger;
 
-            if (_context.Orders.Count() == 0)
+            /*if (_context.Orders.Count() == 0)
             {
                 _context.Orders.Add(new Order
                 {
@@ -28,7 +32,7 @@ namespace Cashier.Controllers
                     OrderSize = 2
                 });
                 _context.SaveChanges();
-            }
+            }*/
         }
 
         // GET: Orders
@@ -47,7 +51,7 @@ namespace Cashier.Controllers
                 return BadRequest(ModelState);
             }
 
-            var order = await _context.Orders.Include(b => b.Coffees).FirstOrDefaultAsync();
+            var order = await _context.Orders.Include(b => b.Coffees).SingleAsync(o => o.OrderId == id);
 
             if (order == null)
             {
@@ -132,6 +136,9 @@ namespace Cashier.Controllers
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
+
+            // Start processing the order
+            new Engine.OrderEngine(_context, _logger).StartOrder(order.OrderId);
 
             // Return the created order
             return CreatedAtAction(nameof(GetOrder), new { id = order.OrderId }, order);

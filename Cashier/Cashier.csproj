@@ -3,6 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <Product>CESSDA Café</Product>
+    <Authors>Matthew Morris</Authors>
+    <Company>CESSDA</Company>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Description>Cashier frontend of the CESSDA Coffee API</Description>
+    <StartupObject>Cashier.Program</StartupObject>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +22,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
+    <PackageReference Include="NSwag.AspNetCore" Version="13.0.6" />
   </ItemGroup>
 
 </Project>
