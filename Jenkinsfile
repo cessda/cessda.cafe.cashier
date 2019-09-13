@@ -45,7 +45,7 @@ pipeline {
 					}
 					post {
 						always {
-							archiveArtifacts './Cashier/publish/**'
+							archiveArtifacts 'Cashier/publish/**'
 						}
 					}
 				}
