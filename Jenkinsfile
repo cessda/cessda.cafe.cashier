@@ -16,12 +16,6 @@ pipeline {
 	agent any
 
 	stages {
-		stage('Set up gcloud') {
-			steps {
-				sh("gcloud config set project ${project_name}")
-				sh("gcloud container clusters get-credentials ${cluster} --zone=${zone}")
-			}
-		}
 		stage('Build and Test Cashier') {
 			agent {
 				docker {
@@ -40,7 +34,7 @@ pipeline {
 					post {
 						always {
 							dir('./Cashier/') {
-								mstest()
+								mstest failOnError: false
 							}
 						}
 					}
