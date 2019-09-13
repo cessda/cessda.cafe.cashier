@@ -45,19 +45,21 @@ pipeline {
 						}
 					}
 				}
-			stage('Build Cashier') {
-				steps {
-					sh 'dotnet build "Cashier/Cashier.csproj" -c Release -o ./publish'
-				}
-				post {
-					always {
-						archiveArtifacts './Cashier/publish/**'
+				stage('Build Cashier') {
+					steps {
+						sh 'dotnet build "Cashier/Cashier.csproj" -c Release -o ./publish'
+					}
+					post {
+						always {
+							archiveArtifacts './Cashier/publish/**'
+						}
 					}
 				}
-			}
-			stage('Publish Cashier') {
-				steps {
-					sh 'dotnet publish "Cashier/Cashier.csproj" -c Release -o ./publish'
+				stage('Publish Cashier') {
+					steps {
+						sh 'dotnet publish "Cashier/Cashier.csproj" -c Release -o ./publish'
+					}
+					when { branch 'master' }
 				}
 			}
 		}
@@ -65,6 +67,7 @@ pipeline {
 			steps {
 				sh "docker build -t ${image_tag} ."
 			}
+			when { branch 'master' }
 		}
 		stage('Push Docker Container') {
 			steps {
@@ -73,5 +76,6 @@ pipeline {
 				sh("gcloud container images add-tag ${image_tag} ${docker_repo}/${product_name}-${module_name}:${env.BRANCH_NAME}-latest")
 			}
 		}
+		when { branch 'master' }
 	}
 }
