@@ -37,11 +37,11 @@ pipeline {
 							sh 'dotnet test --logger:trx'
 						}
 					}
-				}
-				post {
-					always {
-						dir('./Cashier/') {
-							mstest()
+					post {
+						always {
+							dir('./Cashier/') {
+								mstest()
+							}
 						}
 					}
 				}
@@ -75,7 +75,7 @@ pipeline {
 				sh("docker push ${image_tag}")
 				sh("gcloud container images add-tag ${image_tag} ${docker_repo}/${product_name}-${module_name}:${env.BRANCH_NAME}-latest")
 			}
+			when { branch 'master' }
 		}
-		when { branch 'master' }
 	}
 }
