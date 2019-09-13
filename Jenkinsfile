@@ -46,6 +46,7 @@ pipeline {
 					post {
 						always {
 							archiveArtifacts 'Cashier/publish/**'
+							recordIssues(tools: [msBuild()])
 						}
 					}
 				}
