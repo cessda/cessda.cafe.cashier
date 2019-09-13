@@ -8,6 +8,7 @@ namespace Cashier.Contexts
     {
         public DbSet<Order> Orders { get; set; }
         public DbSet<Coffee> Coffees { get; set; }
+        public DbSet<Machines> Machines { get; set; }
 
         public CoffeeDbContext() { }
 

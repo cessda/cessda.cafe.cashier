@@ -2,47 +2,57 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.EntityFrameworkCore;
+using Cashier.Contexts;
+using Cashier.Models;
 
 namespace Cashier.Controllers
 {
     [Route("[controller]")]
     [ApiController]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class ConfigureController : Controller
+    public class ConfigureController : ControllerBase
     {
-        // GET: api/<controller>
+        private readonly CoffeeDbContext _context;
+
+        public ConfigureController(CoffeeDbContext context)
+        {
+            _context = context;
+        }
+
+        // GET: api/Configure
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<ActionResult<IEnumerable<Machines>>> GetMachines()
         {
-            return new string[] { "value1", "value2" };
+            return await _context.Machines.ToListAsync();
         }
 
-        // GET api/<controller>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<controller>
+        // POST: api/Configure
         [HttpPost]
-        public void Post([FromBody]string value)
+        public async Task<ActionResult<Machines>> PostMachines(Machines machines)
         {
+            _context.Machines.Add(machines);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetMachines", new { id = machines.CoffeeMachine }, machines);
         }
 
-        // PUT api/<controller>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/<controller>/5
+        // DELETE: api/Configure/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult<Machines>> DeleteMachines(string id)
         {
+            var machines = await _context.Machines.FindAsync(id);
+            if (machines == null)
+            {
+                return NotFound();
+            }
+
+            _context.Machines.Remove(machines);
+            await _context.SaveChangesAsync();
+
+            return machines;
         }
     }
 }

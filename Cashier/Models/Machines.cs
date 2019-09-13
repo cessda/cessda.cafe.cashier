@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+
 
 namespace Cashier.Models
 {
     /// <summary>
-    /// Class to store the list of Coffee Machines
+    /// Class to store the list of known machines.
     /// </summary>
     public class Machines
     {
-        public List<string> CoffeeMachines { get; set; }
+        [Key]
+        public string CoffeeMachine { get; set; }
     }
 }

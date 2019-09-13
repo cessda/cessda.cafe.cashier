@@ -20,7 +20,7 @@
     "Cashier": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "order-history",
+      "launchUrl": "swagger/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

@@ -13,12 +13,19 @@ using System.Threading.Tasks;
 
 namespace Cashier.Engine
 {
-    
+    /// <summary>
+    /// Class to hold the logic of contacting coffee machines.
+    /// </summary>
     public class OrderEngine
     {
         private readonly CoffeeDbContext _context;
         private readonly ILogger _logger;
 
+        /// <summary>
+        /// Constructor for OrderEngine, used for passing the logger and the database context.
+        /// </summary>
+        /// <param name="context">Coffee Database Context</param>
+        /// <param name="logger">Logger</param>
         public OrderEngine(CoffeeDbContext context, ILogger logger)
         {
             _context = context;
@@ -31,52 +38,80 @@ namespace Cashier.Engine
         /// <param name="id">The order to start</param>
         public void StartOrder(Guid id)
         {
-            // Set up web request
-            // TODO: Store globally
-            var machines = new Machines() { CoffeeMachines = new List<string>() { "http://localhost:1337" } };
-
-            // Make sure that there are some machines configured
-            if (machines.CoffeeMachines.Count == 0)
-            {
-                throw new Exceptions.NoCoffeeMachinesException("No coffee machines have been configured.");
-            }
-
-            // Set up the JSON converter
-            var jsonSettings = new JsonSerializerSettings();
-            jsonSettings.Converters.Add(new StringEnumConverter());
-            jsonSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
-
             // Load the order
             var order = _context.Orders.Include(b => b.Coffees).Single(o => o.OrderId == id);
+            _logger.LogInformation("Starting order: " + order.OrderId);
 
             // For each coffee
             foreach (var coffee in order.Coffees)
             {
-                bool success = false;
+                StartCoffee(coffee.JobId);
+            }
+        }
 
-                var coffeePayload = new CoffeePayload();
+        /// <summary>
+        /// Start the specifed coffee
+        /// </summary>
+        /// <param name="id">ID of coffee to start</param>
+        public void StartCoffee(Guid id)
+        {
+            // Load the coffee
+            var coffee = _context.Coffees.Single(c => c.JobId == id);
 
-                coffeePayload.OrderId = coffee.OrderId;
-                coffeePayload.OrderPlaced = coffee.OrderPlaced;
-                coffeePayload.OrderSize = coffee.OrderSize;
-                coffeePayload.Product = coffee.Product;
+            bool success = false;
+
+            // Check if the coffee has already been sent to a machine
+            if (string.IsNullOrEmpty(coffee.Machine))
+            {
+                // Set up web request
+                var test = _context.Machines.ToList();
+                var coffeeMachines = new List<Uri>();
+
+                foreach (var machine in test)
+                {
+                    coffeeMachines.Add(new Uri(machine.CoffeeMachine));
+                }
+
+                _logger.LogInformation("Starting coffee " + coffee.JobId);
+                _logger.LogDebug("Configured machines are: " + coffeeMachines);
+
+                // Make sure that there are some machines configured
+                if (coffeeMachines.Count == 0)
+                {
+                    throw new Exceptions.NoCoffeeMachinesException("No coffee machines have been configured.");
+                }
+
+                var coffeePayload = new CoffeePayload()
+                {
+                    OrderId = coffee.OrderId,
+                    OrderPlaced = coffee.OrderPlaced,
+                    OrderSize = coffee.OrderSize,
+                    Product = coffee.Product
+                };
+
+                // Set up the JSON converter
+                var jsonSettings = new JsonSerializerSettings()
+                {
+                    DateTimeZoneHandling = DateTimeZoneHandling.Utc
+                };
+                jsonSettings.Converters.Add(new StringEnumConverter());
 
                 var json = JsonConvert.SerializeObject(coffeePayload, jsonSettings);
-                _logger.LogDebug(json);
+                _logger.LogDebug("Created JSON: " + json);
 
                 // Iterate through all known coffee machines
-                foreach (var machine in machines.CoffeeMachines)
+                foreach (var machine in coffeeMachines)
                 {
                     // Break if the order has already been sent to a machine
                     if (success) break;
 
+                    // Create a new WebRequest
+                    var httpWebRequest = WebRequest.CreateHttp(new Uri(machine, "start-job"));
+                    httpWebRequest.ContentType = "application/json";
+                    httpWebRequest.Method = "POST";
+
                     try
                     {
-                        // Create a new WebRequest
-                        var httpWebRequest = WebRequest.CreateHttp(machine + "/start-job");
-                        httpWebRequest.ContentType = "application/json";
-                        httpWebRequest.Method = "POST";
-
                         // Submit the coffee to the coffee machine
                         using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
                         {
@@ -89,15 +124,20 @@ namespace Cashier.Engine
                             var httpResponse = httpWebRequest.GetResponse();
                             using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
                             {
-                                var response = streamReader.ReadToEnd();
-                                var jsonResponse = JsonConvert.DeserializeObject<Coffee>(response);
+                                var response = JsonConvert.DeserializeObject<Coffee>(streamReader.ReadToEnd());
+                                _logger.LogDebug("Response from " + machine + ": " + response);
                             }
 
                             // Sucess - mark the time that the order was sent
-                            _logger.LogInformation("Sent order " + coffeePayload.OrderId + " to machine " + machine);
+                            _logger.LogInformation("Sent job " + coffeePayload.OrderId + " to machine " + machine);
                             coffee.JobStarted = DateTime.Now;
-                            coffee.State = ECoffeeState.PROCESSING;
+                            coffee.Machine = machine.ToString();
+                            coffee.State = ECoffeeState.PROCESSED;
                             success = true;
+
+                            // Update the database
+                            _context.Entry(coffee).State = EntityState.Modified;
+                            _context.SaveChanges();
                         }
                         catch (WebException e)
                         {
@@ -105,26 +145,35 @@ namespace Cashier.Engine
                             using (var streamReader = new StreamReader(e.Response.GetResponseStream()))
                             {
                                 // TODO - Change behavior based on message
-                                var response = streamReader.ReadToEnd().ToString();
+                                var stringResponse = streamReader.ReadToEnd();
                                 var responseCode = ((HttpWebResponse)e.Response).StatusCode;
-                                var parsedResponse = JsonConvert.DeserializeObject<ApiMessage>(response);
-
-                                _logger.LogWarning("Coffee machine " + machine + " responded with code " + (int)responseCode + " and with message:" + parsedResponse.Message);
+                                try
+                                {
+                                    var response = JsonConvert.DeserializeObject<ApiMessage>(stringResponse);
+                                    _logger.LogWarning("Coffee machine " + machine + " responded with code " + (int)responseCode + " and with message: " + response.Message);
+                                }
+                                catch (JsonSerializationException)
+                                {
+                                    _logger.LogWarning("Coffee machine " + machine + " responded with code " + (int)responseCode + ". The message could not be parsed.");
+                                }
                             }
                         }
                     }
                     // If the message is null (i.e. connection issue)
                     catch (WebException e)
                     {
-                        _logger.LogWarning(machine + ": " + e.Message);
+                        _logger.LogError("Connecting to coffee machine " + machine.Host + " failed: " + e.Message);
                     }
                 }
-
                 // If we didn't succeed
                 if (!success)
                 {
-                    _logger.LogError("No coffee machines could accept the request.");
+                    _logger.LogWarning("No coffee machines could accept job " + coffee.JobId + ".");
                 }
+            }
+            else
+            {
+                _logger.LogWarning("Attempted to start coffee " + coffee.JobId + " which has already been started");
             }
         }
         /// <summary>
@@ -136,13 +185,6 @@ namespace Cashier.Engine
             public DateTime OrderPlaced { get; set; }
             public int OrderSize { get; set; }
             public ECoffeeTypes Product { get; set; }
-        }
-        /// <summary>
-        /// Class to send and hold messages from other coffee APIs
-        /// </summary>
-        private class ApiMessage
-        {
-            public string Message { get; set; }
         }
     }
 }
