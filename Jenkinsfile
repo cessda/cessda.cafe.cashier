@@ -28,11 +28,11 @@ pipeline {
 					steps {
 						withSonarQubeEnv('cessda-sonar') {
 							sh 'dotnet tool install --global dotnet-sonarscanner'
-							sh("export PATH=\"$PATH:/tmp/.dotnet/tools\" && dotnet sonarscanner begin /k:\"eu.cessda.cafe:cashier\"
-							/n:\"CESSDA Café: Cashier\" /d:\"sonar.projectVersion=1.0.0\"
-							/d:\"sonar.projectDescription=Cashier implementation of the CESSDA Coffee API\"
-							/d:\"sonar.links.ci = https://jenkins-dev.cessda.eu/\"
-							/d:\"sonar.links.scm = https://bitbucket.org/cessda/cessda.cafe.cashier/\"")
+							sh("export PATH=\"$PATH:/tmp/.dotnet/tools\" && dotnet sonarscanner begin /k:\"eu.cessda.cafe:cashier\"" +
+							"/n:\"CESSDA Café: Cashier\" /d:\"sonar.projectVersion=1.0.0\"" +
+							"/d:\"sonar.projectDescription=Cashier implementation of the CESSDA Coffee API\"" +
+							"/d:\"sonar.links.ci = https://jenkins-dev.cessda.eu/\"" +
+							"/d:\"sonar.links.scm = https://bitbucket.org/cessda/cessda.cafe.cashier/\"")
 						}
 					}
 					when { branch 'master' }
