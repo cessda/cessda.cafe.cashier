@@ -28,7 +28,7 @@ pipeline {
 					steps {
 						withSonarQubeEnv('cessda-sonar') {
 							sh 'dotnet tool install --global dotnet-sonarscanner'
-							sh "dotnet sonarscanner begin /k:\"eu.cessda.cafe:cashier\""
+							sh "export PATH=\"$PATH:/tmp/.dotnet/tools\" && dotnet sonarscanner begin /k:\"eu.cessda.cafe:cashier\""
 							sh 'dotnet build -c Release'
 						}
 					}
@@ -52,7 +52,7 @@ pipeline {
 				stage('Run Sonar Scan') {
 					steps {
 						withSonarQubeEnv('cessda-sonar') {
-							sh "dotnet sonarscanner end"
+							sh "export PATH=\"$PATH:/tmp/.dotnet/tools\" && dotnet sonarscanner end"
 						}
 					}
 					when { branch 'master' }
