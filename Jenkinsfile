@@ -17,21 +17,26 @@ pipeline {
 	stages {
 		stage('Pull SDK Docker Image') {
 			agent {
-				docker {
-					image 'dotnet/core/sdk:2.2-stretch'
-					registryUrl 'https://mcr.microsoft.com'
+				dockerfile {
+					dir 'CI'
+					filename 'Dockerfile'
 					reuseNode true
 				}
 			}
 			stages {
-				stage('Build Cashier') {
+				stage('Start SonarQube') {
 					steps {
 						withSonarQubeEnv('cessda-sonar') {
 							sh 'dotnet tool install --global dotnet-sonarscanner'
 							sh "export PATH=\"$PATH:/tmp/.dotnet/tools\" && dotnet sonarscanner begin /k:\"eu.cessda.cafe:cashier\""
-							sh 'dotnet build -c Release'
 						}
 					}
+					when { branch 'master' }
+				}
+				stage('Build Cashier') {
+					steps {
+						sh 'dotnet build -c Release'
+					}					
 					post {
 						always {
 							archiveArtifacts 'Cashier/bin/Release/netcoreapp2.2/**'
