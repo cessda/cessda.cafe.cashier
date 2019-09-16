@@ -28,7 +28,7 @@ pipeline {
 				stage('Build Cashier') {
 					steps {
 						withSonarQubeEnv('cessda-sonar') {
-							sh "dotnet ${scannerHome} begin /k:\"eu.cessda.cafe:cashier\""
+							sh "dotnet ${scannerHome}/SonarScanner.MSBuild.dll begin /k:\"eu.cessda.cafe:cashier\""
 							sh 'dotnet build -c Release'
 						}
 					}
@@ -52,7 +52,7 @@ pipeline {
 				stage('Run Sonar Scan') {
 					steps {
 						withSonarQubeEnv('cessda-sonar') {
-							sh 'dotnet ${scannerHome} end'
+							sh "dotnet ${scannerHome}/SonarScanner.MSBuild.dll end"
 						}
 					}
 					when { branch 'master' }
