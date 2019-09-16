@@ -23,16 +23,6 @@ namespace Cashier.Controllers
         {
             _context = context;
             _logger = logger;
-
-            /*if (_context.Orders.Count() == 0)
-            {
-                _context.Orders.Add(new Order
-                {
-                    Coffees = new List<Coffee>() { (new Coffee { Product = ECoffeeTypes.CAPPUCCINO, OrderSize = 2 }) },
-                    OrderSize = 2
-                });
-                _context.SaveChanges();
-            }*/
         }
 
         // GET: Orders

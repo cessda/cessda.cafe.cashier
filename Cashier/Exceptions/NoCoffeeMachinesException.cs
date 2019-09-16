@@ -4,7 +4,8 @@ using System.Runtime.Serialization;
 namespace Cashier.Exceptions
 {
     [Serializable]
-    internal class NoCoffeeMachinesException : Exception
+#pragma warning disable CS1591
+    public class NoCoffeeMachinesException : Exception
     {
         public NoCoffeeMachinesException()
         {

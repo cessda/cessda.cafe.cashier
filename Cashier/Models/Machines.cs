@@ -9,6 +9,7 @@ namespace Cashier.Models
     /// </summary>
     public class Machines
     {
+#pragma warning disable CS1591
         [Key]
         public string CoffeeMachine { get; set; }
     }

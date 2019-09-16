@@ -10,6 +10,7 @@ namespace Cashier.Models
     /// </summary>
     public enum ECoffeeTypes : byte
     {
+#pragma warning disable CS1591
         COFFEE,
         STRONG_COFFEE,
         CAPPUCCINO,
@@ -19,6 +20,7 @@ namespace Cashier.Models
         ESPRESSO_CHOCOLATE,
         KAKAO,
         HOT_WATER
+#pragma warning restore CS1591
     }
 
     /// <summary>
@@ -26,21 +28,38 @@ namespace Cashier.Models
     /// </summary>
     public enum ECoffeeState : byte
     {
+#pragma warning disable CS1591
         QUEUED,
         PROCESSED
+#pragma warning restore CS1591
     }
 
+    /// <summary>
+    /// Class that counts the coffees that it holds
+    /// </summary>
     public class CoffeeCount
     {
+        /// <summary>
+        /// Counts the amounts of coffees held by this class
+        /// </summary>
         public CoffeeCount(List<Coffee> coffees)
         {
             count = coffees.Count;
             Coffees = coffees;
         }
+        /// <summary>
+        /// Amount of coffees held
+        /// </summary>
         public int count { get; private set; }
+        /// <summary>
+        /// Coffees held
+        /// </summary>
         public virtual ICollection<Coffee> Coffees { get; set; }
     }
 
+    /// <summary>
+    /// Defines a coffee according to https://bitbucket.org/cessda/cessda.cafe/src/master/index.md
+    /// </summary>
     public class Coffee
     {
         /// <summary>
@@ -82,6 +101,9 @@ namespace Cashier.Models
         public ECoffeeState State { get; set; } = ECoffeeState.QUEUED;
     }
 
+    /// <summary>
+    /// Defines an order according to https://bitbucket.org/cessda/cessda.cafe/src/master/index.md
+    /// </summary>
     public class Order
     {
         /// <summary>

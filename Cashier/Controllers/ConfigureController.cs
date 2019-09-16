@@ -10,6 +10,9 @@ using Cashier.Models;
 
 namespace Cashier.Controllers
 {
+    /// <summary>
+    /// Endpoint to allow configuration of known coffee machines
+    /// </summary>
     [Route("[controller]")]
     [ApiController]
     [ApiConventionType(typeof(DefaultApiConventions))]
@@ -20,6 +23,12 @@ namespace Cashier.Controllers
         public ConfigureController(CoffeeDbContext context)
         {
             _context = context;
+
+            // Configure Carsten's Coffeepot by default
+            if (_context.Machines.Count() == 0)
+            {
+                _context.Machines.Add(new Machines() { CoffeeMachine = "http://cafe-coffeepot:1337/" } );
+            }
         }
 
         // GET: api/Configure
