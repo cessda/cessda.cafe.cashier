@@ -10,7 +10,6 @@ pipeline {
 		module_name = "cashier"
 		image_tag = "${docker_repo}/${product_name}-${module_name}:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
 		HOME = '/tmp'
-		scannerHome = tool 'sonar-scanner-msbuild'
 	}
 
 	agent any
@@ -28,7 +27,8 @@ pipeline {
 				stage('Build Cashier') {
 					steps {
 						withSonarQubeEnv('cessda-sonar') {
-							sh "dotnet ${scannerHome}/SonarScanner.MSBuild.dll begin /k:\"eu.cessda.cafe:cashier\""
+							sh 'dotnet tool install --global dotnet-sonarscanner'
+							sh "dotnet sonarscanner begin /k:\"eu.cessda.cafe:cashier\""
 							sh 'dotnet build -c Release'
 						}
 					}
@@ -52,7 +52,7 @@ pipeline {
 				stage('Run Sonar Scan') {
 					steps {
 						withSonarQubeEnv('cessda-sonar') {
-							sh "dotnet ${scannerHome}/SonarScanner.MSBuild.dll end"
+							sh "dotnet sonarscanner end"
 						}
 					}
 					when { branch 'master' }
