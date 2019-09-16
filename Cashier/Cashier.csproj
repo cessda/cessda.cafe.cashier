@@ -7,7 +7,7 @@
     <Authors>Matthew Morris</Authors>
     <Company>CESSDA</Company>
     <NeutralLanguage>en</NeutralLanguage>
-    <Description>Cashier frontend of the CESSDA Coffee API</Description>
+    <Description>Cashier implementation of the CESSDA Coffee API</Description>
     <StartupObject>Cashier.Program</StartupObject>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
