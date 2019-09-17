@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Cashier.Contexts;
 using Cashier.Models;
 using Microsoft.Extensions.Logging;
+using Cashier.Engine;
 
 namespace Cashier.Controllers
 {
@@ -18,11 +19,13 @@ namespace Cashier.Controllers
     {
         private readonly CoffeeDbContext _context;
         private readonly ILogger _logger;
+        private readonly IOrderEngine _orderEngine;
 
-        public PlaceOrderController(CoffeeDbContext context, ILogger<PlaceOrderController> logger)
+        public PlaceOrderController(CoffeeDbContext context, ILogger<PlaceOrderController> logger, IOrderEngine orderEngine)
         {
             _context = context;
             _logger = logger;
+            _orderEngine = orderEngine;
         }
 
         // GET: Orders
@@ -74,7 +77,7 @@ namespace Cashier.Controllers
             // If no coffees have been sent reject the order
             if (order.OrderSize == 0)
             {
-                return BadRequest("There must be at least one coffee in the order");
+                return BadRequest(NoCoffees());
             }
 
             _context.Entry(order).State = EntityState.Modified;
@@ -113,7 +116,7 @@ namespace Cashier.Controllers
                 // Each coffee should have an amount greater than 0
                 if (coffee.OrderSize <= 0)
                 {
-                    return BadRequest("There must be at least one coffee in the order");
+                    return BadRequest(NoCoffees());
                 }
                 order.OrderSize += coffee.OrderSize;
             }
@@ -121,14 +124,14 @@ namespace Cashier.Controllers
             // If no coffees have been sent reject the order
             if (order.OrderSize <= 0)
             {
-                return BadRequest("There must be at least one coffee in the order");
+                return BadRequest(NoCoffees());
             }
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
             // Start processing the order
-            new Engine.OrderEngine(_context, _logger).StartOrder(order.OrderId);
+            _orderEngine.StartOrder(order.OrderId);
 
             // Return the created order
             return CreatedAtAction(nameof(GetOrder), new { id = order.OrderId }, order);
@@ -158,6 +161,11 @@ namespace Cashier.Controllers
         private bool OrderExists(Guid id)
         {
             return _context.Orders.Any(e => e.OrderId == id);
+        }
+
+        private static ApiMessage NoCoffees()
+        {
+            return new ApiMessage() { Message = "There must be at least one coffee in the order" };
         }
     }
 }

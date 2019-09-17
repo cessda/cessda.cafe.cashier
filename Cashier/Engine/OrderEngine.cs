@@ -16,7 +16,7 @@ namespace Cashier.Engine
     /// <summary>
     /// Class to hold the logic of contacting coffee machines.
     /// </summary>
-    public class OrderEngine
+    public class OrderEngine : IOrderEngine
     {
         private readonly CoffeeDbContext _context;
         private readonly ILogger _logger;
@@ -26,7 +26,7 @@ namespace Cashier.Engine
         /// </summary>
         /// <param name="context">Coffee Database Context</param>
         /// <param name="logger">Logger</param>
-        public OrderEngine(CoffeeDbContext context, ILogger logger)
+        public OrderEngine(CoffeeDbContext context, ILogger<OrderEngine> logger)
         {
             _context = context;
             _logger = logger;
@@ -63,23 +63,28 @@ namespace Cashier.Engine
             // Check if the coffee has already been sent to a machine
             if (string.IsNullOrEmpty(coffee.Machine))
             {
-                // Set up web request
-                var test = _context.Machines.ToList();
-                var coffeeMachines = new List<Uri>();
+                _logger.LogInformation("Starting coffee " + coffee.JobId + ".");
 
-                foreach (var machine in test)
+                // Set up web request
+                var coffeeMachines = new List<Uri>();
+                foreach (var machine in _context.Machines.ToList())
                 {
                     coffeeMachines.Add(new Uri(machine.CoffeeMachine));
                 }
-
-                _logger.LogInformation("Starting coffee " + coffee.JobId);
-                _logger.LogDebug("Configured machines are: " + coffeeMachines);
 
                 // Make sure that there are some machines configured
                 if (coffeeMachines.Count == 0)
                 {
                     throw new Exceptions.NoCoffeeMachinesException("No coffee machines have been configured.");
                 }
+
+                // Log known coffee machines
+                string machineList = String.Empty;
+                foreach (var machine in coffeeMachines)
+                {
+                    machineList = machineList + machine + ", ";
+                }
+                _logger.LogDebug("Configured machines are: " + machineList);
 
                 var coffeePayload = new CoffeePayload()
                 {
@@ -106,6 +111,7 @@ namespace Cashier.Engine
                     if (success) break;
 
                     // Create a new WebRequest
+                    _logger.LogDebug("Using machine: " + machine + ".");
                     var httpWebRequest = WebRequest.CreateHttp(new Uri(machine, "start-job"));
                     httpWebRequest.ContentType = "application/json";
                     httpWebRequest.Method = "POST";

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Cashier.Models;
+using System.Linq;
 
 namespace Cashier.Contexts
 {
@@ -14,7 +15,15 @@ namespace Cashier.Contexts
         public DbSet<Coffee> Coffees { get; set; }
         public DbSet<Machines> Machines { get; set; }
 
-        public CoffeeDbContext() { }
+        public CoffeeDbContext()
+        {
+            // Configure Carsten's Coffeepot by default
+            if (Machines.Count() == 0)
+            {
+                Machines.Add(new Machines() { CoffeeMachine = "http://cafe-coffeepot:1337/" });
+                SaveChanges();
+            }
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -22,6 +31,6 @@ namespace Cashier.Contexts
             optionsBuilder.EnableSensitiveDataLogging(true);
         }
 
-        private readonly string _inMemDatabase = "coffee-db";
+        private const string _inMemDatabase = "coffee-db";
     }
 }

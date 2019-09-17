@@ -17,6 +17,7 @@ using Cashier.Contexts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Newtonsoft.Json.Linq;
+using Cashier.Engine;
 
 namespace Cashier
 {
@@ -29,7 +30,6 @@ namespace Cashier
             Configuration = configuration;
         }
 
-
         /// <summary>
         /// This method gets called by the runtime. Use this method to add services to the container.
         /// </summary>
@@ -37,12 +37,12 @@ namespace Cashier
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddJsonOptions(options =>
+                .AddJsonOptions(jsonOptions =>
             {
                 // Convert enums into the strings representing them
-                options.SerializerSettings.Converters.Add(new StringEnumConverter());
-                options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
-                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                jsonOptions.SerializerSettings.Converters.Add(new StringEnumConverter());
+                jsonOptions.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                jsonOptions.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             }); ;
 
             // Set up the database
@@ -52,14 +52,17 @@ namespace Cashier
             services.AddHealthChecks();
 
             // Set up Swagger
-            services.AddSwaggerDocument(config =>
+            services.AddSwaggerDocument(swagger =>
             {
-                config.PostProcess = document =>
+                swagger.PostProcess = document =>
                 {
                     document.Info.Version = "v1";
                     document.Info.Title = "CESSDA Café: Cashier API";
                 };
             });
+
+            // Set up engine
+            services.AddScoped<IOrderEngine, OrderEngine>();
         }
 
         /// <summary>

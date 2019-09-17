@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Cashier.Contexts;
 using Cashier.Models;
 using Microsoft.Extensions.Logging;
+using Cashier.Engine;
+using Cashier.Exceptions;
 
 namespace Cashier.Controllers
 {
@@ -17,12 +19,12 @@ namespace Cashier.Controllers
     public class ProcessJobsController : ControllerBase
     {
         private readonly CoffeeDbContext _context;
-        private readonly ILogger _logger;
+        private readonly IOrderEngine _orderEngine;
 
-        public ProcessJobsController(CoffeeDbContext context, ILogger<ProcessJobsController> logger)
+        public ProcessJobsController(CoffeeDbContext context, IOrderEngine orderEngine)
         {
-            _context = context;
-            _logger = logger;
+            _context = context;;
+            _orderEngine = orderEngine;
         }
 
         // POST: api/ProcessJobs
@@ -37,7 +39,14 @@ namespace Cashier.Controllers
 
             foreach (var coffee in coffees)
             {
-                new Engine.OrderEngine(_context, _logger).StartCoffee(coffee.JobId);
+                try
+                {
+                    _orderEngine.StartCoffee(coffee.JobId);
+                }
+                catch (NoCoffeeMachinesException e)
+                {
+                    return StatusCode(500, new ApiMessage { Message = e.Message });
+                }
             }
 
             // Update the local variable with changes from the database
