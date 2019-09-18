@@ -10,6 +10,7 @@ pipeline {
 		module_name = "cashier"
 		image_tag = "${docker_repo}/${product_name}-${module_name}:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
 		HOME = '/tmp'
+		build_configuration = "Release"
 	}
 
 	agent any
@@ -39,7 +40,7 @@ pipeline {
 				}
 				stage('Build Cashier') {
 					steps {
-						sh 'dotnet build -c Release'
+						sh "dotnet build -c ${build_configuration}"
 					}					
 					post {
 						always {
@@ -50,7 +51,7 @@ pipeline {
 				}
 				stage('Test Cashier') {
 					steps {
-						sh 'dotnet test -c Release --logger:trx --no-build'
+						sh "dotnet test -c ${build_configuration} --collect:\"Code Coverage\" --logger:trx --no-build"
 					}
 					post {
 						always {
@@ -76,7 +77,7 @@ pipeline {
 				}
 				stage('Publish Cashier') {
 					steps {
-						sh 'dotnet publish --no-build -c Release -o ./publish'
+						sh "dotnet publish \"Cashier/Cashier.csproj\" --no-build -c ${build_configuration} -o ./publish"
 					}
 					when { branch 'master' }
 				}

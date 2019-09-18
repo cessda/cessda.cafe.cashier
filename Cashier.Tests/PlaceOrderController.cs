@@ -1,10 +1,6 @@
 using Cashier.Contexts;
-using Cashier.Controllers;
 using Cashier.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
-using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +11,7 @@ namespace Cashier.Tests
     public class PlaceOrderController
     {
         private readonly CoffeeDbContext _context;
+        private readonly Controllers.PlaceOrderController _controller;
 
         /// <summary>
         /// Constructor, used to set up tests
@@ -22,13 +19,13 @@ namespace Cashier.Tests
         public PlaceOrderController()
         {
             _context = new CoffeeDbContext();
+            _controller = new Controllers.PlaceOrderController(_context);
         }
 
         [Fact]
         public void GetOrder_ReturnsAnActionResult_WithAListOfOrders()
         {
             // Arrange
-            var service = new Controllers.PlaceOrderController(_context);
             foreach (var order in ExampleOrders())
             {
                 _context.Add(order);
@@ -36,7 +33,7 @@ namespace Cashier.Tests
             _context.SaveChanges();
 
             // Act
-            var getOrder = service.GetOrders().Result.Value;
+            var getOrder = _controller.GetOrders().Result.Value;
 
             // Should be a list of orders
             Assert.IsType<List<Order>>(getOrder);
@@ -48,16 +45,52 @@ namespace Cashier.Tests
         [Fact]
         public async void PostOrder_ReturnsCreatedOrder_ForAPostedOrder()
         {
-            // Arrange
-            var service = new Controllers.PlaceOrderController(_context);
-
             // Act
-            var postOrder = await service.PostOrder(ExampleOrders()[0]);
+            var postOrder = await _controller.PostOrder(ExampleOrders()[0]);
 
             // Should be an IActionResult
             Assert.IsType<CreatedAtActionResult>(postOrder);
             Assert.NotNull(postOrder);
             Assert.NotEmpty(_context.Orders);
+        }
+
+        [Fact]
+        public async void DeleteOrder_ReturnsDeletedOrder_OnOrderDeletion()
+        {
+            // Arrange
+            foreach (var order in ExampleOrders())
+            {
+                _context.Add(order);
+            }
+            _context.SaveChanges();
+
+            // Make a copy of the id
+            Guid id = _context.Orders.First().OrderId;
+
+            // Act
+            var deleteOrder = await _controller.DeleteOrder(id);
+
+            // Should be OK
+            Assert.IsType<OkObjectResult>(deleteOrder);
+
+            // Order should be deleted
+            Assert.Null(_context.Find<Order>(id));
+        }
+
+        [Fact]
+        public async void DeleteOrder_ReturnsMessage_OnNullOrder()
+        {
+            // Arrange
+            var id = new Guid();
+
+            // Act
+            var deleteOrder = await _controller.DeleteOrder(id);
+
+            // Should be NotFoundObjectResult
+            Assert.IsType<NotFoundObjectResult>(deleteOrder);
+
+            // Should contain id
+            Assert.Contains(id.ToString(), ((ApiMessage)deleteOrder).Message);
         }
 
         private static List<Order> ExampleOrders()
