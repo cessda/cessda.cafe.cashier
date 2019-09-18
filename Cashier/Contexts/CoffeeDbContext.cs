@@ -14,7 +14,7 @@ namespace Cashier.Contexts
         public DbSet<Coffee> Coffees { get; set; }
         public DbSet<Machines> Machines { get; set; }
 
-        public CoffeeDbContext()
+        public CoffeeDbContext(DbContextOptions<CoffeeDbContext> options) : base(options)
         {
             // Configure Carsten's Coffeepot by default
             if (Machines.Count() == 0)
@@ -23,13 +23,5 @@ namespace Cashier.Contexts
                 SaveChanges();
             }
         }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseInMemoryDatabase(_inMemDatabase);
-            optionsBuilder.EnableSensitiveDataLogging(true);
-        }
-
-        private const string _inMemDatabase = "coffee-db";
     }
 }

@@ -1,6 +1,7 @@
 using Cashier.Contexts;
 using Cashier.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,11 @@ namespace Cashier.Tests
         /// </summary>
         public PlaceOrderController()
         {
-            _context = new CoffeeDbContext();
+            var options = new DbContextOptionsBuilder<CoffeeDbContext>()
+                .UseInMemoryDatabase("_inMemDatabase")
+                .EnableSensitiveDataLogging(true)
+                .Options;
+            _context = new CoffeeDbContext(options);
             _controller = new Controllers.PlaceOrderController(_context);
         }
 

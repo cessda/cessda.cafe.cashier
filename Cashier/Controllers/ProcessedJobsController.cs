@@ -11,20 +11,30 @@ using Microsoft.Extensions.Logging;
 
 namespace Cashier.Controllers
 {
+    /// <summary>
+    /// Get processed jobs
+    /// </summary>
     [Route("processed-jobs")]
     [ApiController]
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class ProcessedJobsController : ControllerBase
     {
         private readonly CoffeeDbContext _context;
-        private readonly ILogger _logger;
 
-        public ProcessedJobsController(CoffeeDbContext context, ILogger<ProcessedJobsController> logger)
+        /// <summary>
+        /// Constructor for ProcessedJobsController.
+        /// </summary>
+        /// <param name="context">Database context.</param>
+        /// <param name="logger"></param>
+        public ProcessedJobsController(CoffeeDbContext context)
         {
             _context = context;
-            _logger = logger;
         }
 
+        /// <summary>
+        /// Get all processed jobs.
+        /// </summary>
+        /// <returns>List of processed jobs.</returns>
         // GET: processed-jobs
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Coffee>>> GetCoffees()
@@ -45,6 +55,11 @@ namespace Cashier.Controllers
             return processedCoffees;
         }
 
+        /// <summary>
+        /// Get a single processed job.
+        /// </summary>
+        /// <param name="id">The coffee to find.</param>
+        /// <returns>A coffee</returns>
         // GET: processed-jobs/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Coffee>> GetCoffee(Guid id)
@@ -59,13 +74,10 @@ namespace Cashier.Controllers
                     return coffee;
                 }
             }
-
-            return NotFound();
-        }
-
-        private bool CoffeeExists(Guid id)
-        {
-            return _context.Coffees.Any(e => e.JobId == id);
+            else
+            {
+                return NotFound();
+            }
         }
     }
 }
