@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Cashier.Contexts;
+using Cashier.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Cashier.Contexts;
-using Cashier.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace Cashier.Controllers

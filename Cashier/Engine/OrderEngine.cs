@@ -1,15 +1,15 @@
 ﻿using Cashier.Contexts;
 using Cashier.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
-using Newtonsoft.Json;
-using Microsoft.Extensions.Logging;
-using System.IO;
-using Newtonsoft.Json.Converters;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace Cashier.Engine
 {
@@ -79,12 +79,13 @@ namespace Cashier.Engine
                 }
 
                 // Log known coffee machines
-                string machineList = String.Empty;
+                var machineSb = new StringBuilder();
                 foreach (var machine in coffeeMachines)
                 {
-                    machineList = machineList + machine + ", ";
+                    machineSb.Append(machine + ", ");
                 }
-                _logger.LogDebug("Configured machines are: " + machineList);
+                string machineList = machineSb.ToString();
+                _logger.LogDebug("Configured machines are: " + machineList.TrimEnd().TrimEnd(",".ToCharArray()));
 
                 var coffeePayload = new CoffeePayload()
                 {

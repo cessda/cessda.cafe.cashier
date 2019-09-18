@@ -35,12 +35,12 @@ namespace Cashier.Models
     }
 
     /// <summary>
-    /// Class that counts the coffees that it holds
+    /// Class that counts the coffees that it holds.
     /// </summary>
     public class CoffeeCount
     {
         /// <summary>
-        /// Counts the amounts of coffees held by this class
+        /// Counts the amounts of coffees held by this class.
         /// </summary>
         public CoffeeCount(List<Coffee> coffees)
         {
@@ -48,11 +48,11 @@ namespace Cashier.Models
             Coffees = coffees;
         }
         /// <summary>
-        /// Amount of coffees held
+        /// Amount of coffees held.
         /// </summary>
         public int count { get; private set; }
         /// <summary>
-        /// Coffees held
+        /// Coffees to be counted.
         /// </summary>
         public virtual ICollection<Coffee> Coffees { get; set; }
     }
@@ -91,12 +91,12 @@ namespace Cashier.Models
         /// </summary>
         public string Machine { get; set; }
         /// <summary>
-        /// The product specified in the job
+        /// The product specified in the job.
         /// </summary>
         [Required]
         public ECoffeeTypes Product { get; set; }
         /// <summary>
-        /// State of the coffee
+        /// State of the coffee.
         /// </summary>
         public ECoffeeState State { get; set; } = ECoffeeState.QUEUED;
     }
@@ -107,17 +107,17 @@ namespace Cashier.Models
     public class Order
     {
         /// <summary>
-        /// The id of the order
+        /// The id of the order.
         /// </summary>
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid OrderId { get; set; }
         /// <summary>
-        /// The total amount of coffees present in the order
+        /// The total amount of coffees present in the order.
         /// </summary>
         public int OrderSize { get; set; }
         /// <summary>
-        /// All coffees associated with this order
+        /// Coffees associated with this order.
         /// </summary>
         [Required]
         public virtual ICollection<Coffee> Coffees { get; set; }

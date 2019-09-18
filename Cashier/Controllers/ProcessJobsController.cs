@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Cashier.Contexts;
-using Cashier.Models;
-using Microsoft.Extensions.Logging;
+﻿using Cashier.Contexts;
 using Cashier.Engine;
 using Cashier.Exceptions;
+using Cashier.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Cashier.Controllers
 {
@@ -23,7 +18,7 @@ namespace Cashier.Controllers
 
         public ProcessJobsController(CoffeeDbContext context, IOrderEngine orderEngine)
         {
-            _context = context;;
+            _context = context;
             _orderEngine = orderEngine;
         }
 

@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Cashier.Models;
+﻿using Cashier.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace Cashier.Contexts

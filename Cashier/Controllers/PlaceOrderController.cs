@@ -1,14 +1,12 @@
-﻿using System;
+﻿using Cashier.Contexts;
+using Cashier.Engine;
+using Cashier.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Cashier.Contexts;
-using Cashier.Models;
-using Microsoft.Extensions.Logging;
-using Cashier.Engine;
 
 namespace Cashier.Controllers
 {
@@ -18,23 +16,28 @@ namespace Cashier.Controllers
     public class PlaceOrderController : ControllerBase
     {
         private readonly CoffeeDbContext _context;
-        private readonly ILogger _logger;
-        private readonly IOrderEngine _orderEngine;
 
-        public PlaceOrderController(CoffeeDbContext context, ILogger<PlaceOrderController> logger, IOrderEngine orderEngine)
+        public PlaceOrderController(CoffeeDbContext context)
         {
             _context = context;
-            _logger = logger;
-            _orderEngine = orderEngine;
         }
 
+        /// <summary>
+        /// Get a list of all known orders.
+        /// </summary>
+        /// <returns>List of orders.</returns>
         // GET: Orders
         [HttpGet]
-        public IEnumerable<Order> GetOrders()
+        public async Task<ActionResult<List<Order>>> GetOrders()
         {
-            return _context.Orders.Include(b => b.Coffees);
+            return await _context.Orders.Include(b => b.Coffees).ToListAsync();
         }
 
+        /// <summary>
+        /// Get the specified order.
+        /// </summary>
+        /// <param name="id">The orderId.</param>
+        /// <returns>The specifed order, or a message stating the order was not found.</returns>
         // GET: Orders/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrder([FromRoute] Guid id)
@@ -48,12 +51,18 @@ namespace Cashier.Controllers
 
             if (order == null)
             {
-                return NotFound();
+                return NotFound(OrderNotFound(id));
             }
 
             return Ok(order);
         }
 
+        /// <summary>
+        /// Update the specified order.
+        /// </summary>
+        /// <param name="id">The orderId to update.</param>
+        /// <param name="order">The modified order.</param>
+        /// <returns>The modified order, or a message if no coffees are specified.</returns>
         // PUT: Orders/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutOrder([FromRoute] Guid id, [FromBody] Order order)
@@ -90,7 +99,7 @@ namespace Cashier.Controllers
             {
                 if (!OrderExists(id))
                 {
-                    return NotFound();
+                    return NotFound(OrderNotFound(id));
                 }
                 else
                 {
@@ -101,6 +110,11 @@ namespace Cashier.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Creates a new order.
+        /// </summary>
+        /// <param name="order">The order.</param>
+        /// <returns>The created order, or a message if an error occurs.</returns>
         // POST: api/Orders
         [HttpPost]
         public async Task<IActionResult> PostOrder([FromBody] Order order)
@@ -130,13 +144,15 @@ namespace Cashier.Controllers
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
-            // Start processing the order
-            _orderEngine.StartOrder(order.OrderId);
-
             // Return the created order
             return CreatedAtAction(nameof(GetOrder), new { id = order.OrderId }, order);
         }
 
+        /// <summary>
+        /// Deletes the specified order.
+        /// </summary>
+        /// <param name="id">The orderId to delete.</param>
+        /// <returns>The deleted order.</returns>
         // DELETE: api/Orders/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrder([FromRoute] Guid id)
@@ -149,7 +165,7 @@ namespace Cashier.Controllers
             var order = await _context.Orders.FindAsync(id);
             if (order == null)
             {
-                return NotFound();
+                return NotFound(OrderNotFound(id));
             }
 
             _context.Orders.Remove(order);
@@ -166,6 +182,11 @@ namespace Cashier.Controllers
         private static ApiMessage NoCoffees()
         {
             return new ApiMessage() { Message = "There must be at least one coffee in the order" };
+        }
+
+        private static ApiMessage OrderNotFound(Guid id)
+        {
+            return new ApiMessage() { Message = "The order " + id.ToString() + " was not found." };
         }
     }
 }
