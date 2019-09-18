@@ -50,7 +50,7 @@ pipeline {
 				}
 				stage('Test Cashier') {
 					steps {
-						sh 'dotnet test --logger:trx --no-build'
+						sh 'dotnet test -c Release --logger:trx --no-build'
 					}
 					post {
 						always {
