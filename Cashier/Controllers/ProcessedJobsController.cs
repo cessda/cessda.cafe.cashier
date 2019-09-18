@@ -25,7 +25,6 @@ namespace Cashier.Controllers
         /// Constructor for ProcessedJobsController.
         /// </summary>
         /// <param name="context">Database context.</param>
-        /// <param name="logger"></param>
         public ProcessedJobsController(CoffeeDbContext context)
         {
             _context = context;
@@ -65,7 +64,7 @@ namespace Cashier.Controllers
         public async Task<ActionResult<Coffee>> GetCoffee(Guid id)
         {
             var coffee = await _context.Coffees.FindAsync(id);
-
+            
             if (coffee != null)
             {
                 // Only return coffees that are processed
@@ -74,10 +73,8 @@ namespace Cashier.Controllers
                     return coffee;
                 }
             }
-            else
-            {
-                return NotFound();
-            }
+
+            return NotFound();
         }
     }
 }
