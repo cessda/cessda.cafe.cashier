@@ -55,7 +55,7 @@ pipeline {
 					}
 					post {
 						always {
-							mstest failOnError: false
+							mstest()
 						}
 					}
 				}

@@ -81,16 +81,18 @@ namespace Cashier.Tests
         public async void DeleteOrder_ReturnsMessage_OnNullOrder()
         {
             // Arrange
-            var id = new Guid();
+            var id = Guid.NewGuid();
 
             // Act
             var deleteOrder = await _controller.DeleteOrder(id);
 
             // Should be NotFoundObjectResult
             Assert.IsType<NotFoundObjectResult>(deleteOrder);
+            var result = deleteOrder as NotFoundObjectResult;
+            var value = result.Value as ApiMessage;
 
             // Should contain id
-            Assert.Contains(id.ToString(), ((ApiMessage)deleteOrder).Message);
+            Assert.Contains(id.ToString(), value.Message);
         }
 
         private static List<Order> ExampleOrders()
@@ -103,12 +105,12 @@ namespace Cashier.Tests
                     {
                         new Coffee()
                         {
-                            JobId = new Guid(),
+                            JobId = Guid.NewGuid(),
                             Product = ECoffeeTypes.COFFEE_WITH_MILK,
                             OrderSize = 1
                         }
                     },
-                    OrderId = new Guid(),
+                    OrderId = Guid.NewGuid(),
                     OrderSize = 1
                 }
             };
