@@ -1,6 +1,7 @@
 ﻿using Cashier.Contexts;
 using Cashier.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,17 +10,17 @@ using System.Threading.Tasks;
 namespace Cashier.Controllers
 {
     /// <summary>
-    /// Read only controller to get the history of known orders
+    /// Read only controller to get the history of known orders.
     /// </summary>
-    [Route("order-history")]
+    [Route("order-history", Name = "GetOrderController")]
     [ApiController]
     [ApiConventionType(typeof(DefaultApiConventions))]
-    public class GetOrderController : Controller
+    public class GetOrderController : ControllerBase
     {
         private readonly CoffeeDbContext _context;
 
         /// <summary>
-        /// Constructor for GetOrderController
+        /// Constructor for GetOrderController.
         /// </summary>
         /// <param name="context">Database Context.</param>
         public GetOrderController(CoffeeDbContext context)
@@ -35,7 +36,7 @@ namespace Cashier.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Order>>> GetOrders()
         {
-            return await new PlaceOrderController(_context).GetOrders();
+            return await _context.Orders.Include(b => b.Coffees).ToListAsync();
         }
 
         /// <summary>
@@ -47,7 +48,19 @@ namespace Cashier.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrder([FromRoute] Guid id)
         {
-            return await new PlaceOrderController(_context).GetOrder(id);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var order = await _context.Orders.Include(b => b.Coffees).SingleAsync(o => o.OrderId == id);
+
+            if (order == null)
+            {
+                return NotFound(ApiMessage.OrderNotFound(id));
+            }
+
+            return Ok(order);
         }  
     }
 }

@@ -57,12 +57,12 @@ namespace Cashier.Controllers
         /// <summary>
         /// Remove a coffee machine from the list of known coffee machines
         /// </summary>
-        /// <param name="id">The URL of the coffee machine to remove.</param>
+        /// <param name="url">The URL of the coffee machine to remove.</param>
         /// <returns>The removed coffee machine.</returns>
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Machines>> DeleteMachines(string id)
+        [HttpDelete("{url}")]
+        public async Task<ActionResult<Machines>> DeleteMachines(string url)
         {
-            var machines = await _context.Machines.FindAsync(HttpUtility.UrlDecode(id));
+            var machines = await _context.Machines.FindAsync(HttpUtility.UrlDecode(url));
             if (machines == null)
             {
                 return NotFound();

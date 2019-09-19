@@ -34,7 +34,7 @@ namespace Cashier
         /// <param name="services">Service object to configure</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(jsonOptions =>
             {
                 // Convert enums into the strings representing them

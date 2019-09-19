@@ -3,9 +3,9 @@ using Cashier.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Xunit;
+using static Cashier.Tests.TestData;
 
 namespace Cashier.Tests
 {
@@ -20,31 +20,11 @@ namespace Cashier.Tests
         public PlaceOrderController()
         {
             var options = new DbContextOptionsBuilder<CoffeeDbContext>()
-                .UseInMemoryDatabase("_inMemDatabase")
+                .UseInMemoryDatabase(nameof(PlaceOrderController))
                 .EnableSensitiveDataLogging(true)
                 .Options;
             _context = new CoffeeDbContext(options);
             _controller = new Controllers.PlaceOrderController(_context);
-        }
-
-        [Fact]
-        public void GetOrder_ReturnsAnActionResult_WithAListOfOrders()
-        {
-            // Arrange
-            foreach (var order in ExampleOrders())
-            {
-                _context.Add(order);
-            }
-            _context.SaveChanges();
-
-            // Act
-            var getOrder = _controller.GetOrders().Result.Value;
-
-            // Should be a list of orders
-            Assert.IsType<List<Order>>(getOrder);
-
-            // Should be a COFFEE_WITH_MILK
-            Assert.Equal(ExampleOrders()[0].Coffees.ToList()[0].Product, getOrder[0].Coffees.ToList()[0].Product);
         }
 
         [Fact]
@@ -98,27 +78,6 @@ namespace Cashier.Tests
 
             // Should contain id
             Assert.Contains(id.ToString(), value.Message);
-        }
-
-        private static List<Order> ExampleOrders()
-        {
-            return new List<Order>()
-            {
-                new Order()
-                {
-                    Coffees = new List<Coffee>()
-                    {
-                        new Coffee()
-                        {
-                            JobId = Guid.NewGuid(),
-                            Product = ECoffeeTypes.COFFEE_WITH_MILK,
-                            OrderSize = 1
-                        }
-                    },
-                    OrderId = Guid.NewGuid(),
-                    OrderSize = 1
-                }
-            };
         }
     }
 }
