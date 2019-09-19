@@ -9,6 +9,7 @@
     <NeutralLanguage>en</NeutralLanguage>
     <Description>Cashier implementation of the CESSDA Coffee API</Description>
     <StartupObject>Cashier.Program</StartupObject>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
