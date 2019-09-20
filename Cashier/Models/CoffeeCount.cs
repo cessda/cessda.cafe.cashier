@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Cashier.Models.Database;
+using System.Collections.Generic;
 
-namespace Cashier.Models.Database
+namespace Cashier.Models
 {
     /// <summary>
     /// Class that counts the coffees that it holds.

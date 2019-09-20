@@ -2,7 +2,6 @@
 using Cashier.Models.Database;
 using System;
 using System.Collections.Generic;
-using static Cashier.Models.CoffeeRequest;
 
 namespace Cashier.Tests
 {

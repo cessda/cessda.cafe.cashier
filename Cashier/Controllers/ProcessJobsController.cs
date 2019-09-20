@@ -70,7 +70,7 @@ namespace Cashier.Controllers
                     jobsQueued++;
                 }
             }
-            return Ok(new ApiMessage { Message = jobsDeployed + " jobs deployed, "+ jobsQueued +" jobs still queued." });
+            return Ok(new ApiMessage { Message = jobsDeployed + " jobs deployed, " + jobsQueued + " jobs still queued." });
         }
     }
 }

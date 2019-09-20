@@ -1,12 +1,9 @@
 ﻿using Cashier.Contexts;
-using Cashier.Engine;
 using Cashier.Models;
 using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Cashier.Controllers

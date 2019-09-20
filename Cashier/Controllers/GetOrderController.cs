@@ -62,6 +62,6 @@ namespace Cashier.Controllers
             }
 
             return Ok(order);
-        }  
+        }
     }
 }

@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Cashier.Contexts;
+using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Cashier.Contexts;
-using Microsoft.Extensions.Logging;
-using Cashier.Models.Database;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Cashier.Controllers
 {
@@ -64,7 +61,7 @@ namespace Cashier.Controllers
         public async Task<ActionResult<Job>> GetCoffee(Guid id)
         {
             var coffee = await _context.Coffees.FindAsync(id);
-            
+
             if (coffee != null)
             {
                 // Only return coffees that are processed
