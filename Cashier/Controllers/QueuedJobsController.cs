@@ -6,36 +6,41 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Cashier.Contexts;
-using Cashier.Models;
 using Microsoft.Extensions.Logging;
+using Cashier.Models.Database;
 
 namespace Cashier.Controllers
 {
+    /// <summary>
+    /// Controller to fetch all queued jobs.
+    /// </summary>
     [Route("queued-jobs")]
     [ApiController]
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class QueuedJobsController : ControllerBase
     {
         private readonly CoffeeDbContext _context;
-        private readonly ILogger _logger;
 
-        public QueuedJobsController(CoffeeDbContext context, ILogger<QueuedJobsController> logger)
+        /// <summary>
+        /// Constructor for QueuedJobsController.
+        /// </summary>
+        /// <param name="context">Database context.</param>
+        public QueuedJobsController(CoffeeDbContext context)
         {
             _context = context;
-            _logger = logger;
         }
 
-        // GET: queued-jobs
         /// <summary>
         /// Get a list of queued jobs
         /// </summary>
         /// <returns>List of queued jobs</returns>
+        // GET: queued-jobs
         [HttpGet]
         public async Task<ActionResult<CoffeeCount>> GetCoffees()
         {
             var coffees = await _context.Coffees.ToListAsync();
 
-            var queuedCoffees = new List<Coffee>();
+            var queuedCoffees = new List<Job>();
 
             // For each coffee check if they are processed
             foreach (var coffee in coffees)
@@ -49,9 +54,14 @@ namespace Cashier.Controllers
             return new CoffeeCount(queuedCoffees);
         }
 
+        /// <summary>
+        /// Get an individual queued job.
+        /// </summary>
+        /// <param name="id">The jobId to get.</param>
+        /// <returns>The queued job.</returns>
         // GET: queued-jobs/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Coffee>> GetCoffee(Guid id)
+        public async Task<ActionResult<Job>> GetCoffee(Guid id)
         {
             var coffee = await _context.Coffees.FindAsync(id);
 
@@ -65,11 +75,6 @@ namespace Cashier.Controllers
             }
 
             return NotFound();
-        }
-
-        private bool CoffeeExists(Guid id)
-        {
-            return _context.Coffees.Any(e => e.JobId == id);
         }
     }
 }

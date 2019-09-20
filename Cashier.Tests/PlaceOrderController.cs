@@ -1,5 +1,6 @@
 using Cashier.Contexts;
 using Cashier.Models;
+using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -31,10 +32,10 @@ namespace Cashier.Tests
         public async void PostOrder_ReturnsCreatedOrder_ForAPostedOrder()
         {
             // Act
-            var postOrder = await _controller.PostOrder(ExampleOrders()[0]);
+            var postOrder = await _controller.PostOrder(ExampleRequest());
 
             // Should be an IActionResult
-            Assert.IsType<CreatedAtActionResult>(postOrder);
+            Assert.IsType<CreatedAtRouteResult>(postOrder);
             Assert.NotNull(postOrder);
             Assert.NotEmpty(_context.Orders);
         }

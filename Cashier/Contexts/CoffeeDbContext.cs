@@ -1,4 +1,4 @@
-﻿using Cashier.Models;
+﻿using Cashier.Models.Database;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
@@ -11,15 +11,15 @@ namespace Cashier.Contexts
     {
 #pragma warning disable CS1591
         public DbSet<Order> Orders { get; set; }
-        public DbSet<Coffee> Coffees { get; set; }
-        public DbSet<Machines> Machines { get; set; }
+        public DbSet<Job> Coffees { get; set; }
+        public DbSet<Machine> Machines { get; set; }
 
         public CoffeeDbContext(DbContextOptions<CoffeeDbContext> options) : base(options)
         {
             // Configure Carsten's Coffeepot by default
             if (Machines.Count() == 0)
             {
-                Machines.Add(new Machines() { CoffeeMachine = "http://cafe-coffeepot:1337/" });
+                Machines.Add(new Machine() { CoffeeMachine = "http://cafe-coffeepot:1337/" });
                 SaveChanges();
             }
         }

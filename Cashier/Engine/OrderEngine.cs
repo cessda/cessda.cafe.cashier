@@ -1,5 +1,6 @@
 ﻿using Cashier.Contexts;
 using Cashier.Models;
+using Cashier.Models.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -131,7 +132,7 @@ namespace Cashier.Engine
                             var httpResponse = httpWebRequest.GetResponse();
                             using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
                             {
-                                var response = JsonConvert.DeserializeObject<Coffee>(streamReader.ReadToEnd());
+                                var response = JsonConvert.DeserializeObject<Job>(streamReader.ReadToEnd());
                                 _logger.LogDebug("Response from " + machine + ": " + response);
                             }
 

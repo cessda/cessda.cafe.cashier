@@ -2,12 +2,16 @@
 using Cashier.Engine;
 using Cashier.Exceptions;
 using Cashier.Models;
+using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace Cashier.Controllers
 {
+    /// <summary>
+    /// Controller to tell the Cashier to process orders stored.
+    /// </summary>
     [Route("process-jobs")]
     [ApiController]
     [ApiConventionType(typeof(DefaultApiConventions))]
@@ -16,6 +20,11 @@ namespace Cashier.Controllers
         private readonly CoffeeDbContext _context;
         private readonly IOrderEngine _orderEngine;
 
+        /// <summary>
+        /// Constructor for ProcessJobsController.
+        /// </summary>
+        /// <param name="context">Database Context.</param>
+        /// <param name="orderEngine">Engine to process orders.</param>
         public ProcessJobsController(CoffeeDbContext context, IOrderEngine orderEngine)
         {
             _context = context;

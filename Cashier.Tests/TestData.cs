@@ -1,6 +1,8 @@
 ﻿using Cashier.Models;
+using Cashier.Models.Database;
 using System;
 using System.Collections.Generic;
+using static Cashier.Models.CoffeeRequest;
 
 namespace Cashier.Tests
 {
@@ -12,9 +14,9 @@ namespace Cashier.Tests
             {
                 new Order()
                 {
-                    Coffees = new List<Coffee>()
+                    Coffees = new List<Models.Database.Job>()
                     {
-                        new Coffee()
+                        new Models.Database.Job()
                         {
                             JobId = Guid.NewGuid(),
                             Product = ECoffeeTypes.COFFEE_WITH_MILK,
@@ -23,6 +25,26 @@ namespace Cashier.Tests
                     },
                     OrderId = Guid.NewGuid(),
                     OrderSize = 1
+                }
+            };
+        }
+
+        public static CoffeeRequest ExampleRequest()
+        {
+            return new CoffeeRequest()
+            {
+                Coffees = new List<CoffeeRequest.Coffee>()
+                {
+                    new CoffeeRequest.Coffee()
+                    {
+                        Count = 3,
+                        Product = ECoffeeTypes.KAKAO
+                    },
+                    new CoffeeRequest.Coffee()
+                    {
+                        Count = 1,
+                        Product = ECoffeeTypes.ESPRESSO
+                    }
                 }
             };
         }

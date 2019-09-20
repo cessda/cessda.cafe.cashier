@@ -1,5 +1,5 @@
 ﻿using Cashier.Contexts;
-using Cashier.Models;
+using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -33,7 +33,7 @@ namespace Cashier.Controllers
         /// </summary>
         /// <returns>List of all configured coffee machines.</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Machines>>> GetMachines()
+        public async Task<ActionResult<IEnumerable<Machine>>> GetMachines()
         {
             return await _context.Machines.ToListAsync();
         }
@@ -45,7 +45,7 @@ namespace Cashier.Controllers
         /// <param name="machines">A coffee machine.</param>
         /// <returns>The added coffee machine.</returns>
         [HttpPost]
-        public async Task<ActionResult<Machines>> PostMachines(Machines machines)
+        public async Task<ActionResult<Machine>> PostMachines(Machine machines)
         {
             _context.Machines.Add(machines);
             await _context.SaveChangesAsync();
@@ -60,7 +60,7 @@ namespace Cashier.Controllers
         /// <param name="url">The URL of the coffee machine to remove.</param>
         /// <returns>The removed coffee machine.</returns>
         [HttpDelete("{url}")]
-        public async Task<ActionResult<Machines>> DeleteMachines(string url)
+        public async Task<ActionResult<Machine>> DeleteMachines(string url)
         {
             var machines = await _context.Machines.FindAsync(HttpUtility.UrlDecode(url));
             if (machines == null)

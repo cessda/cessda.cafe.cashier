@@ -1,5 +1,6 @@
 ﻿using Cashier.Contexts;
 using Cashier.Models;
+using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;

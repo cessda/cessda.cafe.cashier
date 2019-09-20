@@ -1,5 +1,5 @@
 ﻿using Cashier.Contexts;
-using Cashier.Models;
+using Cashier.Models.Database;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;

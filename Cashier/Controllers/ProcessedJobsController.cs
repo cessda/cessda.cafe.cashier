@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Cashier.Contexts;
-using Cashier.Models;
 using Microsoft.Extensions.Logging;
+using Cashier.Models.Database;
 
 namespace Cashier.Controllers
 {
@@ -36,11 +36,11 @@ namespace Cashier.Controllers
         /// <returns>List of processed jobs.</returns>
         // GET: processed-jobs
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Coffee>>> GetCoffees()
+        public async Task<ActionResult<IEnumerable<Job>>> GetCoffees()
         {
             var coffees = await _context.Coffees.ToListAsync();
 
-            var processedCoffees = new List<Coffee>();
+            var processedCoffees = new List<Job>();
 
             // For each coffee check if they are processed
             foreach (var coffee in coffees)
@@ -61,7 +61,7 @@ namespace Cashier.Controllers
         /// <returns>A coffee</returns>
         // GET: processed-jobs/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Coffee>> GetCoffee(Guid id)
+        public async Task<ActionResult<Job>> GetCoffee(Guid id)
         {
             var coffee = await _context.Coffees.FindAsync(id);
             

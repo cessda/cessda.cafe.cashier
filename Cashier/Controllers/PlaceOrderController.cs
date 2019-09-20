@@ -1,6 +1,7 @@
 ﻿using Cashier.Contexts;
 using Cashier.Engine;
 using Cashier.Models;
+using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -32,26 +33,38 @@ namespace Cashier.Controllers
         /// <summary>
         /// Creates a new order.
         /// </summary>
-        /// <param name="order">The order.</param>
+        /// <param name="request">The order.</param>
         /// <returns>The created order, or a message if an error occurs.</returns>
         // POST: api/Orders
         [HttpPost]
-        public async Task<IActionResult> PostOrder([FromBody] Order order)
+        public async Task<IActionResult> PostOrder([FromBody] CoffeeRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            var order = new Order()
+            {
+                Coffees = new List<Job>()
+            };
+
             // Add up the total amount of coffees ordered
-            foreach (Coffee coffee in order.Coffees)
+            foreach (var coffee in request.Coffees)
             {
                 // Each coffee should have an amount greater than 0
-                if (coffee.OrderSize <= 0)
+                if (coffee.Count <= 0)
                 {
                     return BadRequest(ApiMessage.NoCoffees());
                 }
-                order.OrderSize += coffee.OrderSize;
+
+                order.Coffees.Add(new Job()
+                {
+                    Product = coffee.Product,
+                    OrderSize = coffee.Count
+                });
+
+                order.OrderSize += coffee.Count;
             }
 
             // If no coffees have been sent reject the order
