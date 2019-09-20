@@ -44,7 +44,7 @@ namespace Cashier.Controllers
         /// Get the specified order.
         /// </summary>
         /// <param name="id">The orderId.</param>
-        /// <returns>The specifed order, or a message stating the order was not found.</returns>
+        /// <returns>The specified order, or a message stating the order was not found.</returns>
         // GET: Orders/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrder([FromRoute] Guid id)
@@ -53,15 +53,15 @@ namespace Cashier.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            var order = await _context.Orders.Include(b => b.Coffees).SingleAsync(o => o.OrderId == id);
-
-            if (order == null)
+            try
+            {
+                var order = await _context.Orders.Include(b => b.Coffees).SingleAsync(o => o.OrderId == id);
+                return Ok(order);
+            }
+            catch (InvalidOperationException)
             {
                 return NotFound(ApiMessage.OrderNotFound(id));
             }
-
-            return Ok(order);
         }
     }
 }

@@ -51,7 +51,7 @@ namespace Cashier.Engine
         }
 
         /// <summary>
-        /// Start the specifed coffee
+        /// Start the specified coffee
         /// </summary>
         /// <param name="id">ID of coffee to start</param>
         public void StartCoffee(Guid id)
@@ -97,7 +97,7 @@ namespace Cashier.Engine
 
                     if (success)
                     {
-                        // Sucess - mark the time that the order was sent
+                        // Success - mark the time that the order was sent
                         _logger.LogInformation("Sent job " + coffee.OrderId + " to machine " + machine);
                         coffee.JobStarted = DateTime.Now;
                         coffee.Machine = machine.ToString();
@@ -120,11 +120,16 @@ namespace Cashier.Engine
             }
         }
 
-        private bool SendRequest(string json, Uri machine)
+        /// <summary>
+        /// Sends a string to the specified endpoint.
+        /// </summary>
+        /// <param name="payload">The string to send.</param>
+        /// <param name="uri">The URI to send to.</param>
+        private bool SendRequest(string payload, Uri uri)
         {
             // Create a new WebRequest
-            _logger.LogDebug("Using machine: " + machine + ".");
-            var httpWebRequest = WebRequest.CreateHttp(new Uri(machine, "start-job"));
+            _logger.LogDebug("Using machine: " + uri + ".");
+            var httpWebRequest = WebRequest.CreateHttp(new Uri(uri, "start-job"));
             httpWebRequest.ContentType = "application/json";
             httpWebRequest.Method = "POST";
 
@@ -133,7 +138,7 @@ namespace Cashier.Engine
                 // Submit the coffee to the coffee machine
                 using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
                 {
-                    streamWriter.Write(json);
+                    streamWriter.Write(payload);
                 }
 
                 // Read the response from the coffee machine
@@ -143,28 +148,27 @@ namespace Cashier.Engine
                     using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
                     {
                         var response = JsonConvert.DeserializeObject<Job>(streamReader.ReadToEnd());
-                        _logger.LogDebug("Response from " + machine + ": " + response);
+                        _logger.LogDebug("Response from " + uri + ": " + response);
                     }
 
                     return true;
                 }
-                catch (WebException e)
+                catch (WebException e) when (e.Response != null)
                 {
-                    if (e.Response == null) throw;
                     using (var streamReader = new StreamReader(e.Response.GetResponseStream()))
                     {
-                        // TODO - Change behavior based on message
+                        // TODO - Change behaviour based on message
                         var stringResponse = streamReader.ReadToEnd();
                         var responseCode = ((HttpWebResponse)e.Response).StatusCode;
                         try
                         {
                             var response = JsonConvert.DeserializeObject<ApiMessage>(stringResponse);
-                            _logger.LogWarning("Coffee machine " + machine + " responded with code " + (int)responseCode + " and with message: " + response.Message);
+                            _logger.LogWarning("Coffee machine " + uri + " responded with code " + (int)responseCode + " and with message: " + response.Message);
                             return false;
                         }
                         catch (JsonSerializationException)
                         {
-                            _logger.LogWarning("Coffee machine " + machine + " responded with code " + (int)responseCode + ". The message could not be parsed.");
+                            _logger.LogWarning("Coffee machine " + uri + " responded with code " + (int)responseCode + ". The message could not be parsed.");
                             return false;
                         }
                     }
@@ -173,7 +177,7 @@ namespace Cashier.Engine
             // If the message is null (i.e. connection issue)
             catch (WebException e)
             {
-                _logger.LogError("Connecting to coffee machine " + machine.Host + " failed: " + e.Message);
+                _logger.LogError("Connecting to coffee machine " + uri.Host + " failed: " + e.Message);
                 return false;
             }
         }
@@ -197,7 +201,7 @@ namespace Cashier.Engine
             var machineSb = new StringBuilder();
             foreach (var machine in coffeeMachines)
             {
-                machineSb.Append(machine + ", ");
+                machineSb.Append(machine).Append(", ");
             }
             string machineList = machineSb.ToString();
             _logger.LogDebug("Configured machines are: " + machineList.TrimEnd().TrimEnd(",".ToCharArray()));

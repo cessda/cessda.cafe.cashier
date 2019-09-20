@@ -63,15 +63,11 @@ namespace Cashier.Controllers
         {
             var coffee = await _context.Coffees.FindAsync(id);
 
-            if (coffee != null)
+            if ((coffee != null) && (coffee.State == ECoffeeState.QUEUED))
             {
                 // Only return coffees that are queued
-                if (coffee.State == ECoffeeState.QUEUED)
-                {
-                    return coffee;
-                }
+                return coffee;
             }
-
             return NotFound();
         }
     }

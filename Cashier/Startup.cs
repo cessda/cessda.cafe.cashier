@@ -35,7 +35,7 @@ namespace Cashier
                 jsonOptions.SerializerSettings.Converters.Add(new StringEnumConverter());
                 jsonOptions.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
                 jsonOptions.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-            }); ;
+            });
 
             // Set up the database
             services.AddDbContext<CoffeeDbContext>(options =>
@@ -43,7 +43,7 @@ namespace Cashier
                 options.UseInMemoryDatabase(_inMemDatabase);
             });
 
-            // Set up healthchecks
+            // Set up health checks
             services.AddHealthChecks();
 
             // Set up Swagger
@@ -74,7 +74,7 @@ namespace Cashier
                 app.UseDeveloperExceptionPage();
             }
 
-            // Register the Swagger generator and the Swagger UI middlewares
+            // Register the Swagger generator and the Swagger UI middleware
             app.UseOpenApi();
             app.UseSwaggerUi3();
 
