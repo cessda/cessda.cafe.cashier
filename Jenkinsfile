@@ -51,7 +51,7 @@ pipeline {
 				}
 				stage('Test Cashier') {
 					steps {
-						sh "dotnet test -c ${build_configuration} --collect:\"Code Coverage\" --logger:trx --no-build"
+						sh "dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover -c ${build_configuration} --logger:trx --no-build"
 					}
 					post {
 						always {
