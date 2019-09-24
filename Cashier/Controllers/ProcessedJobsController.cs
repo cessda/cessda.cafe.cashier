@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Cashier.Controllers
@@ -35,20 +36,10 @@ namespace Cashier.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Job>>> GetCoffees()
         {
-            var coffees = await _context.Coffees.ToListAsync();
-
-            var processedCoffees = new List<Job>();
-
             // For each coffee check if they are processed
-            foreach (var coffee in coffees)
-            {
-                if (coffee.State == ECoffeeState.PROCESSED)
-                {
-                    processedCoffees.Add(coffee);
-                }
-            }
-
-            return processedCoffees;
+            return await _context.Coffees
+                .Where(c => c.State == ECoffeeState.PROCESSED)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -62,13 +53,10 @@ namespace Cashier.Controllers
         {
             var coffee = await _context.Coffees.FindAsync(id);
 
-            if (coffee != null)
+            // Only return coffees that are processed
+            if (coffee?.State == ECoffeeState.PROCESSED)
             {
-                // Only return coffees that are processed
-                if (coffee.State == ECoffeeState.PROCESSED)
-                {
-                    return coffee;
-                }
+                return coffee;
             }
 
             return NotFound();

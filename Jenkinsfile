@@ -9,8 +9,9 @@ pipeline {
 		product_name = "cafe"
 		module_name = "cashier"
 		image_tag = "${docker_repo}/${product_name}-${module_name}:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
-		HOME = '/tmp'
+		HOME = "/tmp"
 		build_configuration = "Release"
+		version = "1.0"
 	}
 
 	agent any
@@ -30,7 +31,7 @@ pipeline {
 						withSonarQubeEnv('cessda-sonar') {
 							sh 'dotnet tool install --global dotnet-sonarscanner'
 							sh("export PATH=\"$PATH:/tmp/.dotnet/tools\" && dotnet sonarscanner begin " + 
-							"/k:'eu.cessda.cafe:cashier' /v:1.0.0  /n:'CESSDA Café: Cashier' " +
+							"/k:'eu.cessda.cafe:cashier' /v:${version}.${env.BUILD_NUMBER}  /n:'CESSDA Café: Cashier' " +
 							"/d:'sonar.cs.opencover.reportsPaths=Cashier.Tests/coverage.opencover.xml' " +
 							"/d:'sonar.projectDescription=Cashier implementation of the CESSDA Coffee API' " +
 							"/d:'sonar.links.ci=https://jenkins-dev.cessda.eu/' " +
@@ -41,7 +42,7 @@ pipeline {
 				}
 				stage('Build Cashier') {
 					steps {
-						sh "dotnet build -c ${build_configuration}"
+						sh "dotnet build -c ${build_configuration} /p:Version=${version}.${env.BUILD_NUMBER}"
 					}					
 					post {
 						always {
@@ -52,7 +53,7 @@ pipeline {
 				}
 				stage('Test Cashier') {
 					steps {
-						sh "dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover -c ${build_configuration} --logger:trx --no-build"
+						sh "dotnet test -c ${build_configuration} /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger:trx --no-build"
 					}
 					post {
 						always {

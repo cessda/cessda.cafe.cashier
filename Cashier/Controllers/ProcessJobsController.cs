@@ -53,23 +53,10 @@ namespace Cashier.Controllers
                 }
             }
 
-            // Update the local variable with changes from the database
-            coffees = await _context.Coffees.ToListAsync();
+            // Count the coffees in either state
+            var jobsDeployed = await _context.Coffees.CountAsync(c => c.State == ECoffeeState.PROCESSED);
+            var jobsQueued = await _context.Coffees.CountAsync(c => c.State == ECoffeeState.QUEUED);
 
-            int jobsDeployed = 0;
-            int jobsQueued = 0;
-
-            foreach (var coffee in coffees)
-            {
-                if (coffee.State == ECoffeeState.PROCESSED)
-                {
-                    jobsDeployed++;
-                }
-                else if (coffee.State == ECoffeeState.QUEUED)
-                {
-                    jobsQueued++;
-                }
-            }
             return Ok(new ApiMessage { Message = jobsDeployed + " jobs deployed, " + jobsQueued + " jobs still queued." });
         }
     }

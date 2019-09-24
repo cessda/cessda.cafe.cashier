@@ -21,18 +21,11 @@ namespace Cashier.Tests
         /// </summary>
         public GetOrderController()
         {
-            var options = new DbContextOptionsBuilder<CoffeeDbContext>()
-                .UseInMemoryDatabase(nameof(GetOrderController))
-                .EnableSensitiveDataLogging(true)
-                .Options;
-            _context = new CoffeeDbContext(options);
+            _context = new Setup().SetupDb(nameof(GetOrderController));
             _controller = new Controllers.GetOrderController(_context);
 
             // Arrange
-            foreach (var order in ExampleOrders())
-            {
-                _context.Add(order);
-            }
+            _context.AddRange(ExampleOrders());
             _context.SaveChanges();
         }
 

@@ -12,6 +12,7 @@ namespace Cashier.Engine
         /// </summary>
         /// <param name="id">The OrderId to start.</param>
         void StartOrder(Guid id);
+
         /// <summary>
         /// Starts the specified coffee.
         /// </summary>

@@ -2,7 +2,6 @@ using Cashier.Contexts;
 using Cashier.Models;
 using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using Xunit;
@@ -20,11 +19,7 @@ namespace Cashier.Tests
         /// </summary>
         public PlaceOrderController()
         {
-            var options = new DbContextOptionsBuilder<CoffeeDbContext>()
-                .UseInMemoryDatabase(nameof(PlaceOrderController))
-                .EnableSensitiveDataLogging(true)
-                .Options;
-            _context = new CoffeeDbContext(options);
+            _context = new Setup().SetupDb(nameof(PlaceOrderController));
             _controller = new Controllers.PlaceOrderController(_context);
         }
 

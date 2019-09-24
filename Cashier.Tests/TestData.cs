@@ -1,11 +1,10 @@
 ﻿using Cashier.Models;
 using Cashier.Models.Database;
-using System;
 using System.Collections.Generic;
 
 namespace Cashier.Tests
 {
-    public class TestData
+    public static class TestData
     {
         public static List<Order> ExampleOrders()
         {
@@ -13,17 +12,39 @@ namespace Cashier.Tests
             {
                 new Order()
                 {
-                    Coffees = new List<Models.Database.Job>()
+                    Coffees = new List<Job>()
                     {
-                        new Models.Database.Job()
+                        new Job()
                         {
-                            JobId = Guid.NewGuid(),
                             Product = ECoffeeTypes.COFFEE_WITH_MILK,
                             OrderSize = 1
+                        },
+                        new Job
+                        {
+                            Product = ECoffeeTypes.ESPRESSO_CHOCOLATE,
+                            OrderSize = 3,
+                            State = ECoffeeState.PROCESSED
+                        },
+                        new Job
+                        {
+                            Product = ECoffeeTypes.MOCCACHINO,
+                            OrderSize = 2,
+                            State = ECoffeeState.QUEUED
                         }
                     },
-                    OrderId = Guid.NewGuid(),
-                    OrderSize = 1
+                    OrderSize = 6
+                },
+                new Order()
+                {
+                    Coffees = new List<Job>()
+                    {
+                        new Job()
+                        {
+                            Product = ECoffeeTypes.KAKAO,
+                            OrderSize = 1,
+                            State = ECoffeeState.PROCESSED
+                        }
+                    }
                 }
             };
         }
