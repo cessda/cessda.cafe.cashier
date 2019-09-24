@@ -1,5 +1,7 @@
 # CESSDA Café: Cashier
 
+[![Build Status](https://jenkins-dev.cessda.eu/buildStatus/icon?job=cessda.cafe.cashier%2Fmaster)](https://jenkins-dev.cessda.eu/job/cessda.cafe.cashier/job/master/)
+
 This project is an implementation of the CESSDA Café Cashier specification using ASP.NET Core.
 
 ## Getting Started
@@ -25,7 +27,7 @@ Several frameworks are used in this application:
 | ----------------------------------------------------- | ------------------------------------------------------------- |
 | [.Net Core](https://dotnet.microsoft.com/)			| Runtime for applications using the C# programming language	|
 | [ASP.NET](https://dotnet.microsoft.com/apps/aspnet)	| Framework for building web applications using .Net			|
-| [NSwag](https://github.com/RicoSuter/NSwag)			| OpenAPI toolchain for ASP.NET									|
+| [NSwag](https://github.com/RicoSuter/NSwag)			| OpenAPI tool chain for ASP.NET								|
 
 ## Resources
 
