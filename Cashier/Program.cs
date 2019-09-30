@@ -29,17 +29,16 @@ namespace Cashier
         public static IWebHost CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureLogging((hostingContext, logging) =>
-                {
+                {;
                     logging.AddGelf(options =>
                     {
-                        options.Host = "localhost";
+                        if (options.Host.Length == 0) options.Host = "localhost";
                         options.LogSource = hostingContext.HostingEnvironment.ApplicationName;
                         options.AdditionalFields["app_version"] = Assembly.GetEntryAssembly()
                             .GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
                         options.AdditionalFields["machine_name"] = Environment.MachineName;
                         options.AdditionalFields["project_name"] = "CESSDA Café";
                     });
-                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                 })
                 .UseStartup<Startup>()
                 .Build();
