@@ -34,12 +34,10 @@ namespace Cashier
                     logging.AddGelf(options =>
                     {
                         options.Host = "localhost";
-                        options.Protocol = GelfProtocol.Http;
                         options.LogSource = hostingContext.HostingEnvironment.ApplicationName;
+                        options.AdditionalFields["machine_name"] = Environment.MachineName;
                         options.AdditionalFields["app_version"] = Assembly.GetEntryAssembly()
                             .GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
-                        options.AdditionalFields["machine_name"] = Environment.MachineName;
-                        options.AdditionalFields["project_name"] = "CESSDA Café";
                     });
                 })
                 .UseStartup<Startup>()
