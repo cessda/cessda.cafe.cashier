@@ -66,11 +66,6 @@ pipeline {
 						withSonarQubeEnv('cessda-sonar') {
 							sh "export PATH=\"$PATH:/tmp/.dotnet/tools\" && dotnet sonarscanner end"
 						}
-					}
-					when { branch 'master' }
-				}
-				stage('Get Quality Gate Status') {
-					steps {
 						timeout(time: 1, unit: 'HOURS') {
 							waitForQualityGate abortPipeline: false
 						}
@@ -93,9 +88,9 @@ pipeline {
 		}
 		stage('Push Docker Container') {
 			steps {
-				sh("gcloud auth configure-docker")
-				sh("docker push ${image_tag}")
-				sh("gcloud container images add-tag ${image_tag} ${docker_repo}/${product_name}-${module_name}:${env.BRANCH_NAME}-latest")
+				sh "gcloud auth configure-docker"
+				sh "docker push ${image_tag}"
+				sh "gcloud container images add-tag ${image_tag} ${docker_repo}/${product_name}-${module_name}:${env.BRANCH_NAME}-latest"
 			}
 			when { branch 'master' }
 		}

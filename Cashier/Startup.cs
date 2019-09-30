@@ -11,7 +11,6 @@ using Newtonsoft.Json.Converters;
 
 namespace Cashier
 {
-
 #pragma warning disable CS1591
     public class Startup
     {
@@ -38,10 +37,7 @@ namespace Cashier
             });
 
             // Set up the database
-            services.AddDbContext<CoffeeDbContext>(options =>
-            {
-                options.UseInMemoryDatabase(_inMemDatabase);
-            });
+            services.AddDbContext<CoffeeDbContext>(options => options.UseInMemoryDatabase(_inMemDatabase));
 
             // Set up health checks
             services.AddHealthChecks();

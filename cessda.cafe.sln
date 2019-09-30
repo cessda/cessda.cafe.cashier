@@ -11,9 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 		Jenkinsfile = Jenkinsfile
+		README.MD = README.MD
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cashier.Tests", "Cashier.Tests\Cashier.Tests.csproj", "{975E7594-00D1-4759-AC4B-24D62E9CD38E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cashier.Tests", "Cashier.Tests\Cashier.Tests.csproj", "{975E7594-00D1-4759-AC4B-24D62E9CD38E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

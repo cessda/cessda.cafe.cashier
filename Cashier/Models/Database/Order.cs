@@ -16,14 +16,17 @@ namespace Cashier.Models.Database
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid OrderId { get; set; }
+
         /// <summary>
         /// The time the order was placed.
         /// </summary>
         public DateTime OrderPlaced { get; private set; } = DateTime.Now;
+
         /// <summary>
         /// The total amount of coffees present in the order.
         /// </summary>
         public int OrderSize { get; set; }
+
         /// <summary>
         /// Coffees associated with this order.
         /// </summary>

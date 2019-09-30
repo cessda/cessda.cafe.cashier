@@ -1,9 +1,12 @@
 ﻿using Cashier.Contexts;
+using Gelf.Extensions.Logging;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Reflection;
 
 namespace Cashier
 {
@@ -28,6 +31,13 @@ namespace Cashier
                 .ConfigureLogging((hostingContext, logging) =>
                 {
                     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                    logging.AddGelf(options =>
+                    {
+                        options.LogSource = hostingContext.HostingEnvironment.ApplicationName;
+                        options.AdditionalFields["machine_name"] = Environment.MachineName;
+                        options.AdditionalFields["app_version"] = Assembly.GetEntryAssembly()
+                            .GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+                    });
                 })
                 .UseStartup<Startup>()
                 .Build();

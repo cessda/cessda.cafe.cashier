@@ -1,24 +1,25 @@
 ﻿using Cashier.Contexts;
+using Cashier.Controllers;
 using Cashier.Models;
 using Cashier.Models.Database;
 using System.Linq;
 using Xunit;
 using static Cashier.Tests.TestData;
 
-namespace Cashier.Tests
+namespace Cashier.Tests.Controllers
 {
-    public class QueuedJobsController
+    public class QueuedJobsControllerTest
     {
         private readonly CoffeeDbContext _context;
-        private readonly Controllers.QueuedJobsController _controller;
+        private readonly QueuedJobsController _controller;
 
         /// <summary>
         /// Constructor, used to set up tests
         /// </summary>
-        public QueuedJobsController()
+        public QueuedJobsControllerTest()
         {
-            _context = new Setup().SetupDb(nameof(QueuedJobsController));
-            _controller = new Controllers.QueuedJobsController(_context);
+            _context = new Setup().SetupDb(nameof(QueuedJobsControllerTest));
+            _controller = new QueuedJobsController(_context);
 
             // Arrange
             _context.AddRange(ExampleOrders());

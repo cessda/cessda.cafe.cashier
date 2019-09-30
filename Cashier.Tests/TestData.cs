@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace Cashier.Tests
 {
-    public static class TestData
+    internal static class TestData
     {
-        public static List<Order> ExampleOrders()
+        internal static List<Order> ExampleOrders()
         {
             return new List<Order>()
             {
@@ -30,6 +30,12 @@ namespace Cashier.Tests
                             Product = ECoffeeTypes.MOCCACHINO,
                             OrderSize = 2,
                             State = ECoffeeState.QUEUED
+                        },
+                        new Job
+                        {
+                            Product = ECoffeeTypes.HOT_WATER,
+                            OrderSize = 1,
+                            State = ECoffeeState.PROCESSED
                         }
                     },
                     OrderSize = 6
@@ -49,7 +55,7 @@ namespace Cashier.Tests
             };
         }
 
-        public static CoffeeRequest ExampleRequest()
+        internal static CoffeeRequest ExampleRequest()
         {
             return new CoffeeRequest()
             {

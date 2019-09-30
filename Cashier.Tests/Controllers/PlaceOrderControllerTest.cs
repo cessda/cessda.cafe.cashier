@@ -1,4 +1,5 @@
 using Cashier.Contexts;
+using Cashier.Controllers;
 using Cashier.Models;
 using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
@@ -7,20 +8,20 @@ using System.Linq;
 using Xunit;
 using static Cashier.Tests.TestData;
 
-namespace Cashier.Tests
+namespace Cashier.Tests.Controllers
 {
-    public class PlaceOrderController
+    public class PlaceOrderControllerTest
     {
         private readonly CoffeeDbContext _context;
-        private readonly Controllers.PlaceOrderController _controller;
+        private readonly PlaceOrderController _controller;
 
         /// <summary>
         /// Constructor, used to set up tests
         /// </summary>
-        public PlaceOrderController()
+        public PlaceOrderControllerTest()
         {
-            _context = new Setup().SetupDb(nameof(PlaceOrderController));
-            _controller = new Controllers.PlaceOrderController(_context);
+            _context = new Setup().SetupDb(nameof(PlaceOrderControllerTest));
+            _controller = new PlaceOrderController(_context);
         }
 
         [Fact]

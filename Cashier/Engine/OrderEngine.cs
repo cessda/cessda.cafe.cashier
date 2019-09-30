@@ -59,14 +59,13 @@ namespace Cashier.Engine
             // Load the coffee
             var coffee = _context.Coffees.Single(c => c.JobId == id);
 
-            bool success = false;
-
             // Check if the coffee has already been sent to a machine
             if (string.IsNullOrEmpty(coffee.Machine))
             {
                 _logger.LogInformation("Starting coffee " + coffee.JobId + ".");
 
                 // Set up web request
+                bool success = false;
                 var coffeeMachines = GetCoffeeMachines();
 
                 var coffeePayload = new CoffeePayload()
@@ -150,7 +149,6 @@ namespace Cashier.Engine
                         var response = JsonConvert.DeserializeObject<Job>(streamReader.ReadToEnd());
                         _logger.LogDebug("Response from " + uri + ": " + response);
                     }
-
                     return true;
                 }
                 catch (WebException e) when (e.Response != null)

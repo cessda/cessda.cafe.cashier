@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Cashier.Tests
 {
-    public class Setup
+    internal class Setup
     {
-        public CoffeeDbContext SetupDb (string dbName)
+        internal CoffeeDbContext SetupDb (string dbName)
         {
             var options = new DbContextOptionsBuilder<CoffeeDbContext>()
                 .UseInMemoryDatabase(dbName)

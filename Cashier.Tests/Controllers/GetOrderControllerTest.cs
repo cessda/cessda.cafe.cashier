@@ -1,28 +1,28 @@
 ﻿using Cashier.Contexts;
+using Cashier.Controllers;
 using Cashier.Models;
 using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 using static Cashier.Tests.TestData;
 
-namespace Cashier.Tests
+namespace Cashier.Tests.Controllers
 {
-    public class GetOrderController
+    public class GetOrderControllerTest
     {
         private readonly CoffeeDbContext _context;
-        private readonly Controllers.GetOrderController _controller;
+        private readonly GetOrderController _controller;
 
         /// <summary>
         /// Constructor, used to set up tests
         /// </summary>
-        public GetOrderController()
+        public GetOrderControllerTest()
         {
-            _context = new Setup().SetupDb(nameof(GetOrderController));
-            _controller = new Controllers.GetOrderController(_context);
+            _context = new Setup().SetupDb(nameof(GetOrderControllerTest));
+            _controller = new GetOrderController(_context);
 
             // Arrange
             _context.AddRange(ExampleOrders());
