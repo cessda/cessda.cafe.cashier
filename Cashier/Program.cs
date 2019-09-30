@@ -29,10 +29,10 @@ namespace Cashier
         public static IWebHost CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureLogging((hostingContext, logging) =>
-                {;
+                {
                     logging.AddGelf(options =>
                     {
-                        if (options.Host.Length == 0) options.Host = "localhost";
+                        if (string.IsNullOrEmpty(options.Host)) options.Host = "localhost";
                         options.LogSource = hostingContext.HostingEnvironment.ApplicationName;
                         options.AdditionalFields["app_version"] = Assembly.GetEntryAssembly()
                             .GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
