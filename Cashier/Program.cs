@@ -33,6 +33,7 @@ namespace Cashier
                     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                     logging.AddGelf(options =>
                     {
+                        options.Host = "localhost";
                         options.LogSource = hostingContext.HostingEnvironment.ApplicationName;
                         options.AdditionalFields["machine_name"] = Environment.MachineName;
                         options.AdditionalFields["app_version"] = Assembly.GetEntryAssembly()
