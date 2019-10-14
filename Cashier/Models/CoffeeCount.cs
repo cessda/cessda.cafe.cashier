@@ -16,7 +16,7 @@ namespace Cashier.Models
         {
             if(coffees == null)
             {
-                throw new ArgumentNullException(nameof(coffees), "The list of coffees must not be null.");
+                throw new ArgumentNullException(nameof(coffees));
             }
 
             Count = coffees.Count;
