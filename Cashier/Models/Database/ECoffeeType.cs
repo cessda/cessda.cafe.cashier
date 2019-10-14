@@ -3,9 +3,10 @@
     /// <summary>
     /// List of allowed coffees
     /// </summary>
-    public enum ECoffeeTypes : byte
+    public enum ECoffeeType
     {
 #pragma warning disable CS1591
+#pragma warning disable CA1707 // Identifiers should not contain underscores
         COFFEE,
         STRONG_COFFEE,
         CAPPUCCINO,

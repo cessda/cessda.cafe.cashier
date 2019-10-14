@@ -25,7 +25,7 @@ namespace Cashier
         /// This method gets called by the runtime. Use this method to add services to the container.
         /// </summary>
         /// <param name="services">Service object to configure</param>
-        public void ConfigureServices(IServiceCollection services)
+        public static void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(jsonOptions =>
@@ -61,7 +61,7 @@ namespace Cashier
         /// </summary>
         /// <param name="app">Application Builder</param>
         /// <param name="env">Hosting Environment</param>
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public static void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseHealthChecks("/healthcheck");
 

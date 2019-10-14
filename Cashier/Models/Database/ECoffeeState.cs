@@ -4,7 +4,7 @@
     /// <summary>
     /// Coffee state
     /// </summary>
-    public enum ECoffeeState : byte
+    public enum ECoffeeState
     {
 #pragma warning disable CS1591
         QUEUED,

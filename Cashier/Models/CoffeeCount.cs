@@ -1,4 +1,5 @@
 ﻿using Cashier.Models.Database;
+using System;
 using System.Collections.Generic;
 
 namespace Cashier.Models
@@ -13,6 +14,11 @@ namespace Cashier.Models
         /// </summary>
         public CoffeeCount(List<Job> coffees)
         {
+            if(coffees == null)
+            {
+                throw new ArgumentNullException(nameof(coffees), "The list of coffees must not be null.");
+            }
+
             Count = coffees.Count;
             Coffees = coffees;
         }

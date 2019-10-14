@@ -36,7 +36,7 @@ namespace Cashier.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Order>>> GetOrders()
         {
-            return await _context.Orders.Include(b => b.Coffees).ToListAsync();
+            return await _context.Orders.Include(b => b.Coffees).ToListAsync().ConfigureAwait(true);
         }
 
         /// <summary>
@@ -54,7 +54,8 @@ namespace Cashier.Controllers
             }
             try
             {
-                var order = await _context.Orders.Include(b => b.Coffees).SingleAsync(o => o.OrderId == id);
+                var order = await _context.Orders.Include(b => b.Coffees)
+                    .SingleAsync(o => o.OrderId == id).ConfigureAwait(true);
                 return Ok(order);
             }
             catch (InvalidOperationException)

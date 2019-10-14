@@ -35,7 +35,7 @@ namespace Cashier.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Machine>>> GetMachines()
         {
-            return await _context.Machines.ToListAsync();
+            return await _context.Machines.ToListAsync().ConfigureAwait(true);
         }
 
         // POST: api/Configure
@@ -47,8 +47,18 @@ namespace Cashier.Controllers
         [HttpPost]
         public async Task<ActionResult<Machine>> PostMachines(Machine machines)
         {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if(machines == null)
+            {
+                return BadRequest();
+            }
+
             _context.Machines.Add(machines);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync().ConfigureAwait(false);
 
             return CreatedAtAction("GetMachines", new { id = machines.CoffeeMachine }, machines);
         }
@@ -60,16 +70,26 @@ namespace Cashier.Controllers
         /// <param name="url">The URL of the coffee machine to remove.</param>
         /// <returns>The removed coffee machine.</returns>
         [HttpDelete("{url}")]
-        public async Task<ActionResult<Machine>> DeleteMachines(string url)
+        public async Task<ActionResult<Machine>> DeleteMachines(System.Uri url)
         {
-            var machines = await _context.Machines.FindAsync(HttpUtility.UrlDecode(url));
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (url == null)
+            {
+                return BadRequest();
+            }
+
+            var machines = await _context.Machines.FindAsync(url.ToString()).ConfigureAwait(true);
             if (machines == null)
             {
                 return NotFound();
             }
 
             _context.Machines.Remove(machines);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync().ConfigureAwait(false);
 
             return machines;
         }

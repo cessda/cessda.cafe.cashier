@@ -39,7 +39,7 @@ namespace Cashier.Controllers
         [HttpPost]
         public async Task<ActionResult<ApiMessage>> PostCoffee()
         {
-            var coffees = await _context.Coffees.ToListAsync();
+            var coffees = await _context.Coffees.ToListAsync().ConfigureAwait(true);
 
             foreach (var coffee in coffees)
             {
@@ -54,8 +54,8 @@ namespace Cashier.Controllers
             }
 
             // Count the coffees in either state
-            var jobsDeployed = await _context.Coffees.CountAsync(c => c.State == ECoffeeState.PROCESSED);
-            var jobsQueued = await _context.Coffees.CountAsync(c => c.State == ECoffeeState.QUEUED);
+            var jobsDeployed = await _context.Coffees.CountAsync(c => c.State == ECoffeeState.PROCESSED).ConfigureAwait(true);
+            var jobsQueued = await _context.Coffees.CountAsync(c => c.State == ECoffeeState.QUEUED).ConfigureAwait(true);
 
             return Ok(new ApiMessage { Message = jobsDeployed + " jobs deployed, " + jobsQueued + " jobs still queued." });
         }

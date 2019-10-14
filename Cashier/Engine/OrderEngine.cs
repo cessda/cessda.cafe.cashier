@@ -91,12 +91,12 @@ namespace Cashier.Engine
                 {
                     // Break if the order has already been sent to a machine
                     if (success) break;
-
                     success = SendRequest(json, machine);
 
+                    // Update local state to mark that the coffee was sent to a remote machine
                     if (success)
                     {
-                        // Success - mark the time that the order was sent
+                        // Mark the time that the order was sent
                         _logger.LogInformation("Sent job " + coffee.OrderId + " to machine " + machine);
                         coffee.JobStarted = DateTime.Now;
                         coffee.Machine = machine.ToString();
@@ -107,7 +107,7 @@ namespace Cashier.Engine
                         _context.SaveChanges();
                     }
                 }
-                // If we didn't succeed
+                // No coffee machines could accept the coffee
                 if (!success)
                 {
                     _logger.LogWarning("No coffee machines could accept job " + coffee.JobId + ".");
@@ -155,13 +155,19 @@ namespace Cashier.Engine
                 {
                     using (var streamReader = new StreamReader(e.Response.GetResponseStream()))
                     {
-                        // TODO - Change behaviour based on message
                         var stringResponse = streamReader.ReadToEnd();
                         var responseCode = ((HttpWebResponse)e.Response).StatusCode;
                         try
                         {
                             var response = JsonConvert.DeserializeObject<ApiMessage>(stringResponse);
-                            _logger.LogWarning("Coffee machine " + uri + " responded with code " + (int)responseCode + " and with message: " + response.Message);
+                            if (stringResponse == "Machine busy!")
+                            {
+                                _logger.LogInformation("Coffee machine" + uri + "is busy.");
+                            }
+                            else
+                            {
+                                _logger.LogWarning("Coffee machine " + uri + " responded with code " + (int)responseCode + " and with message: " + response.Message);
+                            }
                             return false;
                         }
                         catch (JsonSerializationException)
@@ -215,7 +221,7 @@ namespace Cashier.Engine
             public Guid OrderId { get; set; }
             public DateTime OrderPlaced { get; set; }
             public int OrderSize { get; set; }
-            public ECoffeeTypes Product { get; set; }
+            public ECoffeeType Product { get; set; }
         }
     }
 }

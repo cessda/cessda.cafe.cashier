@@ -21,7 +21,7 @@ namespace Cashier.Models
             /// <summary>
             /// The product specified in the job.
             /// </summary>
-            public ECoffeeTypes Product { get; set; }
+            public ECoffeeType Product { get; set; }
 
             /// <summary>
             /// The amount of coffees to order

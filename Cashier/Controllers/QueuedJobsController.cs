@@ -39,7 +39,7 @@ namespace Cashier.Controllers
             // For each coffee check if they are processed
             var coffees = await _context.Coffees
                 .Where(c => c.State == ECoffeeState.QUEUED)
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(true);
 
             return new CoffeeCount(coffees);
         }
@@ -53,7 +53,7 @@ namespace Cashier.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Job>> GetCoffee(Guid id)
         {
-            var coffee = await _context.Coffees.FindAsync(id);
+            var coffee = await _context.Coffees.FindAsync(id).ConfigureAwait(true);
 
             if (coffee?.State == ECoffeeState.QUEUED)
             {

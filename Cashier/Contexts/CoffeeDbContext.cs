@@ -17,7 +17,7 @@ namespace Cashier.Contexts
         public CoffeeDbContext(DbContextOptions<CoffeeDbContext> options) : base(options)
         {
             // Configure Carsten's Coffeepot by default
-            if (Machines.Count() == 0)
+            if (!Machines.Any())
             {
                 Machines.Add(new Machine() { CoffeeMachine = "http://cafe-coffeepot:1337/" });
                 SaveChanges();

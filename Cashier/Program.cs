@@ -24,6 +24,7 @@ namespace Cashier
             }
 
             host.Run();
+            host.Dispose();
         }
 
         public static IWebHost CreateWebHostBuilder(string[] args) =>

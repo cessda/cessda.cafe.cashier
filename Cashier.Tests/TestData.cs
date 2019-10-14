@@ -16,24 +16,24 @@ namespace Cashier.Tests
                     {
                         new Job()
                         {
-                            Product = ECoffeeTypes.COFFEE_WITH_MILK,
+                            Product = ECoffeeType.COFFEE_WITH_MILK,
                             OrderSize = 1
                         },
                         new Job
                         {
-                            Product = ECoffeeTypes.ESPRESSO_CHOCOLATE,
+                            Product = ECoffeeType.ESPRESSO_CHOCOLATE,
                             OrderSize = 3,
                             State = ECoffeeState.PROCESSED
                         },
                         new Job
                         {
-                            Product = ECoffeeTypes.MOCCACHINO,
+                            Product = ECoffeeType.MOCCACHINO,
                             OrderSize = 2,
                             State = ECoffeeState.QUEUED
                         },
                         new Job
                         {
-                            Product = ECoffeeTypes.HOT_WATER,
+                            Product = ECoffeeType.HOT_WATER,
                             OrderSize = 1,
                             State = ECoffeeState.PROCESSED
                         }
@@ -46,7 +46,7 @@ namespace Cashier.Tests
                     {
                         new Job()
                         {
-                            Product = ECoffeeTypes.KAKAO,
+                            Product = ECoffeeType.KAKAO,
                             OrderSize = 1,
                             State = ECoffeeState.PROCESSED
                         }
@@ -64,12 +64,12 @@ namespace Cashier.Tests
                     new CoffeeRequest.Coffee()
                     {
                         Count = 3,
-                        Product = ECoffeeTypes.KAKAO
+                        Product = ECoffeeType.KAKAO
                     },
                     new CoffeeRequest.Coffee()
                     {
                         Count = 1,
-                        Product = ECoffeeTypes.ESPRESSO
+                        Product = ECoffeeType.ESPRESSO
                     }
                 }
             };

@@ -40,6 +40,10 @@ namespace Cashier.Controllers
             {
                 return BadRequest(ModelState);
             }
+            if (request == null)
+            {
+                return BadRequest();
+            }
 
             var order = new Order()
             {
@@ -71,7 +75,7 @@ namespace Cashier.Controllers
             }
 
             _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync().ConfigureAwait(false);
 
             // Return the created order
             return CreatedAtRoute("GetOrderController", new { id = order.OrderId }, order);
@@ -91,14 +95,14 @@ namespace Cashier.Controllers
                 return BadRequest(ModelState);
             }
 
-            var order = await _context.Orders.FindAsync(id);
+            var order = await _context.Orders.FindAsync(id).ConfigureAwait(true);
             if (order == null)
             {
                 return NotFound(ApiMessage.OrderNotFound(id));
             }
 
             _context.Orders.Remove(order);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync().ConfigureAwait(false);
 
             return Ok(order);
         }
