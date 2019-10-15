@@ -3,7 +3,6 @@ using Cashier.Models;
 using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Cashier.Controllers
@@ -45,10 +44,7 @@ namespace Cashier.Controllers
                 return BadRequest();
             }
 
-            var order = new Order()
-            {
-                Coffees = new List<Job>()
-            };
+            var order = new Order();
 
             // Add up the total amount of coffees ordered
             foreach (var coffee in request.Coffees)

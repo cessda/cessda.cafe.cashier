@@ -31,7 +31,7 @@ Several frameworks are used in this application:
 
 ## Resources
 
-Issue Tracker
+[Issue Tracker](https://bitbucket.org/cessda/cessda.cafe.cashier/issues?status=new&status=open)
 
 ## Authors
 

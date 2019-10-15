@@ -5,7 +5,7 @@ namespace Cashier.Tests
 {
     internal class Setup
     {
-        internal CoffeeDbContext SetupDb (string dbName)
+        internal CoffeeDbContext SetupDb(string dbName)
         {
             var options = new DbContextOptionsBuilder<CoffeeDbContext>()
                 .UseInMemoryDatabase(dbName)

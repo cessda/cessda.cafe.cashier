@@ -14,7 +14,7 @@ namespace Cashier.Models
         /// </summary>
         public CoffeeCount(List<Job> coffees)
         {
-            if(coffees == null)
+            if (coffees == null)
             {
                 throw new ArgumentNullException(nameof(coffees));
             }
@@ -26,9 +26,10 @@ namespace Cashier.Models
         /// Amount of coffees held.
         /// </summary>
         public int Count { get; private set; }
+
         /// <summary>
         /// Coffees to be counted.
         /// </summary>
-        public virtual ICollection<Job> Coffees { get; set; }
+        public virtual List<Job> Coffees { get; } = new List<Job>();
     }
 }

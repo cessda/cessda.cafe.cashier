@@ -1,17 +1,15 @@
 ﻿using Cashier.Contexts;
+using Cashier.Controllers;
 using Cashier.Engine;
+using Cashier.Exceptions;
 using Cashier.Models;
-using Moq;
-using System.Linq;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Xunit;
-using static Cashier.Tests.TestData;
 using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
-using Cashier.Exceptions;
-using Cashier.Controllers;
+using Moq;
+using System;
+using System.Linq;
+using Xunit;
+using static Cashier.Tests.TestData;
 
 namespace Cashier.Tests.Controllers
 {

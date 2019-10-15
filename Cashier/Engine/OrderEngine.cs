@@ -1,6 +1,7 @@
 ﻿using Cashier.Contexts;
 using Cashier.Models;
 using Cashier.Models.Database;
+using Cashier.Properties;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -198,7 +199,7 @@ namespace Cashier.Engine
             // Make sure that there are some machines configured
             if (coffeeMachines.Count == 0)
             {
-                throw new Exceptions.NoCoffeeMachinesException("No coffee machines have been configured.");
+                throw new Exceptions.NoCoffeeMachinesException(Resources.NoCoffeeMachines);
             }
 
             // Log known coffee machines

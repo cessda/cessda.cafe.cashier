@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace Cashier.Controllers
 {
@@ -47,12 +46,12 @@ namespace Cashier.Controllers
         [HttpPost]
         public async Task<ActionResult<Machine>> PostMachines(Machine machines)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if(machines == null)
+            if (machines == null)
             {
                 return BadRequest();
             }
@@ -72,7 +71,7 @@ namespace Cashier.Controllers
         [HttpDelete("{url}")]
         public async Task<ActionResult<Machine>> DeleteMachines(System.Uri url)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }

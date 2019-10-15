@@ -31,6 +31,6 @@ namespace Cashier.Models.Database
         /// Coffees associated with this order.
         /// </summary>
         [Required]
-        public virtual ICollection<Job> Coffees { get; set; }
+        public virtual List<Job> Coffees { get; } = new List<Job>();
     }
 }

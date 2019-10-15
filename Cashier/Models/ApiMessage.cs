@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Cashier.Properties;
+using System;
+using System.Globalization;
 
 namespace Cashier.Models
 {
@@ -18,7 +20,7 @@ namespace Cashier.Models
         /// <returns>The ApiMessage.</returns>
         public static ApiMessage NoCoffees()
         {
-            return new ApiMessage() { Message = "There must be at least one coffee in the order" };
+            return new ApiMessage() { Message = Resources.NoCoffees };
         }
 
         /// <summary>
@@ -28,7 +30,10 @@ namespace Cashier.Models
         /// <returns>The ApiMessage.</returns>
         public static ApiMessage OrderNotFound(Guid id)
         {
-            return new ApiMessage() { Message = "The order " + id.ToString() + " was not found." };
+            return new ApiMessage() 
+            { 
+                Message = string.Format(CultureInfo.InvariantCulture, Resources.OrderNotFound, id.ToString()) 
+            };
         }
     }
 }
