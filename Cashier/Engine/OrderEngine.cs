@@ -71,9 +71,7 @@ namespace Cashier.Engine
 
                 var coffeePayload = new CoffeePayload()
                 {
-                    OrderId = coffee.OrderId,
-                    OrderPlaced = coffee.OrderPlaced,
-                    OrderSize = coffee.OrderSize,
+                    JobId = coffee.JobId,
                     Product = coffee.Product
                 };
 
@@ -98,7 +96,7 @@ namespace Cashier.Engine
                     if (success)
                     {
                         // Mark the time that the order was sent
-                        _logger.LogInformation("Sent job " + coffee.OrderId + " to machine " + machine);
+                        _logger.LogInformation("Sent job " + coffee.JobId + " to machine " + machine);
                         coffee.JobStarted = DateTime.Now;
                         coffee.Machine = machine.ToString();
                         coffee.State = ECoffeeState.PROCESSED;
@@ -148,7 +146,7 @@ namespace Cashier.Engine
                     using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
                     {
                         var response = JsonConvert.DeserializeObject<Job>(streamReader.ReadToEnd());
-                        _logger.LogDebug("Response from " + uri + ": " + response);
+                        _logger.LogDebug("Response from " + uri + ": " + response.ToString());
                     }
                     return true;
                 }
@@ -182,7 +180,7 @@ namespace Cashier.Engine
             // If the message is null (i.e. connection issue)
             catch (WebException e)
             {
-                _logger.LogError("Connecting to coffee machine " + uri.Host + " failed: " + e.Message);
+                _logger.LogError("Connecting to coffee machine " + uri + " failed: " + e.Message);
                 return false;
             }
         }
@@ -219,9 +217,7 @@ namespace Cashier.Engine
         /// </summary>
         private class CoffeePayload
         {
-            public Guid OrderId { get; set; }
-            public DateTime OrderPlaced { get; set; }
-            public int OrderSize { get; set; }
+            public Guid JobId { get; set; }
             public ECoffeeType Product { get; set; }
         }
     }
