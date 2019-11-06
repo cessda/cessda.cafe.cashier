@@ -16,6 +16,7 @@
     <Version>1.1.0</Version>
     <RepositoryUrl>https://bitbucket.org/cessda/cessda.cafe.cashier.git</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
+    <ReleaseVersion>1.1.1</ReleaseVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,7 +25,10 @@
 
   <ItemGroup>
     <PackageReference Include="Gelf.Extensions.Logging" Version="1.5.2" />
-    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.App">
+      <PrivateAssets Condition="'%(PackageReference.Version)' == ''">all</PrivateAssets>
+      <Publish Condition="'%(PackageReference.Version)' == ''">true</Publish>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.HealthChecks" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.6">

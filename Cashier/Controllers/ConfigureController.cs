@@ -2,6 +2,7 @@
 using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -69,7 +70,7 @@ namespace Cashier.Controllers
         /// <param name="url">The URL of the coffee machine to remove.</param>
         /// <returns>The removed coffee machine.</returns>
         [HttpDelete("{url}")]
-        public async Task<ActionResult<Machine>> DeleteMachines(System.Uri url)
+        public async Task<ActionResult<Machine>> DeleteMachines(Uri url)
         {
             if (!ModelState.IsValid)
             {
@@ -81,6 +82,10 @@ namespace Cashier.Controllers
                 return BadRequest();
             }
 
+            // Unescape the string
+            url = new Uri(Uri.UnescapeDataString(url.ToString()));
+
+            // Attempt to find the coffee machine
             var machines = await _context.Machines.FindAsync(url.ToString()).ConfigureAwait(true);
             if (machines == null)
             {
