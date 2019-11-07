@@ -82,7 +82,9 @@ pipeline {
 		}
 		stage('Build Docker Container') {
 			steps {
-				sh "docker build -t ${image_tag} ."
+                dir('./Cashier/') {
+				    sh "docker build -t ${image_tag} ."
+                }
 			}
 			when { branch 'master' }
 		}
