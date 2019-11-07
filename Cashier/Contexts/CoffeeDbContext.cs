@@ -19,7 +19,7 @@ namespace Cashier.Contexts
             // Configure Carsten's Coffeepot by default
             if (!Machines.Any())
             {
-                Machines.Add(new Machine() { CoffeeMachine = "http://cafe-coffeepot:1337/" });
+                Machines.Add(new Machine() { CoffeeMachine = "http://cafe-coffee-carsten:1337/" });
                 SaveChanges();
             }
         }
