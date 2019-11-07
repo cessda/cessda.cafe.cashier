@@ -13,15 +13,6 @@ namespace Cashier.Contexts
         public DbSet<Order> Orders { get; set; }
         public DbSet<Job> Coffees { get; set; }
         public DbSet<Machine> Machines { get; set; }
-
-        public CoffeeDbContext(DbContextOptions<CoffeeDbContext> options) : base(options)
-        {
-            // Configure Carsten's Coffeepot by default
-            if (!Machines.Any())
-            {
-                Machines.Add(new Machine() { CoffeeMachine = "http://cafe-coffee-carsten:1337/" });
-                SaveChanges();
-            }
-        }
+        public CoffeeDbContext(DbContextOptions<CoffeeDbContext> options) : base(options){}
     }
 }

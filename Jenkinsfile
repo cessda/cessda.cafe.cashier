@@ -11,7 +11,7 @@ pipeline {
 		image_tag = "${docker_repo}/${product_name}-${module_name}:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
 		HOME = "/tmp"
 		build_configuration = "Release"
-		version = "1.1.2"
+		version = "1.1.3"
 	}
 
 	agent any

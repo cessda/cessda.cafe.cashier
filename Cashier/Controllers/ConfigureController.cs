@@ -2,6 +2,7 @@
 using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,14 +18,17 @@ namespace Cashier.Controllers
     public class ConfigureController : ControllerBase
     {
         private readonly CoffeeDbContext _context;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Constructor for the ConfigureController
         /// </summary>
         /// <param name="context">Database context</param>
-        public ConfigureController(CoffeeDbContext context)
+        /// <param name="logger">Logger</param>
+        public ConfigureController(CoffeeDbContext context, ILogger<ConfigureController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/Configure
@@ -52,15 +56,21 @@ namespace Cashier.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (machines == null)
+            if (machines != null)
             {
-                return BadRequest();
+                // If the coffee machine is not already configured
+                if (_context.Machines.Find(machines.CoffeeMachine) == null)
+                {
+                    _context.Machines.Add(machines);
+                    await _context.SaveChangesAsync().ConfigureAwait(false);
+
+                    _logger.LogInformation("Added coffee machine " + machines.CoffeeMachine + ".");
+
+                    return CreatedAtAction("GetMachines", new { id = machines.CoffeeMachine }, machines);
+                }
             }
 
-            _context.Machines.Add(machines);
-            await _context.SaveChangesAsync().ConfigureAwait(false);
-
-            return CreatedAtAction("GetMachines", new { id = machines.CoffeeMachine }, machines);
+            return BadRequest();
         }
 
         // DELETE: api/Configure/5
@@ -94,6 +104,7 @@ namespace Cashier.Controllers
 
             _context.Machines.Remove(machines);
             await _context.SaveChangesAsync().ConfigureAwait(false);
+            _logger.LogInformation("Removed coffee machine " + url + ".");
 
             return machines;
         }

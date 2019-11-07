@@ -1,4 +1,5 @@
 ﻿using Cashier.Contexts;
+using Cashier.Models.Database;
 using Gelf.Extensions.Logging;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -18,7 +19,10 @@ namespace Cashier
             using (var scope = host.Services.CreateScope())
             using (var context = scope.ServiceProvider.GetService<CoffeeDbContext>())
             {
+                // Configure Carsten's Coffeepot by default
                 context.Database.EnsureCreated();
+                context.Machines.Add(new Machine() { CoffeeMachine = "http://cafe-coffee-carsten:1337/" });
+                context.SaveChanges();
             }
 
             host.Run();
