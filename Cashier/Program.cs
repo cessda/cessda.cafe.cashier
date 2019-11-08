@@ -36,11 +36,11 @@ namespace Cashier
                     logging.AddGelf(options =>
                     {
                         if (string.IsNullOrEmpty(options.Host)) options.Host = "localhost";
-                        options.LogSource = hostingContext.HostingEnvironment.ApplicationName;
+                        options.LogSource = Environment.MachineName;
                         options.AdditionalFields["app_version"] = Assembly.GetEntryAssembly()
                             .GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
-                        options.AdditionalFields["machine_name"] = Environment.MachineName;
-                        options.AdditionalFields["project_name"] = "CESSDA Café";
+                        options.AdditionalFields["cessda_component"] = hostingContext.HostingEnvironment.ApplicationName;
+                        options.AdditionalFields["cessda_product"] = "CESSDA Café";
                     });
                 })
                 .UseStartup<Startup>()
