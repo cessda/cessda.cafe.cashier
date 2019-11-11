@@ -56,18 +56,15 @@ namespace Cashier.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (machines != null)
+            if (machines != null && _context.Machines.Find(machines.CoffeeMachine) == null)
             {
                 // If the coffee machine is not already configured
-                if (_context.Machines.Find(machines.CoffeeMachine) == null)
-                {
-                    _context.Machines.Add(machines);
-                    await _context.SaveChangesAsync().ConfigureAwait(false);
+                _context.Machines.Add(machines);
+                await _context.SaveChangesAsync().ConfigureAwait(false);
 
-                    _logger.LogInformation("Added coffee machine " + machines.CoffeeMachine + ".");
+                _logger.LogInformation("Added coffee machine " + machines.CoffeeMachine + ".");
 
-                    return CreatedAtAction("GetMachines", new { id = machines.CoffeeMachine }, machines);
-                }
+                return CreatedAtAction("GetMachines", new { id = machines.CoffeeMachine }, machines);
             }
 
             return BadRequest();

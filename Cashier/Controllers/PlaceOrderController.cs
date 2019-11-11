@@ -55,12 +55,6 @@ namespace Cashier.Controllers
                     return BadRequest(ApiMessage.NoCoffees());
                 }
 
-                order.Coffees.Add(new Job()
-                {
-                    Product = coffee.Product,
-                    OrderSize = coffee.Count
-                });
-
                 order.OrderSize += coffee.Count;
             }
 
@@ -68,6 +62,19 @@ namespace Cashier.Controllers
             if (order.OrderSize <= 0)
             {
                 return BadRequest(ApiMessage.NoCoffees());
+            }
+
+            // Add each coffee to the order
+            foreach (var coffee in request.Coffees)
+            {
+                for (int i = 0; i < coffee.Count; i++)
+                {
+                    order.Coffees.Add(new Job()
+                    {
+                        Product = coffee.Product,
+                        OrderSize = order.OrderSize
+                    });
+                }
             }
 
             _context.Orders.Add(order);

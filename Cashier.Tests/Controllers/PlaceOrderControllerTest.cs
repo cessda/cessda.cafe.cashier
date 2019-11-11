@@ -5,6 +5,7 @@ using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 using static Cashier.Tests.TestData;
 
@@ -25,7 +26,7 @@ namespace Cashier.Tests.Controllers
         }
 
         [Fact]
-        public async void PostOrder_ReturnsCreatedOrder_ForAPostedOrder()
+        public async Task PostOrder_ReturnsCreatedOrder_ForAPostedOrder()
         {
             // Act
             var postOrder = await _controller.PostOrder(ExampleRequest());
@@ -37,7 +38,7 @@ namespace Cashier.Tests.Controllers
         }
 
         [Fact]
-        public async void DeleteOrder_ReturnsDeletedOrder_OnOrderDeletion()
+        public async Task DeleteOrder_ReturnsDeletedOrder_OnOrderDeletion()
         {
             // Arrange
             foreach (var order in ExampleOrders())
@@ -60,7 +61,7 @@ namespace Cashier.Tests.Controllers
         }
 
         [Fact]
-        public async void DeleteOrder_ReturnsMessage_OnNullOrder()
+        public async Task DeleteOrder_ReturnsMessage_OnNullOrder()
         {
             // Arrange
             var id = Guid.NewGuid();
