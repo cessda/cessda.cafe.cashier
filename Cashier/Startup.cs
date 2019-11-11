@@ -1,13 +1,18 @@
 ﻿using Cashier.Contexts;
 using Cashier.Engine;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 namespace Cashier
 {
@@ -63,7 +68,10 @@ namespace Cashier
         /// <param name="env">Hosting Environment</param>
         public static void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.UseHealthChecks("/healthcheck");
+            app.UseHealthChecks("/healthcheck", new HealthCheckOptions()
+            { 
+                ResponseWriter = WriteResponse
+            });
 
             if (env.IsDevelopment())
             {
@@ -75,6 +83,23 @@ namespace Cashier
             app.UseSwaggerUi3();
 
             app.UseMvc();
+        }
+
+        private static Task WriteResponse(HttpContext httpContext, HealthReport result)
+        {
+            httpContext.Response.ContentType = "application/json";
+            JObject json;
+
+            if (result.Status == HealthStatus.Healthy)
+            {
+                // Healthy
+                json = new JObject(new JProperty("message", "Ok"));
+            } else 
+            {
+                // Unhealthy
+                json = new JObject(new JProperty("message", result.Status.ToString()));
+            }
+            return httpContext.Response.WriteAsync(json.ToString());
         }
 
         private const string _inMemDatabase = "coffee-db";

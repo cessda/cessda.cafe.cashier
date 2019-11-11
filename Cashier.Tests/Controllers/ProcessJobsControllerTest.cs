@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 using static Cashier.Tests.TestData;
 
@@ -35,7 +36,7 @@ namespace Cashier.Tests.Controllers
         }
 
         [Fact]
-        public async void PostCoffee_ReturnsAnApiMessage()
+        public async Task PostCoffee_ReturnsAnApiMessage()
         {
             // Arrange
             var queuedCoffees = _context.Coffees.Count(c => c.State == ECoffeeState.QUEUED);
@@ -61,7 +62,7 @@ namespace Cashier.Tests.Controllers
         }
 
         [Fact]
-        public async void PostCoffee_ShouldHandleException()
+        public async Task PostCoffee_ShouldHandleException()
         {
             // Arrange
             _mock.Setup(o => o.StartCoffee(It.IsAny<Guid>())).Throws(new NoCoffeeMachinesException());
@@ -76,7 +77,7 @@ namespace Cashier.Tests.Controllers
             Assert.Equal(500, result.StatusCode);
 
             // Should contain a message
-            var apiMessage = result.Value as ApiMessage;
+            _ = result.Value as ApiMessage;
         }
     }
 }
