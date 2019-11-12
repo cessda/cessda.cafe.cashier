@@ -8,7 +8,7 @@ This project is an implementation of the CESSDA Café Cashier specification usin
 
 To quickly start this application, navigate to the Cashier directory and enter the command dotnet run.
 
-To quickly create a docker container, build and run the Dockerfile in the Cashier directory. Do not run the Dockerfile in the top-level directory as this Dockerfile is for CI purposes.
+To quickly create a docker container, build and run the Dockerfile in the base directory. Do not run the Dockerfile in the Cashier directory as this Dockerfile is for CI purposes.
 
 Once running the application will be exposed on port 5000.
 
