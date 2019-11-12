@@ -8,7 +8,9 @@ namespace Cashier.Models.Database
     /// </summary>
     public class Machine
     {
-#pragma warning disable CS1591
+        /// <summary>
+        /// A URL of a coffee machine
+        /// </summary>
         [Key]
         public string CoffeeMachine { get; set; }
     }

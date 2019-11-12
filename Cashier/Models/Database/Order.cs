@@ -31,6 +31,6 @@ namespace Cashier.Models.Database
         /// Coffees associated with this order.
         /// </summary>
         [Required]
-        public virtual List<Job> Coffees { get; } = new List<Job>();
+        public virtual List<Job> Jobs { get; } = new List<Job>();
     }
 }

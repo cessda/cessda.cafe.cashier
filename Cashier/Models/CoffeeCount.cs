@@ -18,7 +18,6 @@ namespace Cashier.Models
             {
                 throw new ArgumentNullException(nameof(coffees));
             }
-
             Count = coffees.Count;
             Coffees = coffees;
         }

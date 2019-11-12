@@ -69,7 +69,7 @@ namespace Cashier.Controllers
             {
                 for (int i = 0; i < coffee.Count; i++)
                 {
-                    order.Coffees.Add(new Job()
+                    order.Jobs.Add(new Job()
                     {
                         Product = coffee.Product,
                         OrderSize = order.OrderSize

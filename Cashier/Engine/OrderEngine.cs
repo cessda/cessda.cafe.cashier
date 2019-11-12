@@ -41,11 +41,11 @@ namespace Cashier.Engine
         public void StartOrder(Guid id)
         {
             // Load the order
-            var order = _context.Orders.Include(b => b.Coffees).Single(o => o.OrderId == id);
+            var order = _context.Orders.Include(b => b.Jobs).Single(o => o.OrderId == id);
             _logger.LogInformation("Starting order: " + order.OrderId);
 
             // For each coffee
-            foreach (var coffee in order.Coffees)
+            foreach (var coffee in order.Jobs)
             {
                 StartCoffee(coffee.JobId);
             }

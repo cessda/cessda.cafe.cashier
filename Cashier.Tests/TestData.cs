@@ -9,7 +9,7 @@ namespace Cashier.Tests
         internal static List<Order> ExampleOrders()
         {
             var order1 = new Order() { OrderSize = 6 };
-            order1.Coffees.AddRange(new List<Job>()
+            order1.Jobs.AddRange(new List<Job>()
             {
                 new Job()
                 {
@@ -37,7 +37,7 @@ namespace Cashier.Tests
             });
 
             var order2 = new Order() { OrderSize = 1 };
-            order2.Coffees.AddRange(new List<Job>()
+            order2.Jobs.AddRange(new List<Job>()
             {
                 new Job()
                 {
