@@ -37,7 +37,7 @@ namespace Cashier.Controllers
         public async Task<ActionResult<IEnumerable<Job>>> GetCoffees()
         {
             // For each coffee check if they are processed
-            return await _context.Coffees
+            return await _context.Jobs
                 .Where(c => c.State == ECoffeeState.PROCESSED)
                 .ToListAsync().ConfigureAwait(true);
         }
@@ -51,7 +51,7 @@ namespace Cashier.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Job>> GetCoffee(Guid id)
         {
-            var coffee = await _context.Coffees.FindAsync(id).ConfigureAwait(true);
+            var coffee = await _context.Jobs.FindAsync(id).ConfigureAwait(true);
 
             // Only return coffees that are processed
             if (coffee?.State == ECoffeeState.PROCESSED)

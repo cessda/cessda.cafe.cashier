@@ -49,7 +49,7 @@ namespace Cashier.Tests.Controllers
         public void GetCoffee_ReturnsAnActionResult_WithACoffee()
         {
             // Arrange
-            var id = _context.Coffees
+            var id = _context.Jobs
                 .Where(j => j.State == ECoffeeState.QUEUED)
                 .First().JobId;
 

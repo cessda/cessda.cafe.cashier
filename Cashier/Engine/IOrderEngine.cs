@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Cashier.Engine
 {
@@ -11,12 +12,12 @@ namespace Cashier.Engine
         /// Starts the specified order.
         /// </summary>
         /// <param name="id">The OrderId to start.</param>
-        void StartOrder(Guid id);
+        Task StartOrderAsync(Guid id);
 
         /// <summary>
         /// Starts the specified coffee.
         /// </summary>
         /// <param name="id">The jobId to start.</param>
-        void StartCoffee(Guid id);
+        Task StartJobAsync(Guid id);
     }
 }

@@ -3,6 +3,7 @@ using Cashier.Engine;
 using Cashier.Exceptions;
 using Cashier.Models;
 using Cashier.Models.Database;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
@@ -37,15 +38,17 @@ namespace Cashier.Controllers
         /// </summary>
         /// <returns>Message</returns>
         [HttpPost]
+        [ProducesResponseType(typeof(ApiMessage), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiMessage), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ApiMessage>> PostCoffee()
         {
-            var coffees = await _context.Coffees.ToListAsync().ConfigureAwait(true);
+            var coffees = await _context.Jobs.ToListAsync().ConfigureAwait(true);
 
             foreach (var coffee in coffees)
             {
                 try
                 {
-                    _orderEngine.StartCoffee(coffee.JobId);
+                    await _orderEngine.StartJobAsync(coffee.JobId).ConfigureAwait(false);
                 }
                 catch (NoCoffeeMachinesException e)
                 {
@@ -54,8 +57,8 @@ namespace Cashier.Controllers
             }
 
             // Count the coffees in either state
-            var jobsDeployed = await _context.Coffees.CountAsync(c => c.State == ECoffeeState.PROCESSED).ConfigureAwait(true);
-            var jobsQueued = await _context.Coffees.CountAsync(c => c.State == ECoffeeState.QUEUED).ConfigureAwait(true);
+            var jobsDeployed = await _context.Jobs.CountAsync(c => c.State == ECoffeeState.PROCESSED).ConfigureAwait(true);
+            var jobsQueued = await _context.Jobs.CountAsync(c => c.State == ECoffeeState.QUEUED).ConfigureAwait(true);
 
             return Ok(new ApiMessage { Message = jobsDeployed + " jobs deployed, " + jobsQueued + " jobs still queued." });
         }

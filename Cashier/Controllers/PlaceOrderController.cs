@@ -35,10 +35,6 @@ namespace Cashier.Controllers
         [HttpPost]
         public async Task<IActionResult> PostOrder([FromBody] CoffeeRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
             if (request == null)
             {
                 return BadRequest();
@@ -93,11 +89,6 @@ namespace Cashier.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrder([FromRoute] Guid id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var order = await _context.Orders.FindAsync(id).ConfigureAwait(true);
             if (order == null)
             {

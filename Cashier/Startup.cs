@@ -1,5 +1,6 @@
 ﻿using Cashier.Contexts;
 using Cashier.Engine;
+using Cashier.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -59,6 +60,9 @@ namespace Cashier
 
             // Set up engine
             services.AddScoped<IOrderEngine, OrderEngine>();
+
+            // Set up HTTP Client for the order engine
+            services.AddHttpClient<IOrderEngine, OrderEngine>();
         }
 
         /// <summary>
@@ -69,7 +73,7 @@ namespace Cashier
         public static void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseHealthChecks("/healthcheck", new HealthCheckOptions()
-            { 
+            {
                 ResponseWriter = WriteResponse
             });
 
@@ -77,6 +81,8 @@ namespace Cashier
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseRequestIdMiddleware();
 
             // Register the Swagger generator and the Swagger UI middleware
             app.UseOpenApi();
@@ -94,7 +100,8 @@ namespace Cashier
             {
                 // Healthy
                 json = new JObject(new JProperty("message", "Ok"));
-            } else 
+            }
+            else
             {
                 // Unhealthy
                 json = new JObject(new JProperty("message", result.Status.ToString()));

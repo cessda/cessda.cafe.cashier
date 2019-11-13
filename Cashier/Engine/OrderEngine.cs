@@ -8,10 +8,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Cashier.Engine
 {
@@ -21,16 +21,19 @@ namespace Cashier.Engine
     public class OrderEngine : IOrderEngine
     {
         private readonly CoffeeDbContext _context;
+        private readonly HttpClient _httpClient;
         private readonly ILogger _logger;
 
         /// <summary>
         /// Constructor for OrderEngine, used for passing the logger and the database context.
         /// </summary>
         /// <param name="context">Coffee Database Context</param>
+        /// <param name="httpClient">HTTP Client</param>
         /// <param name="logger">Logger</param>
-        public OrderEngine(CoffeeDbContext context, ILogger<OrderEngine> logger)
+        public OrderEngine(CoffeeDbContext context, HttpClient httpClient, ILogger<OrderEngine> logger)
         {
             _context = context;
+            _httpClient = httpClient;
             _logger = logger;
         }
 
@@ -38,7 +41,7 @@ namespace Cashier.Engine
         /// Start the specified order
         /// </summary>
         /// <param name="id">The order to start</param>
-        public void StartOrder(Guid id)
+        public async Task StartOrderAsync(Guid id)
         {
             // Load the order
             var order = _context.Orders.Include(b => b.Jobs).Single(o => o.OrderId == id);
@@ -47,7 +50,7 @@ namespace Cashier.Engine
             // For each coffee
             foreach (var coffee in order.Jobs)
             {
-                StartCoffee(coffee.JobId);
+                await StartJobAsync(coffee.JobId).ConfigureAwait(true);
             }
         }
 
@@ -55,10 +58,10 @@ namespace Cashier.Engine
         /// Start the specified coffee
         /// </summary>
         /// <param name="id">ID of coffee to start</param>
-        public void StartCoffee(Guid id)
+        public async Task StartJobAsync(Guid id)
         {
             // Load the coffee
-            var coffee = _context.Coffees.Single(c => c.JobId == id);
+            var coffee = _context.Jobs.Single(c => c.JobId == id);
 
             // Check if the coffee has already been sent to a machine
             if (string.IsNullOrEmpty(coffee.Machine))
@@ -90,7 +93,7 @@ namespace Cashier.Engine
                 {
                     // Break if the order has already been sent to a machine
                     if (success) break;
-                    success = SendRequest(json, machine);
+                    success = await SendRequestAsync(json, machine).ConfigureAwait(true);
 
                     // Update local state to mark that the coffee was sent to a remote machine
                     if (success)
@@ -123,68 +126,67 @@ namespace Cashier.Engine
         /// </summary>
         /// <param name="payload">The string to send.</param>
         /// <param name="uri">The URI to send to.</param>
-        private bool SendRequest(string payload, Uri uri)
+        private async Task<bool> SendRequestAsync(string payload, Uri uri)
         {
             // Create a new WebRequest
             _logger.LogDebug("Using machine: " + uri + ".");
-            var httpWebRequest = WebRequest.CreateHttp(new Uri(uri, "start-job"));
-            httpWebRequest.ContentType = "application/json";
-            httpWebRequest.Method = "POST";
+            var content = new StringContent(payload, Encoding.UTF8, "application/json");
 
+            // Submit the coffee to the coffee machine
+            HttpResponseMessage response;
             try
             {
-                // Submit the coffee to the coffee machine
-                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
-                {
-                    streamWriter.Write(payload);
-                }
+                response = await _httpClient.PostAsync(new Uri(uri, "start-job"), content).ConfigureAwait(true);
 
-                // Read the response from the coffee machine
-                try
+                if (response.IsSuccessStatusCode)
                 {
-                    var httpResponse = httpWebRequest.GetResponse();
-                    using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-                    {
-                        var response = JsonConvert.DeserializeObject<Job>(streamReader.ReadToEnd());
-                        _logger.LogDebug("Response from " + uri + ": " + response.ToString());
-                    }
+                    // Read the response from the coffee machine
+                    var responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(true);
+                    JsonConvert.DeserializeObject<Job>(responseString);
+                    _logger.LogDebug("Response from " + uri + ": " + responseString);
                     return true;
                 }
-                catch (WebException e) when (e.Response != null)
+                else
                 {
-                    using (var streamReader = new StreamReader(e.Response.GetResponseStream()))
+                    var stringResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(true);
+                    var responseCode = response.StatusCode;
+                    try
                     {
-                        var stringResponse = streamReader.ReadToEnd();
-                        var responseCode = ((HttpWebResponse)e.Response).StatusCode;
-                        try
+                        var apiMessage = JsonConvert.DeserializeObject<ApiMessage>(stringResponse);
+                        if (stringResponse == "Machine busy!")
                         {
-                            var response = JsonConvert.DeserializeObject<ApiMessage>(stringResponse);
-                            if (stringResponse == "Machine busy!")
-                            {
-                                _logger.LogInformation("Coffee machine" + uri + "is busy.");
-                            }
-                            else
-                            {
-                                _logger.LogWarning("Coffee machine " + uri + " responded with code " + (int)responseCode + " and with message: " + response.Message);
-                            }
-                            return false;
+                            _logger.LogInformation("Coffee machine" + uri + "is busy.");
                         }
-                        catch (JsonSerializationException)
+                        else
                         {
-                            _logger.LogWarning("Coffee machine " + uri + " responded with code " + (int)responseCode + ". The message could not be parsed.");
-                            return false;
+                            _logger.LogWarning("Coffee machine " + uri + " responded with code " + (int)responseCode + " and with message: " + apiMessage.Message);
                         }
+                        return false;
                     }
+#pragma warning disable CA1031
+                    catch (JsonSerializationException)
+                    {
+                        _logger.LogWarning("Coffee machine " + uri + " responded with code " + (int)responseCode + ". The message could not be parsed.");
+                        return false;
+                    }
+#pragma warning restore CA1031
                 }
             }
-            // If the message is null (i.e. connection issue)
-            catch (WebException e)
+            catch (HttpRequestException e)
             {
                 _logger.LogError("Connecting to coffee machine " + uri + " failed: " + e.Message);
                 return false;
             }
+            finally
+            {
+                content.Dispose();
+            }
         }
 
+        /// <summary>
+        /// Gets a list of known coffee machines from the database
+        /// </summary>
+        /// <returns>List of coffee machines</returns>
         private List<Uri> GetCoffeeMachines()
         {
             // Set up web request

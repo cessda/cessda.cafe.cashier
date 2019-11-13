@@ -30,9 +30,9 @@ namespace Cashier.Models
         /// <returns>The ApiMessage.</returns>
         public static ApiMessage OrderNotFound(Guid id)
         {
-            return new ApiMessage() 
-            { 
-                Message = string.Format(CultureInfo.InvariantCulture, Resources.OrderNotFound, id.ToString()) 
+            return new ApiMessage()
+            {
+                Message = string.Format(CultureInfo.InvariantCulture, Resources.OrderNotFound, id.ToString())
             };
         }
     }
