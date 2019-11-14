@@ -1,8 +1,10 @@
 using Cashier.Contexts;
 using Cashier.Controllers;
+using Cashier.Engine;
 using Cashier.Models;
 using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,6 +17,8 @@ namespace Cashier.Tests.Controllers
     {
         private readonly CoffeeDbContext _context;
         private readonly PlaceOrderController _controller;
+        private readonly Mock<IOrderEngine> _mock = new Mock<IOrderEngine>();
+        private readonly IOrderEngine _orderEngine;
 
         /// <summary>
         /// Constructor, used to set up tests
@@ -22,7 +26,8 @@ namespace Cashier.Tests.Controllers
         public PlaceOrderControllerTest()
         {
             _context = new Setup().SetupDb(nameof(PlaceOrderControllerTest));
-            _controller = new PlaceOrderController(_context);
+            _orderEngine = _mock.Object;
+            _controller = new PlaceOrderController(_context, _orderEngine);
         }
 
         [Fact]
@@ -41,7 +46,7 @@ namespace Cashier.Tests.Controllers
         public async Task DeleteOrder_ReturnsDeletedOrder_OnOrderDeletion()
         {
             // Arrange
-            foreach (var order in ExampleOrders())
+            foreach (var order in ExampleDeletableOrders())
             {
                 _context.Add(order);
             }

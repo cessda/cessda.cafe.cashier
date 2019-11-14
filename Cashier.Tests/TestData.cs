@@ -49,6 +49,46 @@ namespace Cashier.Tests
             return new List<Order>() { order1, order2 };
         }
 
+        internal static List<Order> ExampleDeletableOrders()
+        {
+            var order1 = new Order() { OrderSize = 6 };
+            order1.Jobs.AddRange(new List<Job>()
+            {
+                new Job()
+                {
+                    Product = ECoffeeType.KAKAO,
+                    OrderSize = 3
+                },
+                new Job
+                {
+                    Product = ECoffeeType.CAPPUCCINO,
+                    OrderSize = 3
+                },
+                new Job
+                {
+                    Product = ECoffeeType.MOCCACHINO,
+                    OrderSize = 2
+                },
+                new Job
+                {
+                    Product = ECoffeeType.HOT_WATER,
+                    OrderSize = 1
+                }
+            });
+
+            var order2 = new Order() { OrderSize = 1 };
+            order2.Jobs.AddRange(new List<Job>()
+            {
+                new Job()
+                {
+                    Product = ECoffeeType.KAKAO,
+                    OrderSize = 1
+                }
+            });
+
+            return new List<Order>() { order1, order2 };
+        }
+
         internal static CoffeeRequest ExampleRequest()
         {
             var request = new CoffeeRequest();

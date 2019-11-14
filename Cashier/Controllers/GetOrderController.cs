@@ -1,4 +1,5 @@
 ﻿using Cashier.Contexts;
+using Cashier.Engine;
 using Cashier.Models;
 using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
@@ -12,20 +13,21 @@ namespace Cashier.Controllers
     /// <summary>
     /// Read only controller to get the history of known orders.
     /// </summary>
-    [Route("order-history", Name = "GetOrderController")]
+    [Route("order-history", Name = nameof(GetOrderController))]
     [ApiController]
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class GetOrderController : ControllerBase
     {
         private readonly CoffeeDbContext _context;
+        private readonly IOrderEngine _orderEngine;
 
         /// <summary>
         /// Constructor for GetOrderController.
         /// </summary>
-        /// <param name="context">Database Context.</param>
-        public GetOrderController(CoffeeDbContext context)
+        public GetOrderController(CoffeeDbContext context, IOrderEngine orderEngine)
         {
             _context = context;
+            _orderEngine = orderEngine;
         }
 
         /// <summary>
@@ -56,6 +58,7 @@ namespace Cashier.Controllers
             {
                 var order = await _context.Orders.Include(b => b.Jobs)
                     .SingleAsync(o => o.OrderId == id).ConfigureAwait(true);
+                await _orderEngine.StartOrderAsync(id).ConfigureAwait(false);
                 return Ok(order);
             }
             catch (InvalidOperationException)

@@ -38,16 +38,37 @@ namespace Cashier.Engine
         }
 
         /// <summary>
+        /// Starts the jobs associated with an order.
+        /// </summary>
+        /// <param name="id">The order to start.</param>
+        public async Task StartOrderAsync(Guid id)
+        {
+            var order = await _context.Orders.Include(b => b.Jobs)
+                .SingleAsync(o => o.OrderId == id).ConfigureAwait(true);
+
+            await StartJobListAsync(order.Jobs).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Starts all jobs that haven't been started.
         /// </summary>
         public async Task StartAllJobsAsync()
         {
-            var coffees = await _context.Jobs.ToListAsync().ConfigureAwait(true);
+            var jobs = await _context.Jobs.ToListAsync().ConfigureAwait(true);
 
-            foreach (var coffee in coffees)
+            await StartJobListAsync(jobs).ConfigureAwait(false);
+        }
+
+        private async Task StartJobListAsync(List<Job> jobs)
+        {
+            var taskList = new List<Task>();
+
+            foreach (var job in jobs)
             {
-                await StartJobAsync(coffee.JobId).ConfigureAwait(false);
+                taskList.Add(StartJobAsync(job.JobId));
             }
+
+            await Task.WhenAll(taskList).ConfigureAwait(false);
         }
 
         /// <summary>

@@ -1,8 +1,10 @@
 ﻿using Cashier.Contexts;
 using Cashier.Controllers;
+using Cashier.Engine;
 using Cashier.Models;
 using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,8 @@ namespace Cashier.Tests.Controllers
     {
         private readonly CoffeeDbContext _context;
         private readonly GetOrderController _controller;
+        private readonly Mock<IOrderEngine> _mock = new Mock<IOrderEngine>();
+        private readonly IOrderEngine _orderEngine;
 
         /// <summary>
         /// Constructor, used to set up tests
@@ -22,7 +26,8 @@ namespace Cashier.Tests.Controllers
         public GetOrderControllerTest()
         {
             _context = new Setup().SetupDb(nameof(GetOrderControllerTest));
-            _controller = new GetOrderController(_context);
+            _orderEngine = _mock.Object;
+            _controller = new GetOrderController(_context, _orderEngine);
 
             // Arrange
             _context.AddRange(ExampleOrders());

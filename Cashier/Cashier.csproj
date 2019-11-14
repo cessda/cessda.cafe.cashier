@@ -11,8 +11,8 @@
     <StartupObject>Cashier.Program</StartupObject>
     <ServerGarbageCollection>false</ServerGarbageCollection>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <AssemblyVersion>1.4.1.0</AssemblyVersion>
-    <FileVersion>1.4.1.0</FileVersion>
+    <AssemblyVersion>1.4.2.0</AssemblyVersion>
+    <FileVersion>1.4.2.0</FileVersion>
     <Version>1.4.0</Version>
     <RepositoryUrl>https://bitbucket.org/cessda/cessda.cafe.cashier.git</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>

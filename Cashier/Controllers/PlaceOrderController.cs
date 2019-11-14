@@ -1,4 +1,5 @@
 ﻿using Cashier.Contexts;
+using Cashier.Engine;
 using Cashier.Models;
 using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
@@ -16,14 +17,17 @@ namespace Cashier.Controllers
     public class PlaceOrderController : ControllerBase
     {
         private readonly CoffeeDbContext _context;
+        private readonly IOrderEngine _orderEngine;
 
         /// <summary>
         /// Constructor for PlaceOrderController
         /// </summary>
         /// <param name="context">Database context.</param>
-        public PlaceOrderController(CoffeeDbContext context)
+        /// <param name="orderEngine">Order Engine.</param>
+        public PlaceOrderController(CoffeeDbContext context, IOrderEngine orderEngine)
         {
             _context = context;
+            _orderEngine = orderEngine;
         }
 
         /// <summary>
@@ -75,9 +79,10 @@ namespace Cashier.Controllers
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync().ConfigureAwait(false);
+            await _orderEngine.StartAllJobsAsync().ConfigureAwait(false);
 
             // Return the created order
-            return CreatedAtRoute("GetOrderController", new { id = order.OrderId }, order);
+            return CreatedAtRoute(nameof(GetOrderController), new { id = order.OrderId }, order);
         }
 
         /// <summary>
@@ -96,7 +101,7 @@ namespace Cashier.Controllers
             }
             foreach (var job in order.Jobs)
             {
-                if (string.IsNullOrEmpty(job.Machine))
+                if (!string.IsNullOrEmpty(job.Machine))
                 {
                     return BadRequest(ApiMessage.OrderAlreadyProcessed(order.OrderId));
                 }

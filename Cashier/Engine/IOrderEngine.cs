@@ -9,10 +9,15 @@ namespace Cashier.Engine
     public interface IOrderEngine
     {
         /// <summary>
+        /// Starts the jobs associated with an order.
+        /// </summary>
+        /// <param name="id">The order to start.</param>
+        Task StartOrderAsync(Guid id);
+
+        /// <summary>
         /// Starts all jobs that haven't been started.
         /// </summary>
         Task StartAllJobsAsync();
-
 
         /// <summary>
         /// Starts the specified coffee.
