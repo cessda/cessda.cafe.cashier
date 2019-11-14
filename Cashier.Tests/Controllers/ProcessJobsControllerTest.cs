@@ -39,9 +39,9 @@ namespace Cashier.Tests.Controllers
         public async Task PostCoffee_ReturnsAnApiMessage()
         {
             // Arrange
-            var queuedCoffees = _context.Jobs.Count(c => c.State == ECoffeeState.QUEUED);
-            var processedCoffees = _context.Jobs.Count(c => c.State == ECoffeeState.PROCESSED);
-            _mock.Setup(o => o.StartJobAsync(It.IsAny<Guid>()));
+            var processedCoffees = _context.Jobs.Count(c => !string.IsNullOrEmpty(c.Machine));
+            var queuedCoffees = _context.Jobs.Count(c => string.IsNullOrEmpty(c.Machine));
+            _mock.Setup(o => o.StartAllJobsAsync());
 
             // Act
             var actionResult = await _controller.PostCoffee();
@@ -53,7 +53,7 @@ namespace Cashier.Tests.Controllers
             var apiMessage = result.Value as ApiMessage;
 
             // StartCoffee should be called
-            _mock.Verify(o => o.StartJobAsync(It.IsAny<Guid>()), Times.AtLeastOnce);
+            _mock.Verify(o => o.StartAllJobsAsync(), Times.AtLeastOnce);
 
             // Should be a list of orders
             Assert.NotNull(apiMessage);
@@ -65,7 +65,7 @@ namespace Cashier.Tests.Controllers
         public async Task PostCoffee_ShouldHandleException()
         {
             // Arrange
-            _mock.Setup(o => o.StartJobAsync(It.IsAny<Guid>())).Throws(new NoCoffeeMachinesException());
+            _mock.Setup(o => o.StartAllJobsAsync()).Throws(new NoCoffeeMachinesException());
 
             // Act
             var actionResult = await _controller.PostCoffee();

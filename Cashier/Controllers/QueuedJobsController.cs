@@ -38,7 +38,7 @@ namespace Cashier.Controllers
         {
             // For each coffee check if they are processed
             var coffees = await _context.Jobs
-                .Where(c => c.State == ECoffeeState.QUEUED)
+                .Where(c => string.IsNullOrEmpty(c.Machine))
                 .ToListAsync().ConfigureAwait(true);
 
             return new CoffeeCount(coffees);
@@ -55,9 +55,9 @@ namespace Cashier.Controllers
         {
             var coffee = await _context.Jobs.FindAsync(id).ConfigureAwait(true);
 
-            if (coffee?.State == ECoffeeState.QUEUED)
+            // Only return coffees that are queued
+            if (string.IsNullOrEmpty(coffee.Machine))
             {
-                // Only return coffees that are queued
                 return coffee;
             }
             return NotFound();

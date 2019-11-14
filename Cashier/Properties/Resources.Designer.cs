@@ -79,6 +79,15 @@ namespace Cashier.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The order {0} has already been processed..
+        /// </summary>
+        internal static string OrderAlreadyProcessed {
+            get {
+                return ResourceManager.GetString("OrderAlreadyProcessed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The order {0} was not found..
         /// </summary>
         internal static string OrderNotFound {

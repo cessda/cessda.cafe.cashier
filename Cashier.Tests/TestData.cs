@@ -20,19 +20,18 @@ namespace Cashier.Tests
                 {
                     Product = ECoffeeType.ESPRESSO_CHOCOLATE,
                     OrderSize = 3,
-                    State = ECoffeeState.PROCESSED
+                    Machine = "http://localhost:1337/"
                 },
                 new Job
                 {
                     Product = ECoffeeType.MOCCACHINO,
-                    OrderSize = 2,
-                    State = ECoffeeState.QUEUED
+                    OrderSize = 2
                 },
                 new Job
                 {
                     Product = ECoffeeType.HOT_WATER,
                     OrderSize = 1,
-                    State = ECoffeeState.PROCESSED
+                    Machine = "http://localhost:1337/"
                 }
             });
 
@@ -43,7 +42,7 @@ namespace Cashier.Tests
                 {
                     Product = ECoffeeType.KAKAO,
                     OrderSize = 1,
-                    State = ECoffeeState.PROCESSED
+                    Machine = "http://localhost:1337/"
                 }
             });
 

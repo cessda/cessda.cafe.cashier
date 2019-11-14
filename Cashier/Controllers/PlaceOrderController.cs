@@ -94,7 +94,13 @@ namespace Cashier.Controllers
             {
                 return NotFound(ApiMessage.OrderNotFound(id));
             }
-
+            foreach (var job in order.Jobs)
+            {
+                if (string.IsNullOrEmpty(job.Machine))
+                {
+                    return BadRequest(ApiMessage.OrderAlreadyProcessed(order.OrderId));
+                }
+            }
             _context.Orders.Remove(order);
             await _context.SaveChangesAsync().ConfigureAwait(false);
 

@@ -41,7 +41,7 @@ namespace Cashier.Tests.Controllers
             // All jobs should be queued
             foreach (var job in coffees.Coffees)
             {
-                Assert.Equal(ECoffeeState.QUEUED, job.State);
+                Assert.Null(job.Machine);
             }
         }
 
@@ -50,7 +50,7 @@ namespace Cashier.Tests.Controllers
         {
             // Arrange
             var id = _context.Jobs
-                .Where(j => j.State == ECoffeeState.QUEUED)
+                .Where(j => string.IsNullOrEmpty(j.Machine))
                 .First().JobId;
 
             // Act
@@ -63,7 +63,7 @@ namespace Cashier.Tests.Controllers
             Assert.Equal(id, job.JobId);
 
             // Should be queued
-            Assert.Equal(ECoffeeState.QUEUED, job.State);
+            Assert.Null(job.Machine);
         }
     }
 }

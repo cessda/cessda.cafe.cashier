@@ -32,7 +32,20 @@ namespace Cashier.Models
         {
             return new ApiMessage()
             {
-                Message = string.Format(CultureInfo.InvariantCulture, Resources.OrderNotFound, id.ToString())
+                Message = string.Format(CultureInfo.InvariantCulture, Resources.OrderNotFound, id)
+            };
+        }
+
+        /// <summary>
+        /// Creates a message stating the order has already been processed.
+        /// </summary>
+        /// <param name="id">The order id processed.</param>
+        /// <returns>The ApiMessage.</returns>
+        public static ApiMessage OrderAlreadyProcessed(Guid id)
+        {
+            return new ApiMessage()
+            {
+                Message = string.Format(CultureInfo.InvariantCulture, Resources.OrderAlreadyProcessed, id)
             };
         }
     }

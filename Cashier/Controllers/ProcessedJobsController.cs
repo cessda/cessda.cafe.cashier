@@ -38,7 +38,7 @@ namespace Cashier.Controllers
         {
             // For each coffee check if they are processed
             return await _context.Jobs
-                .Where(c => c.State == ECoffeeState.PROCESSED)
+                .Where(c => c.Machine != null)
                 .ToListAsync().ConfigureAwait(true);
         }
 
@@ -54,7 +54,7 @@ namespace Cashier.Controllers
             var coffee = await _context.Jobs.FindAsync(id).ConfigureAwait(true);
 
             // Only return coffees that are processed
-            if (coffee?.State == ECoffeeState.PROCESSED)
+            if (coffee.Machine != null)
             {
                 return coffee;
             }

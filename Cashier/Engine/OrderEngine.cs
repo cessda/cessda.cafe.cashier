@@ -38,19 +38,15 @@ namespace Cashier.Engine
         }
 
         /// <summary>
-        /// Start the specified order
+        /// Starts all jobs that haven't been started.
         /// </summary>
-        /// <param name="id">The order to start</param>
-        public async Task StartOrderAsync(Guid id)
+        public async Task StartAllJobsAsync()
         {
-            // Load the order
-            var order = _context.Orders.Include(b => b.Jobs).Single(o => o.OrderId == id);
-            _logger.LogInformation("Starting order: " + order.OrderId);
+            var coffees = await _context.Jobs.ToListAsync().ConfigureAwait(true);
 
-            // For each coffee
-            foreach (var coffee in order.Jobs)
+            foreach (var coffee in coffees)
             {
-                await StartJobAsync(coffee.JobId).ConfigureAwait(true);
+                await StartJobAsync(coffee.JobId).ConfigureAwait(false);
             }
         }
 
@@ -61,12 +57,12 @@ namespace Cashier.Engine
         public async Task StartJobAsync(Guid id)
         {
             // Load the coffee
-            var coffee = _context.Jobs.Single(c => c.JobId == id);
+            var job = _context.Jobs.Single(c => c.JobId == id);
 
             // Check if the coffee has already been sent to a machine
-            if (string.IsNullOrEmpty(coffee.Machine))
+            if (string.IsNullOrEmpty(job.Machine))
             {
-                _logger.LogInformation("Starting coffee " + coffee.JobId + ".");
+                _logger.LogInformation("Starting job " + job.JobId + ".");
 
                 // Set up web request
                 bool success = false;
@@ -74,8 +70,8 @@ namespace Cashier.Engine
 
                 var coffeePayload = new CoffeePayload()
                 {
-                    JobId = coffee.JobId,
-                    Product = coffee.Product
+                    JobId = job.JobId,
+                    Product = job.Product
                 };
 
                 // Set up the JSON converter
@@ -99,25 +95,24 @@ namespace Cashier.Engine
                     if (success)
                     {
                         // Mark the time that the order was sent
-                        _logger.LogInformation("Sent job " + coffee.JobId + " to machine " + machine);
-                        coffee.JobStarted = DateTime.Now;
-                        coffee.Machine = machine.ToString();
-                        coffee.State = ECoffeeState.PROCESSED;
+                        _logger.LogInformation("Sent job " + job.JobId + " to machine " + machine);
+                        job.JobStarted = DateTime.Now;
+                        job.Machine = machine.ToString();
 
                         // Update the database
-                        _context.Entry(coffee).State = EntityState.Modified;
+                        _context.Entry(job).State = EntityState.Modified;
                         _context.SaveChanges();
                     }
                 }
                 // No coffee machines could accept the coffee
                 if (!success)
                 {
-                    _logger.LogWarning("No coffee machines could accept job " + coffee.JobId + ".");
+                    _logger.LogWarning("No coffee machines could accept job " + job.JobId + ".");
                 }
             }
             else
             {
-                _logger.LogWarning("Attempted to start coffee " + coffee.JobId + " which has already been started");
+                _logger.LogWarning("Attempted to start coffee " + job.JobId + " which has already been started");
             }
         }
 
@@ -161,15 +156,14 @@ namespace Cashier.Engine
                         {
                             _logger.LogWarning("Coffee machine " + uri + " responded with code " + (int)responseCode + " and with message: " + apiMessage.Message);
                         }
-                        return false;
                     }
 #pragma warning disable CA1031
                     catch (JsonSerializationException)
                     {
                         _logger.LogWarning("Coffee machine " + uri + " responded with code " + (int)responseCode + ". The message could not be parsed.");
-                        return false;
                     }
 #pragma warning restore CA1031
+                    return false;
                 }
             }
             catch (HttpRequestException e)

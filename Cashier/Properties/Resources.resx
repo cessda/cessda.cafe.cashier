@@ -123,6 +123,9 @@
   <data name="NoCoffees" xml:space="preserve">
     <value>There must be at least one coffee in the order.</value>
   </data>
+  <data name="OrderAlreadyProcessed" xml:space="preserve">
+    <value>The order {0} has already been processed.</value>
+  </data>
   <data name="OrderNotFound" xml:space="preserve">
     <value>The order {0} was not found.</value>
   </data>

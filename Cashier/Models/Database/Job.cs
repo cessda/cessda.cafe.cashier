@@ -48,10 +48,5 @@ namespace Cashier.Models.Database
         /// </summary>
         [Required]
         public ECoffeeType Product { get; set; }
-
-        /// <summary>
-        /// State of the coffee.
-        /// </summary>
-        public ECoffeeState State { get; set; } = ECoffeeState.QUEUED;
     }
 }
