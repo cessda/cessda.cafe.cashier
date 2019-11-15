@@ -20,7 +20,7 @@ namespace Cashier.Engine
     /// </summary>
     public class OrderEngine : IOrderEngine
     {
-        private readonly CoffeeDbContext _context;
+        private readonly CashierDbContext _context;
         private readonly HttpClient _httpClient;
         private readonly ILogger _logger;
 
@@ -30,7 +30,7 @@ namespace Cashier.Engine
         /// <param name="context">Coffee Database Context</param>
         /// <param name="httpClient">HTTP Client</param>
         /// <param name="logger">Logger</param>
-        public OrderEngine(CoffeeDbContext context, HttpClient httpClient, ILogger<OrderEngine> logger)
+        public OrderEngine(CashierDbContext context, HttpClient httpClient, ILogger<OrderEngine> logger)
         {
             _context = context;
             _httpClient = httpClient;

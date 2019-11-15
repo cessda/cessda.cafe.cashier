@@ -10,7 +10,7 @@ namespace Cashier.Tests.Controllers
 {
     public class QueuedJobsControllerTest
     {
-        private readonly CoffeeDbContext _context;
+        private readonly CashierDbContext _context;
         private readonly QueuedJobsController _controller;
 
         /// <summary>

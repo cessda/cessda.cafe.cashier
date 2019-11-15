@@ -17,7 +17,7 @@ namespace Cashier.Controllers
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class ConfigureController : ControllerBase
     {
-        private readonly CoffeeDbContext _context;
+        private readonly CashierDbContext _context;
         private readonly ILogger _logger;
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace Cashier.Controllers
         /// </summary>
         /// <param name="context">Database context</param>
         /// <param name="logger">Logger</param>
-        public ConfigureController(CoffeeDbContext context, ILogger<ConfigureController> logger)
+        public ConfigureController(CashierDbContext context, ILogger<ConfigureController> logger)
         {
             _context = context;
             _logger = logger;
@@ -46,25 +46,26 @@ namespace Cashier.Controllers
         /// <summary>
         /// Add a coffee machine to the list of known coffee machines.
         /// </summary>
-        /// <param name="machines">A coffee machine.</param>
+        /// <param name="machine">A coffee machine.</param>
         /// <returns>The added coffee machine.</returns>
         [HttpPost]
-        public async Task<ActionResult<Machine>> PostMachines(Machine machines)
+        public async Task<ActionResult<Machine>> PostMachines(Machine machine)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (machines != null && _context.Machines.Find(machines.CoffeeMachine) == null)
+            if (machine != null && Uri.IsWellFormedUriString(machine.CoffeeMachine, UriKind.Absolute)
+                && _context.Machines.Find(machine.CoffeeMachine) == null)
             {
                 // If the coffee machine is not already configured
-                _context.Machines.Add(machines);
+                _context.Machines.Add(machine);
                 await _context.SaveChangesAsync().ConfigureAwait(false);
 
-                _logger.LogInformation("Added coffee machine " + machines.CoffeeMachine + ".");
+                _logger.LogInformation("Added coffee machine " + machine.CoffeeMachine + ".");
 
-                return CreatedAtAction("GetMachines", new { id = machines.CoffeeMachine }, machines);
+                return CreatedAtAction("GetMachines", new { id = machine.CoffeeMachine }, machine);
             }
 
             return BadRequest();
@@ -77,7 +78,7 @@ namespace Cashier.Controllers
         /// <param name="url">The URL of the coffee machine to remove.</param>
         /// <returns>The removed coffee machine.</returns>
         [HttpDelete("{url}")]
-        public async Task<ActionResult<Machine>> DeleteMachines(Uri url)
+        public async Task<ActionResult<Machine>> DeleteMachines(string url)
         {
             if (!ModelState.IsValid)
             {
@@ -90,10 +91,10 @@ namespace Cashier.Controllers
             }
 
             // Unescape the string
-            url = new Uri(Uri.UnescapeDataString(url.ToString()));
+            url = Uri.UnescapeDataString(url);
 
             // Attempt to find the coffee machine
-            var machines = await _context.Machines.FindAsync(url.ToString()).ConfigureAwait(true);
+            var machines = await _context.Machines.FindAsync(url).ConfigureAwait(true);
             if (machines == null)
             {
                 return NotFound();

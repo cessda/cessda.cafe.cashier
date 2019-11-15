@@ -17,13 +17,13 @@ namespace Cashier.Controllers
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class ProcessedJobsController : ControllerBase
     {
-        private readonly CoffeeDbContext _context;
+        private readonly CashierDbContext _context;
 
         /// <summary>
         /// Constructor for ProcessedJobsController.
         /// </summary>
         /// <param name="context">Database context.</param>
-        public ProcessedJobsController(CoffeeDbContext context)
+        public ProcessedJobsController(CashierDbContext context)
         {
             _context = context;
         }

@@ -21,12 +21,10 @@
       "commandName": "Docker",
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/order-history",
-      "environmentVariables": {},
       "httpPort": 50986
     },
     "Cashier": {
       "commandName": "Project",
-      "launchBrowser": true,
       "launchUrl": "swagger/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

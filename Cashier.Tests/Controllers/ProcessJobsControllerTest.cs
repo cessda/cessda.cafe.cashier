@@ -14,7 +14,7 @@ namespace Cashier.Tests.Controllers
 {
     public class ProcessJobsControllerTest
     {
-        private readonly CoffeeDbContext _context;
+        private readonly CashierDbContext _context;
         private readonly ProcessJobsController _controller;
         private readonly Mock<IOrderEngine> _mock = new Mock<IOrderEngine>();
         private readonly IOrderEngine _orderEngine;

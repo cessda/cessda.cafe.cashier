@@ -6,12 +6,12 @@ namespace Cashier.Contexts
     /// <summary>
     /// Defines the database context and options
     /// </summary>
-    public class CoffeeDbContext : DbContext
+    public class CashierDbContext : DbContext
     {
 #pragma warning disable CS1591
         public DbSet<Order> Orders { get; set; }
         public DbSet<Job> Jobs { get; set; }
         public DbSet<Machine> Machines { get; set; }
-        public CoffeeDbContext(DbContextOptions<CoffeeDbContext> options) : base(options) { }
+        public CashierDbContext(DbContextOptions<CashierDbContext> options) : base(options) { }
     }
 }

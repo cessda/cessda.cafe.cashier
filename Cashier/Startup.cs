@@ -43,7 +43,7 @@ namespace Cashier
             });
 
             // Set up the database
-            services.AddDbContext<CoffeeDbContext>(options => options.UseInMemoryDatabase(_inMemDatabase));
+            services.AddDbContext<CashierDbContext>(options => options.UseInMemoryDatabase(_inMemDatabase));
 
             // Set up health checks
             services.AddHealthChecks();

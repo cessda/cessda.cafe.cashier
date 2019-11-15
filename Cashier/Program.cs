@@ -3,7 +3,9 @@ using Cashier.Models.Database;
 using Gelf.Extensions.Logging;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Reflection;
 
@@ -17,11 +19,20 @@ namespace Cashier
             var host = CreateWebHostBuilder(args);
 
             using (var scope = host.Services.CreateScope())
-            using (var context = scope.ServiceProvider.GetService<CoffeeDbContext>())
+            using (var context = scope.ServiceProvider.GetService<CashierDbContext>())
             {
-                // Configure Carsten's Coffeepot by default
                 context.Database.EnsureCreated();
-                context.Machines.Add(new Machine() { CoffeeMachine = "http://cafe-coffee-carsten:1337/" });
+
+                // If the environment specifies a coffee machine use it, else default to localhost
+                var defaultCoffeeMachine = scope.ServiceProvider.GetService<IConfiguration>()["Cafe:DefaultCoffeeMachine"];
+                if (string.IsNullOrEmpty(defaultCoffeeMachine))
+                {
+                    context.Machines.Add(new Machine() { CoffeeMachine = "http://localhost:1337/" });
+                }
+                else
+                {
+                    context.Machines.Add(new Machine() { CoffeeMachine = defaultCoffeeMachine });
+                }
                 context.SaveChanges();
             }
 
@@ -33,15 +44,18 @@ namespace Cashier
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureLogging((hostingContext, logging) =>
                 {
-                    logging.AddGelf(options =>
+                    // Only configure GELF if a host is specified
+                    if (!string.IsNullOrEmpty(hostingContext.Configuration["Logging:GELF:Host"]))
                     {
-                        if (string.IsNullOrEmpty(options.Host)) options.Host = "localhost";
-                        options.LogSource = Environment.MachineName;
-                        options.AdditionalFields["app_version"] = Assembly.GetEntryAssembly()
-                            .GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
-                        options.AdditionalFields["cessda_component"] = hostingContext.HostingEnvironment.ApplicationName;
-                        options.AdditionalFields["cessda_product"] = "CESSDA Café";
-                    });
+                        logging.AddGelf(options =>
+                        {
+                            options.LogSource = Environment.MachineName;
+                            options.AdditionalFields["app_version"] = Assembly.GetEntryAssembly()
+                                .GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+                            options.AdditionalFields["cessda_component"] = hostingContext.HostingEnvironment.ApplicationName;
+                            options.AdditionalFields["cessda_product"] = "CESSDA Café";
+                        });
+                    }
                 })
                 .UseStartup<Startup>()
                 .Build();

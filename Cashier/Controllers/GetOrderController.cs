@@ -18,13 +18,13 @@ namespace Cashier.Controllers
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class GetOrderController : ControllerBase
     {
-        private readonly CoffeeDbContext _context;
+        private readonly CashierDbContext _context;
         private readonly IOrderEngine _orderEngine;
 
         /// <summary>
         /// Constructor for GetOrderController.
         /// </summary>
-        public GetOrderController(CoffeeDbContext context, IOrderEngine orderEngine)
+        public GetOrderController(CashierDbContext context, IOrderEngine orderEngine)
         {
             _context = context;
             _orderEngine = orderEngine;

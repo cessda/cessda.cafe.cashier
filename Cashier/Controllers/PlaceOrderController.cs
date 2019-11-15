@@ -16,7 +16,7 @@ namespace Cashier.Controllers
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class PlaceOrderController : ControllerBase
     {
-        private readonly CoffeeDbContext _context;
+        private readonly CashierDbContext _context;
         private readonly IOrderEngine _orderEngine;
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace Cashier.Controllers
         /// </summary>
         /// <param name="context">Database context.</param>
         /// <param name="orderEngine">Order Engine.</param>
-        public PlaceOrderController(CoffeeDbContext context, IOrderEngine orderEngine)
+        public PlaceOrderController(CashierDbContext context, IOrderEngine orderEngine)
         {
             _context = context;
             _orderEngine = orderEngine;

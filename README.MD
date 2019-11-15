@@ -12,6 +12,10 @@ To quickly create a docker container, build and run the Dockerfile in the base d
 
 Once running the application will be exposed on port 5000.
 
+## Configuring
+
+By default, the cashier will autoconfigure a coffee machine at http://localhost:1337/ for testing purposes. To override this use the command line argument --Cafe:DefaultCoffeeMachine=http://example.com/ or set the environment variable CAFE__DEFAULTCOFFEEMACHINE to configure a different coffee machine.
+
 ## Prerequisites
 
 The following tools need to be installed locally to build and test the application:
