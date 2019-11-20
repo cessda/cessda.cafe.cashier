@@ -10,6 +10,23 @@ namespace Cashier.Models.Database
     public class Job
     {
         /// <summary>
+        /// Create a new Job object with the OrderPlaced set to the current time
+        /// </summary>
+        public Job() 
+        {
+            OrderPlaced = DateTime.Now;
+        }
+
+        /// <summary>
+        /// Create a new Job object with the OrderPlaced set to the specified time
+        /// </summary>
+        /// <param name="orderPlaced">The time the order was placed</param>
+        public Job(DateTime orderPlaced)
+        {
+            OrderPlaced = orderPlaced;
+        }
+
+        /// <summary>
         /// The ID of the job
         /// </summary>
         [Key]
@@ -30,7 +47,8 @@ namespace Cashier.Models.Database
         /// <summary>
         /// The time the order was placed.
         /// </summary>
-        public DateTime OrderPlaced { get; private set; } = DateTime.Now;
+        [Required]
+        public DateTime OrderPlaced { get; private set; }
 
         /// <summary>
         /// The size of the order.

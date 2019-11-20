@@ -14,7 +14,7 @@ Once running the application will be exposed on port 5000.
 
 ## Configuring
 
-By default, the cashier will autoconfigure a coffee machine at http://localhost:1337/ for testing purposes. To override this use the command line argument --Cafe:DefaultCoffeeMachine=http://example.com/ or set the environment variable CAFE__DEFAULTCOFFEEMACHINE to configure a different coffee machine.
+By default, the cashier will autoconfigure a coffee machine at http://localhost:1337/ for testing purposes. To override this use the command line argument --Cafe:DefaultCoffeeMachine=http://example.com/ or set the environment variable CAFE__DEFAULTCOFFEEMACHINE to configure a different coffee machine. To configure multiple coffee machines set CAFE__DEFAULTCOFFEEMACHINE__1, CAFE__DEFAULTCOFFEEMACHINE__2 to the coffee machines that should be configured.
 
 ## Prerequisites
 

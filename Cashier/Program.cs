@@ -1,11 +1,8 @@
 ﻿using Cashier.Contexts;
-using Cashier.Models.Database;
 using Gelf.Extensions.Logging;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Reflection;
 
@@ -22,19 +19,9 @@ namespace Cashier
             using (var context = scope.ServiceProvider.GetService<CashierDbContext>())
             {
                 context.Database.EnsureCreated();
-
-                // If the environment specifies a coffee machine use it, else default to localhost
-                var defaultCoffeeMachine = scope.ServiceProvider.GetService<IConfiguration>()["Cafe:DefaultCoffeeMachine"];
-                if (string.IsNullOrEmpty(defaultCoffeeMachine))
-                {
-                    context.Machines.Add(new Machine() { CoffeeMachine = "http://localhost:1337/" });
-                }
-                else
-                {
-                    context.Machines.Add(new Machine() { CoffeeMachine = defaultCoffeeMachine });
-                }
-                context.SaveChanges();
             }
+
+            Startup.ConfigureCoffeeMachines(host);
 
             host.Run();
             host.Dispose();

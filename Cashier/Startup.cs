@@ -1,4 +1,5 @@
 ﻿using Cashier.Contexts;
+using Cashier.Models.Database;
 using Cashier.Engine;
 using Cashier.Middleware;
 using Microsoft.AspNetCore.Builder;
@@ -10,10 +11,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace Cashier
 {
@@ -43,7 +46,7 @@ namespace Cashier
             });
 
             // Set up the database
-            services.AddDbContext<CashierDbContext>(options => options.UseInMemoryDatabase(_inMemDatabase));
+            services.AddDbContext<CashierDbContext>(options => options.UseInMemoryDatabase("coffee-db"));
 
             // Set up health checks
             services.AddHealthChecks();
@@ -109,6 +112,50 @@ namespace Cashier
             return httpContext.Response.WriteAsync(json.ToString());
         }
 
-        private const string _inMemDatabase = "coffee-db";
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", 
+            "CA1303:Do not pass literals as localized parameters", Justification = "Logger")]
+        public static void ConfigureCoffeeMachines(IWebHost host)
+        {
+            // Validate parameters
+            if (host == null) throw new ArgumentNullException(nameof(host));
+
+            using (var scope = host.Services.CreateScope())
+            using (var context = scope.ServiceProvider.GetService<CashierDbContext>())
+            {
+                // If the environment specifies a coffee machine use it, else default to localhost
+                var coffeeMachines = scope.ServiceProvider.GetService<IConfiguration>()
+                    .GetSection("Cafe:DefaultCoffeeMachine").AsEnumerable();
+                var logger = scope.ServiceProvider.GetService<ILogger<Startup>>();
+
+                foreach (var coffeeMachine in coffeeMachines)
+                {
+                    // Validate the Uri
+                    if (Uri.IsWellFormedUriString(coffeeMachine.Value, UriKind.Absolute))
+                    {
+                        context.Machines.Add(new Machine() { CoffeeMachine = coffeeMachine.Value });
+                        logger.LogInformation("Using coffee machine " + coffeeMachine.Value + ".");
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(coffeeMachine.Value))
+                        {
+                            logger.LogWarning(coffeeMachine.Value + " is not a valid URI, not configuring.");
+                        }
+                    }
+                }
+
+                // If no coffee machines were added add the localhost coffee machine
+                var countTask = context.Machines.CountAsync();
+                countTask.Wait();
+                if (countTask.Result == 0)
+                {
+                    const string defaultCoffeeMachine = "http://localhost:1337/";
+                    context.Machines.Add(new Machine() { CoffeeMachine = defaultCoffeeMachine });
+                    logger.LogInformation("Using default coffee machine " + defaultCoffeeMachine + ".");
+                }
+
+                context.SaveChanges();
+            }
+        }
     }
 }

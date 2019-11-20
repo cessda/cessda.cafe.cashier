@@ -23,6 +23,7 @@ namespace Cashier.Engine
         private readonly CashierDbContext _context;
         private readonly HttpClient _httpClient;
         private readonly ILogger _logger;
+        private readonly JsonSerializerSettings _jsonSettings;
 
         /// <summary>
         /// Constructor for OrderEngine, used for passing the logger and the database context.
@@ -35,6 +36,14 @@ namespace Cashier.Engine
             _context = context;
             _httpClient = httpClient;
             _logger = logger;
+
+            // Set up the JSON converter
+            var jsonSettings = new JsonSerializerSettings()
+            {
+                DateTimeZoneHandling = DateTimeZoneHandling.Utc
+            };
+            jsonSettings.Converters.Add(new StringEnumConverter());
+            _jsonSettings = jsonSettings;
         }
 
         /// <summary>
@@ -71,10 +80,13 @@ namespace Cashier.Engine
             await Task.WhenAll(taskList).ConfigureAwait(false);
         }
 
+
         /// <summary>
         /// Start the specified coffee
         /// </summary>
         /// <param name="id">ID of coffee to start</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization",
+            "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public async Task StartJobAsync(Guid id)
         {
             // Load the coffee
@@ -83,7 +95,7 @@ namespace Cashier.Engine
             // Check if the coffee has already been sent to a machine
             if (string.IsNullOrEmpty(job.Machine))
             {
-                _logger.LogInformation("Starting job " + job.JobId + ".");
+                _logger.LogInformation("Starting job {jobId}.", job.JobId);
 
                 // Set up web request
                 bool success = false;
@@ -95,15 +107,8 @@ namespace Cashier.Engine
                     Product = job.Product
                 };
 
-                // Set up the JSON converter
-                var jsonSettings = new JsonSerializerSettings()
-                {
-                    DateTimeZoneHandling = DateTimeZoneHandling.Utc
-                };
-                jsonSettings.Converters.Add(new StringEnumConverter());
-
-                var json = JsonConvert.SerializeObject(coffeePayload, jsonSettings);
-                _logger.LogDebug("Created JSON: " + json);
+                var json = JsonConvert.SerializeObject(coffeePayload, _jsonSettings);
+                _logger.LogDebug("Created JSON: {json}.", json);
 
                 // Iterate through all known coffee machines
                 foreach (var machine in coffeeMachines)
@@ -116,7 +121,7 @@ namespace Cashier.Engine
                     if (success)
                     {
                         // Mark the time that the order was sent
-                        _logger.LogInformation("Sent job " + job.JobId + " to machine " + machine);
+                        _logger.LogInformation("Sent job {jobId} to machine {machine}.", job.JobId, machine);
                         job.JobStarted = DateTime.Now;
                         job.Machine = machine.ToString();
 
@@ -128,20 +133,23 @@ namespace Cashier.Engine
                 // No coffee machines could accept the coffee
                 if (!success)
                 {
-                    _logger.LogWarning("No coffee machines could accept job " + job.JobId + ".");
+                    _logger.LogWarning("No coffee machines could accept job {jobId}.", job.JobId);
                 }
             }
             else
             {
-                _logger.LogWarning("Attempted to start coffee " + job.JobId + " which has already been started");
+                _logger.LogWarning("Attempted to start coffee {jobId} which has already been started.", job.JobId);
             }
         }
+
 
         /// <summary>
         /// Sends a string to the specified endpoint.
         /// </summary>
         /// <param name="payload">The string to send.</param>
         /// <param name="uri">The URI to send to.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", 
+            "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         private async Task<bool> SendRequestAsync(string payload, Uri uri)
         {
             // Create a new WebRequest
@@ -159,7 +167,7 @@ namespace Cashier.Engine
                     // Read the response from the coffee machine
                     var responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(true);
                     JsonConvert.DeserializeObject<Job>(responseString);
-                    _logger.LogDebug("Response from " + uri + ": " + responseString);
+                    if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTrace("Response from {uri}: {response}.", uri, responseString);
                     return true;
                 }
                 else
@@ -171,17 +179,17 @@ namespace Cashier.Engine
                         var apiMessage = JsonConvert.DeserializeObject<ApiMessage>(stringResponse);
                         if (stringResponse == "Machine busy!")
                         {
-                            _logger.LogInformation("Coffee machine" + uri + "is busy.");
+                            _logger.LogInformation("Coffee machine {uri} is busy.", uri);
                         }
                         else
                         {
-                            _logger.LogWarning("Coffee machine " + uri + " responded with code " + (int)responseCode + " and with message: " + apiMessage.Message);
+                            _logger.LogWarning("Coffee machine {uri} responded with code {code} and with message: {message}.", uri, (int)responseCode, apiMessage.Message);
                         }
                     }
 #pragma warning disable CA1031
                     catch (JsonSerializationException)
                     {
-                        _logger.LogWarning("Coffee machine " + uri + " responded with code " + (int)responseCode + ". The message could not be parsed.");
+                        _logger.LogWarning("Coffee machine {uri} responded with code {code}. The message could not be parsed.", uri, (int)responseCode);
                     }
 #pragma warning restore CA1031
                     return false;
@@ -189,7 +197,7 @@ namespace Cashier.Engine
             }
             catch (HttpRequestException e)
             {
-                _logger.LogError("Connecting to coffee machine " + uri + " failed: " + e.Message);
+                _logger.LogError("Connecting to coffee machine {uri} failed: {e}.", uri, e.Message);
                 return false;
             }
             finally
@@ -198,10 +206,13 @@ namespace Cashier.Engine
             }
         }
 
+
         /// <summary>
         /// Gets a list of known coffee machines from the database
         /// </summary>
         /// <returns>List of coffee machines</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", 
+            "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         private List<Uri> GetCoffeeMachines()
         {
             // Set up web request
@@ -224,7 +235,7 @@ namespace Cashier.Engine
                 machineSb.Append(machine).Append(", ");
             }
             string machineList = machineSb.ToString();
-            _logger.LogDebug("Configured machines are: " + machineList.TrimEnd().TrimEnd(",".ToCharArray()));
+            _logger.LogDebug("Configured machines are: {machines}.", machineList.TrimEnd().TrimEnd(",".ToCharArray()));
 
             return coffeeMachines;
         }

@@ -3,6 +3,7 @@ using Cashier.Engine;
 using Cashier.Models;
 using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -17,6 +18,7 @@ namespace Cashier.Controllers
     public class PlaceOrderController : ControllerBase
     {
         private readonly CashierDbContext _context;
+        private readonly ILogger _logger;
         private readonly IOrderEngine _orderEngine;
 
         /// <summary>
@@ -24,9 +26,11 @@ namespace Cashier.Controllers
         /// </summary>
         /// <param name="context">Database context.</param>
         /// <param name="orderEngine">Order Engine.</param>
-        public PlaceOrderController(CashierDbContext context, IOrderEngine orderEngine)
+        /// <param name="logger">Logger.</param>
+        public PlaceOrderController(CashierDbContext context, ILogger<PlaceOrderController> logger, IOrderEngine orderEngine)
         {
             _context = context;
+            _logger = logger;
             _orderEngine = orderEngine;
         }
 
@@ -37,6 +41,8 @@ namespace Cashier.Controllers
         /// <returns>The created order, or a message if an error occurs.</returns>
         // POST: api/Orders
         [HttpPost]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", 
+            "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public async Task<IActionResult> PostOrder([FromBody] CoffeeRequest request)
         {
             if (request == null)
@@ -54,7 +60,6 @@ namespace Cashier.Controllers
                 {
                     return BadRequest(ApiMessage.NoCoffees());
                 }
-
                 order.OrderSize += coffee.Count;
             }
 
@@ -69,16 +74,19 @@ namespace Cashier.Controllers
             {
                 for (int i = 0; i < coffee.Count; i++)
                 {
-                    order.Jobs.Add(new Job()
+                    order.Jobs.Add(new Job(order.OrderPlaced)
                     {
                         Product = coffee.Product,
                         OrderSize = order.OrderSize
                     });
+                    _logger.LogDebug("Added coffee {product} to the order.", coffee.Product);
                 }
             }
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync().ConfigureAwait(false);
+            _logger.LogInformation("Created order {orderId}.", order.OrderId);
+
             await _orderEngine.StartAllJobsAsync().ConfigureAwait(false);
 
             // Return the created order
@@ -92,13 +100,18 @@ namespace Cashier.Controllers
         /// <returns>The deleted order.</returns>
         // DELETE: api/Orders/5
         [HttpDelete("{id}")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", 
+            "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public async Task<IActionResult> DeleteOrder([FromRoute] Guid id)
         {
             var order = await _context.Orders.FindAsync(id).ConfigureAwait(true);
+
             if (order == null)
             {
                 return NotFound(ApiMessage.OrderNotFound(id));
             }
+
+            // Check if any jobs have been sent to a coffee machine
             foreach (var job in order.Jobs)
             {
                 if (!string.IsNullOrEmpty(job.Machine))
@@ -106,8 +119,10 @@ namespace Cashier.Controllers
                     return BadRequest(ApiMessage.OrderAlreadyProcessed(order.OrderId));
                 }
             }
+
             _context.Orders.Remove(order);
             await _context.SaveChangesAsync().ConfigureAwait(false);
+            _logger.LogInformation("Deleted order {orderId}.", order.OrderId);
 
             return Ok(order);
         }

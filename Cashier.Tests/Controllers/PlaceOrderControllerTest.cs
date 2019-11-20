@@ -4,6 +4,7 @@ using Cashier.Engine;
 using Cashier.Models;
 using Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace Cashier.Tests.Controllers
         {
             _context = new Setup().SetupDb(nameof(PlaceOrderControllerTest));
             _orderEngine = _mock.Object;
-            _controller = new PlaceOrderController(_context, _orderEngine);
+            _controller = new PlaceOrderController(_context, Mock.Of<ILogger<PlaceOrderController>>(), _orderEngine);
         }
 
         [Fact]
