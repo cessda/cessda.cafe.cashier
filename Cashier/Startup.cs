@@ -144,17 +144,16 @@ namespace Cashier
                     }
                 }
 
+                context.SaveChanges();
+
                 // If no coffee machines were added add the localhost coffee machine
-                var countTask = context.Machines.CountAsync();
-                countTask.Wait();
-                if (countTask.Result == 0)
+                if (context.Machines.CountAsync().Result == 0)
                 {
                     const string defaultCoffeeMachine = "http://localhost:1337/";
                     context.Machines.Add(new Machine() { CoffeeMachine = defaultCoffeeMachine });
                     logger.LogInformation("Using default coffee machine " + defaultCoffeeMachine + ".");
+                    context.SaveChanges();
                 }
-
-                context.SaveChanges();
             }
         }
     }

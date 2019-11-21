@@ -11,7 +11,7 @@ pipeline {
 		image_tag = "${docker_repo}/${product_name}-${module_name}:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
 		HOME = "/tmp"
 		build_configuration = "Release"
-		version = "1.5.0"
+		version = "1.5.1"
 	}
 
 	agent any
@@ -98,7 +98,7 @@ pipeline {
 		}
         stage('Deploy Docker image'){
             steps{
-                build job: '../cessda.cafe.deployment/master', parameters: [string(name: 'cashier_image_tag', value: "${image_tag}"), string(name: 'module', value: 'cashier')], wait: false
+                build job: '../cessda.cafe.deployment/master', parameters: [string(name: 'image_tag', value: "${image_tag}"), string(name: 'component', value: 'cashier')], wait: false
             }
 			when { branch 'master' }
         }
