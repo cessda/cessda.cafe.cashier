@@ -1,7 +1,6 @@
 ﻿using Cashier.Contexts;
 using Cashier.Models.Database;
 using Cashier.Engine;
-using Cashier.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -17,6 +16,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using System;
+using CorrelationId;
 
 namespace Cashier
 {
@@ -66,6 +66,9 @@ namespace Cashier
 
             // Set up HTTP Client for the order engine
             services.AddHttpClient<IOrderEngine, OrderEngine>();
+
+            // Set up correlation ID
+            services.AddCorrelationId();
         }
 
         /// <summary>
@@ -75,6 +78,14 @@ namespace Cashier
         /// <param name="env">Hosting Environment</param>
         public static void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseCorrelationId(new CorrelationIdOptions
+            {
+                Header = "X-Request-Id",
+                IncludeInResponse = true,
+                UseGuidForCorrelationId = true,
+                UpdateTraceIdentifier = true
+            });
+
             app.UseHealthChecks("/healthcheck", new HealthCheckOptions()
             {
                 ResponseWriter = WriteResponse
@@ -84,8 +95,6 @@ namespace Cashier
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseRequestIdMiddleware();
 
             // Register the Swagger generator and the Swagger UI middleware
             app.UseOpenApi();
@@ -120,10 +129,10 @@ namespace Cashier
             if (host == null) throw new ArgumentNullException(nameof(host));
 
             using (var scope = host.Services.CreateScope())
-            using (var context = scope.ServiceProvider.GetService<CashierDbContext>())
+            using (var context = scope.ServiceProvider.GetRequiredService<CashierDbContext>())
             {
                 // If the environment specifies a coffee machine use it, else default to localhost
-                var coffeeMachines = scope.ServiceProvider.GetService<IConfiguration>()
+                var coffeeMachines = scope.ServiceProvider.GetRequiredService<IConfiguration>()
                     .GetSection("Cafe:DefaultCoffeeMachine").AsEnumerable();
                 var logger = scope.ServiceProvider.GetService<ILogger<Startup>>();
 

@@ -2,6 +2,7 @@
 using Cashier.Models;
 using Cashier.Models.Database;
 using Cashier.Properties;
+using CorrelationId;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -21,6 +22,7 @@ namespace Cashier.Engine
     public class OrderEngine : IOrderEngine
     {
         private readonly CashierDbContext _context;
+        private readonly ICorrelationContextAccessor _correlationContext;
         private readonly HttpClient _httpClient;
         private readonly ILogger _logger;
         private readonly JsonSerializerSettings _jsonSettings;
@@ -29,10 +31,12 @@ namespace Cashier.Engine
         /// Constructor for OrderEngine, used for passing the logger and the database context.
         /// </summary>
         /// <param name="context">Coffee Database Context</param>
+        /// <param name="correlationContext">Correlation Context</param>
         /// <param name="httpClient">HTTP Client</param>
         /// <param name="logger">Logger</param>
-        public OrderEngine(CashierDbContext context, HttpClient httpClient, ILogger<OrderEngine> logger)
+        public OrderEngine(CashierDbContext context, HttpClient httpClient, ILogger<OrderEngine> logger, ICorrelationContextAccessor correlationContext)
         {
+            _correlationContext = correlationContext;
             _context = context;
             _httpClient = httpClient;
             _logger = logger;
@@ -155,6 +159,7 @@ namespace Cashier.Engine
             // Create a new WebRequest
             _logger.LogDebug("Using machine: " + uri + ".");
             var content = new StringContent(payload, Encoding.UTF8, "application/json");
+            content.Headers.Add("X-Request-Id", _correlationContext.CorrelationContext.CorrelationId);
 
             // Submit the coffee to the coffee machine
             HttpResponseMessage response;
