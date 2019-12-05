@@ -192,7 +192,7 @@ namespace Cashier.Engine
                         }
                     }
 #pragma warning disable CA1031
-                    catch (JsonSerializationException)
+                    catch (JsonReaderException)
                     {
                         _logger.LogWarning("Coffee machine {uri} responded with code {code}. The message could not be parsed.", uri, (int)responseCode);
                     }
