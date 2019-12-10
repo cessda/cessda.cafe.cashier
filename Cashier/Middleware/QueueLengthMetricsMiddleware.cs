@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Cashier.Contexts;
@@ -39,7 +38,7 @@ namespace Cashier.Middleware
             await _next(httpContext);
         }
 
-        private void ValidateParameters(CashierDbContext context)
+        private static void ValidateParameters(CashierDbContext context)
         {
             if (context == null)
             {
@@ -53,6 +52,9 @@ namespace Cashier.Middleware
     /// </summary>
     public static class QueueLengthMetricsMiddlewareExtensions
     {
+        /// <summary>
+        /// Extension method used to add the middleware to the HTTP request pipeline.
+        /// </summary>
         public static IApplicationBuilder UseQueueLengthMetricsMiddleware(this IApplicationBuilder builder)
         {
             return builder.UseMiddleware<QueueLengthMetricsMiddleware>();

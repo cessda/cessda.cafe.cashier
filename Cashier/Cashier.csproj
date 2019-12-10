@@ -25,10 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="CorrelationId" Version="2.1.0" />
     <PackageReference Include="Gelf.Extensions.Logging" Version="1.5.2" />
     <PackageReference Include="Microsoft.AspNetCore.App">
