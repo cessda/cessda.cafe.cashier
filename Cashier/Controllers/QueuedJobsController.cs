@@ -39,7 +39,7 @@ namespace Cashier.Controllers
             // For each coffee check if they are processed
             var coffees = await _context.Jobs
                 .Where(c => string.IsNullOrEmpty(c.Machine))
-                .ToListAsync().ConfigureAwait(true);
+                .ToListAsync();
 
             return new CoffeeCount(coffees);
         }

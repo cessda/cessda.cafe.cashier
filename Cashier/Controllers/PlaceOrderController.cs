@@ -84,10 +84,10 @@ namespace Cashier.Controllers
             }
 
             _context.Orders.Add(order);
-            await _context.SaveChangesAsync().ConfigureAwait(false);
+            await _context.SaveChangesAsync();
             _logger.LogInformation("Created order {orderId}.", order.OrderId);
 
-            await _orderEngine.StartAllJobsAsync().ConfigureAwait(false);
+            await _orderEngine.StartAllJobsAsync();
 
             // Return the created order
             return CreatedAtRoute(nameof(GetOrderController), new { id = order.OrderId }, order);
@@ -104,7 +104,7 @@ namespace Cashier.Controllers
             "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public async Task<IActionResult> DeleteOrder([FromRoute] Guid id)
         {
-            var order = await _context.Orders.FindAsync(id).ConfigureAwait(true);
+            var order = await _context.Orders.FindAsync(id);
 
             if (order == null)
             {
@@ -121,7 +121,7 @@ namespace Cashier.Controllers
             }
 
             _context.Orders.Remove(order);
-            await _context.SaveChangesAsync().ConfigureAwait(false);
+            await _context.SaveChangesAsync();
             _logger.LogInformation("Deleted order {orderId}.", order.OrderId);
 
             return Ok(order);

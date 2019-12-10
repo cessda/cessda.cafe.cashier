@@ -57,8 +57,8 @@ namespace Cashier.Controllers
             try
             {
                 var order = await _context.Orders.Include(b => b.Jobs)
-                    .SingleAsync(o => o.OrderId == id).ConfigureAwait(true);
-                await _orderEngine.StartOrderAsync(id).ConfigureAwait(false);
+                    .SingleAsync(o => o.OrderId == id);
+                await _orderEngine.StartOrderAsync(id);
                 return Ok(order);
             }
             catch (InvalidOperationException)

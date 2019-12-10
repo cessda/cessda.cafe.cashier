@@ -39,7 +39,7 @@ namespace Cashier.Controllers
             // For each coffee check if they are processed
             return await _context.Jobs
                 .Where(c => c.Machine != null)
-                .ToListAsync().ConfigureAwait(true);
+                .ToListAsync();
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Cashier.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Job>> GetCoffee(Guid id)
         {
-            var coffee = await _context.Jobs.FindAsync(id).ConfigureAwait(true);
+            var coffee = await _context.Jobs.FindAsync(id);
 
             // Only return coffees that are processed
             if (coffee.Machine != null)

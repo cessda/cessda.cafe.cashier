@@ -39,7 +39,7 @@ namespace Cashier.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Machine>>> GetMachines()
         {
-            return await _context.Machines.ToListAsync().ConfigureAwait(true);
+            return await _context.Machines.ToListAsync();
         }
 
         // POST: api/Configure
@@ -61,7 +61,7 @@ namespace Cashier.Controllers
             {
                 // If the coffee machine is not already configured
                 _context.Machines.Add(machine);
-                await _context.SaveChangesAsync().ConfigureAwait(false);
+                await _context.SaveChangesAsync();
 
                 _logger.LogInformation("Added coffee machine " + machine.CoffeeMachine + ".");
 
@@ -96,14 +96,14 @@ namespace Cashier.Controllers
             url = Uri.UnescapeDataString(url);
 
             // Attempt to find the coffee machine
-            var machines = await _context.Machines.FindAsync(url).ConfigureAwait(true);
+            var machines = await _context.Machines.FindAsync(url);
             if (machines == null)
             {
                 return NotFound();
             }
 
             _context.Machines.Remove(machines);
-            await _context.SaveChangesAsync().ConfigureAwait(false);
+            await _context.SaveChangesAsync();
             _logger.LogInformation("Removed coffee machine " + url + ".");
 
             return machines;

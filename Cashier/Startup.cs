@@ -17,6 +17,8 @@ using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using System;
 using CorrelationId;
+using Prometheus;
+using Cashier.Middleware;
 
 namespace Cashier
 {
@@ -78,6 +80,15 @@ namespace Cashier
         /// <param name="env">Hosting Environment</param>
         public static void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            // Prometheus
+            app.Map("/metrics", metricsApp =>
+            {
+                Metrics.SuppressDefaultMetrics();
+                metricsApp.UseQueueLengthMetricsMiddleware();
+                metricsApp.UseMetricServer("");
+            });
+
+            // Request ID
             app.UseCorrelationId(new CorrelationIdOptions
             {
                 Header = "X-Request-Id",

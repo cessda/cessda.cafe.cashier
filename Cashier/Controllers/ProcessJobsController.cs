@@ -44,7 +44,7 @@ namespace Cashier.Controllers
         {
             try
             {
-                await _orderEngine.StartAllJobsAsync().ConfigureAwait(false);
+                await _orderEngine.StartAllJobsAsync();
             }
             catch (NoCoffeeMachinesException e)
             {
@@ -52,8 +52,8 @@ namespace Cashier.Controllers
             }
 
             // Count the coffees in either state
-            var jobsDeployed = await _context.Jobs.CountAsync(c => !string.IsNullOrEmpty(c.Machine)).ConfigureAwait(true);
-            var jobsQueued = await _context.Jobs.CountAsync(c => string.IsNullOrEmpty(c.Machine)).ConfigureAwait(true);
+            var jobsDeployed = await _context.Jobs.CountAsync(c => !string.IsNullOrEmpty(c.Machine));
+            var jobsQueued = await _context.Jobs.CountAsync(c => string.IsNullOrEmpty(c.Machine));
 
             return Ok(new ApiMessage { Message = jobsDeployed + " jobs deployed, " + jobsQueued + " jobs still queued." });
         }

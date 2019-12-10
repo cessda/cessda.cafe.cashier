@@ -57,9 +57,9 @@ namespace Cashier.Engine
         public async Task StartOrderAsync(Guid id)
         {
             var order = await _context.Orders.Include(b => b.Jobs)
-                .SingleAsync(o => o.OrderId == id).ConfigureAwait(true);
+                .SingleAsync(o => o.OrderId == id);
 
-            await StartJobListAsync(order.Jobs).ConfigureAwait(false);
+            await StartJobListAsync(order.Jobs);
         }
 
         /// <summary>
@@ -67,9 +67,9 @@ namespace Cashier.Engine
         /// </summary>
         public async Task StartAllJobsAsync()
         {
-            var jobs = await _context.Jobs.ToListAsync().ConfigureAwait(true);
+            var jobs = await _context.Jobs.ToListAsync();
 
-            await StartJobListAsync(jobs).ConfigureAwait(false);
+            await StartJobListAsync(jobs);
         }
 
         private async Task StartJobListAsync(List<Job> jobs)
@@ -81,7 +81,7 @@ namespace Cashier.Engine
                 taskList.Add(StartJobAsync(job.JobId));
             }
 
-            await Task.WhenAll(taskList).ConfigureAwait(false);
+            await Task.WhenAll(taskList);
         }
 
 
@@ -119,7 +119,7 @@ namespace Cashier.Engine
                 {
                     // Break if the order has already been sent to a machine
                     if (success) break;
-                    success = await SendRequestAsync(json, machine).ConfigureAwait(true);
+                    success = await SendRequestAsync(json, machine);
 
                     // Update local state to mark that the coffee was sent to a remote machine
                     if (success)
@@ -165,19 +165,19 @@ namespace Cashier.Engine
             HttpResponseMessage response;
             try
             {
-                response = await _httpClient.PostAsync(new Uri(uri, "start-job"), content).ConfigureAwait(true);
+                response = await _httpClient.PostAsync(new Uri(uri, "start-job"), content);
 
                 if (response.IsSuccessStatusCode)
                 {
                     // Read the response from the coffee machine
-                    var responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(true);
+                    var responseString = await response.Content.ReadAsStringAsync();
                     JsonConvert.DeserializeObject<Job>(responseString);
                     if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTrace("Response from {uri}: {response}.", uri, responseString);
                     return true;
                 }
                 else
                 {
-                    var stringResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(true);
+                    var stringResponse = await response.Content.ReadAsStringAsync();
                     var responseCode = response.StatusCode;
                     try
                     {
@@ -191,12 +191,10 @@ namespace Cashier.Engine
                             _logger.LogWarning("Coffee machine {uri} responded with code {code} and with message: {message}.", uri, (int)responseCode, apiMessage.Message);
                         }
                     }
-#pragma warning disable CA1031
                     catch (JsonReaderException)
                     {
                         _logger.LogWarning("Coffee machine {uri} responded with code {code}. The message could not be parsed.", uri, (int)responseCode);
                     }
-#pragma warning restore CA1031
                     return false;
                 }
             }
