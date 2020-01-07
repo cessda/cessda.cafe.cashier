@@ -19,19 +19,19 @@ namespace Cashier.Controllers
     {
         private readonly CashierDbContext _context;
         private readonly ILogger _logger;
-        private readonly IOrderEngine _orderEngine;
+        private readonly ICoffeeMachineService _coffeeMachineService;
 
         /// <summary>
         /// Constructor for PlaceOrderController
         /// </summary>
         /// <param name="context">Database context.</param>
-        /// <param name="orderEngine">Order Engine.</param>
+        /// <param name="coffeeMachineService">Order Engine.</param>
         /// <param name="logger">Logger.</param>
-        public PlaceOrderController(CashierDbContext context, ILogger<PlaceOrderController> logger, IOrderEngine orderEngine)
+        public PlaceOrderController(CashierDbContext context, ILogger<PlaceOrderController> logger, ICoffeeMachineService coffeeMachineService)
         {
             _context = context;
             _logger = logger;
-            _orderEngine = orderEngine;
+            _coffeeMachineService = coffeeMachineService;
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace Cashier.Controllers
             await _context.SaveChangesAsync();
             _logger.LogInformation("Created order {orderId}.", order.OrderId);
 
-            await _orderEngine.StartAllJobsAsync();
+            await _coffeeMachineService.StartAllJobsAsync();
 
             // Return the created order
             return CreatedAtRoute(nameof(GetOrderController), new { id = order.OrderId }, order);

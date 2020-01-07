@@ -16,8 +16,8 @@ namespace Cashier.Tests.Controllers
     {
         private readonly CashierDbContext _context;
         private readonly ProcessJobsController _controller;
-        private readonly Mock<IOrderEngine> _mock = new Mock<IOrderEngine>();
-        private readonly IOrderEngine _orderEngine;
+        private readonly Mock<ICoffeeMachineService> _mock = new Mock<ICoffeeMachineService>();
+        private readonly ICoffeeMachineService _orderEngine;
 
         /// <summary>
         /// Constructor, used to set up tests

@@ -3,6 +3,7 @@ using Cashier.Controllers;
 using Cashier.Models;
 using Cashier.Models.Database;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 using static Cashier.Tests.TestData;
 
@@ -27,26 +28,26 @@ namespace Cashier.Tests.Controllers
         }
 
         [Fact]
-        public void GetCoffees_ReturnsAnActionResult_WithAListOfCoffees()
+        public async Task GetCoffees_ReturnsAnActionResult_WithAListOfCoffees()
         {
             // Act
-            var coffees = _controller.GetCoffees().Result.Value;
+            var coffees = await _controller.GetCoffees();
 
             // Should be a list of orders
-            Assert.IsType<CoffeeCount>(coffees);
+            Assert.IsType<CoffeeCount>(coffees.Value);
 
             // Should have a count greater than one
-            Assert.True(coffees.Count > 0);
+            Assert.True(coffees.Value.Count > 0);
 
             // All jobs should be queued
-            foreach (var job in coffees.Coffees)
+            foreach (var job in coffees.Value.Coffees)
             {
                 Assert.Null(job.Machine);
             }
         }
 
         [Fact]
-        public void GetCoffee_ReturnsAnActionResult_WithACoffee()
+        public async Task GetCoffee_ReturnsAnActionResult_WithACoffee()
         {
             // Arrange
             var id = _context.Jobs
@@ -54,16 +55,16 @@ namespace Cashier.Tests.Controllers
                 .First().JobId;
 
             // Act
-            var job = _controller.GetCoffee(id).Result.Value;
+            var job = await _controller.GetCoffee(id);
 
             // Should be a job
-            Assert.IsType<Job>(job);
+            Assert.IsType<Job>(job.Value);
 
             // Should have the same id
-            Assert.Equal(id, job.JobId);
+            Assert.Equal(id, job.Value.JobId);
 
             // Should be queued
-            Assert.Null(job.Machine);
+            Assert.Null(job.Value.Machine);
         }
     }
 }

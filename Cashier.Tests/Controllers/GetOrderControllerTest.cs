@@ -8,6 +8,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 using static Cashier.Tests.TestData;
 
@@ -17,8 +18,8 @@ namespace Cashier.Tests.Controllers
     {
         private readonly CashierDbContext _context;
         private readonly GetOrderController _controller;
-        private readonly Mock<IOrderEngine> _mock = new Mock<IOrderEngine>();
-        private readonly IOrderEngine _orderEngine;
+        private readonly Mock<ICoffeeMachineService> _mock = new Mock<ICoffeeMachineService>();
+        private readonly ICoffeeMachineService _orderEngine;
 
         /// <summary>
         /// Constructor, used to set up tests
@@ -35,26 +36,26 @@ namespace Cashier.Tests.Controllers
         }
 
         [Fact]
-        public void GetOrders_ReturnsAnActionResult_WithAListOfOrders()
+        public async Task GetOrders_ReturnsAnActionResult_WithAListOfOrders()
         {
             // Act
-            var getOrders = _controller.GetOrders().Result.Value;
+            var getOrders = await _controller.GetOrders();
 
             // Should be a list of orders
-            Assert.IsType<List<Order>>(getOrders);
+            Assert.IsType<List<Order>>(getOrders.Value);
 
             // Should be a COFFEE_WITH_MILK
             Assert.NotNull(getOrders);
         }
 
         [Fact]
-        public void GetOrder_ReturnsAnActionResult_WithAnOrder()
+        public async Task GetOrder_ReturnsAnActionResult_WithAnOrder()
         {
             // Arrange
             var id = _context.Orders.First().OrderId;
 
             // Act
-            var getOrder = _controller.GetOrder(id).Result;
+            var getOrder = await _controller.GetOrder(id);
 
             // Should be an OkObjectResult
             Assert.IsType<OkObjectResult>(getOrder);
@@ -69,13 +70,13 @@ namespace Cashier.Tests.Controllers
         }
 
         [Fact]
-        public void GetOrder_ReturnsAMessage_OnInvalidOrder()
+        public async Task GetOrder_ReturnsAMessage_OnInvalidOrder()
         {
             // Arrange
             var id = Guid.NewGuid();
 
             // Act
-            var getOrder = _controller.GetOrder(id).Result;
+            var getOrder = await _controller.GetOrder(id);
 
             // Should be a NotFoundObjectResult
             Assert.IsType<NotFoundObjectResult>(getOrder);

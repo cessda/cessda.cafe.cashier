@@ -19,7 +19,7 @@ namespace Cashier.Engine
     /// <summary>
     /// Class to hold the logic of contacting coffee machines.
     /// </summary>
-    public class OrderEngine : IOrderEngine
+    public class CoffeeMachineService : ICoffeeMachineService
     {
         private readonly CashierDbContext _context;
         private readonly ICorrelationContextAccessor _correlationContext;
@@ -34,7 +34,7 @@ namespace Cashier.Engine
         /// <param name="correlationContext">Correlation Context</param>
         /// <param name="httpClient">HTTP Client</param>
         /// <param name="logger">Logger</param>
-        public OrderEngine(CashierDbContext context, HttpClient httpClient, ILogger<OrderEngine> logger, ICorrelationContextAccessor correlationContext)
+        public CoffeeMachineService(CashierDbContext context, HttpClient httpClient, ILogger<CoffeeMachineService> logger, ICorrelationContextAccessor correlationContext)
         {
             _correlationContext = correlationContext;
             _context = context;
@@ -56,9 +56,7 @@ namespace Cashier.Engine
         /// <param name="id">The order to start.</param>
         public async Task StartOrderAsync(Guid id)
         {
-            var order = await _context.Orders.Include(b => b.Jobs)
-                .SingleAsync(o => o.OrderId == id);
-
+            var order = await _context.Orders.Include(b => b.Jobs).SingleAsync(o => o.OrderId == id);
             await StartJobListAsync(order.Jobs);
         }
 
@@ -67,11 +65,14 @@ namespace Cashier.Engine
         /// </summary>
         public async Task StartAllJobsAsync()
         {
-            var jobs = await _context.Jobs.ToListAsync();
-
+            var jobs = await _context.Jobs.Where(j => string.IsNullOrEmpty(j.Machine)).ToListAsync();
             await StartJobListAsync(jobs);
         }
 
+        /// <summary>
+        /// Starts the jobs specified in the job list.
+        /// </summary>
+        /// <param name="jobs">The list of jobs to start.</param>
         private async Task StartJobListAsync(List<Job> jobs)
         {
             var taskList = new List<Task>();
@@ -89,8 +90,6 @@ namespace Cashier.Engine
         /// Start the specified coffee
         /// </summary>
         /// <param name="id">ID of coffee to start</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization",
-            "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public async Task StartJobAsync(Guid id)
         {
             // Load the coffee
@@ -152,61 +151,56 @@ namespace Cashier.Engine
         /// </summary>
         /// <param name="payload">The string to send.</param>
         /// <param name="uri">The URI to send to.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", 
-            "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         private async Task<bool> SendRequestAsync(string payload, Uri uri)
         {
             // Create a new WebRequest
-            _logger.LogDebug("Using machine: " + uri + ".");
-            var content = new StringContent(payload, Encoding.UTF8, "application/json");
-            content.Headers.Add("X-Request-Id", _correlationContext.CorrelationContext.CorrelationId);
-
-            // Submit the coffee to the coffee machine
-            HttpResponseMessage response;
-            try
+            using (var content = new StringContent(payload, Encoding.UTF8, "application/json"))
             {
-                response = await _httpClient.PostAsync(new Uri(uri, "start-job"), content);
+                // Forward the request id
+                content.Headers.Add("X-Request-Id", _correlationContext.CorrelationContext.CorrelationId);
 
-                if (response.IsSuccessStatusCode)
+                // Submit the coffee to the coffee machine
+                HttpResponseMessage response;
+                try
                 {
-                    // Read the response from the coffee machine
-                    var responseString = await response.Content.ReadAsStringAsync();
-                    JsonConvert.DeserializeObject<Job>(responseString);
-                    if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTrace("Response from {uri}: {response}.", uri, responseString);
-                    return true;
-                }
-                else
-                {
-                    var stringResponse = await response.Content.ReadAsStringAsync();
-                    var responseCode = response.StatusCode;
-                    try
+                    response = await _httpClient.PostAsync(new Uri(uri, "start-job"), content);
+
+                    if (response.IsSuccessStatusCode)
                     {
-                        var apiMessage = JsonConvert.DeserializeObject<ApiMessage>(stringResponse);
-                        if (stringResponse == "Machine busy!")
+                        // Read the response from the coffee machine
+                        var responseString = await response.Content.ReadAsStringAsync();
+                        JsonConvert.DeserializeObject<Job>(responseString);
+                        if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTrace("Response from {CoffeeMachineUri}: {response}.", uri, responseString);
+                        return true;
+                    }
+                    else
+                    {
+                        var stringResponse = await response.Content.ReadAsStringAsync();
+                        var responseCode = response.StatusCode;
+                        try
                         {
-                            _logger.LogInformation("Coffee machine {uri} is busy.", uri);
+                            var apiMessage = JsonConvert.DeserializeObject<ApiMessage>(stringResponse);
+                            if (stringResponse == "Machine busy!")
+                            {
+                                _logger.LogInformation("Coffee machine {CoffeeMachineUri} is busy.", uri);
+                            }
+                            else
+                            {
+                                _logger.LogWarning("Coffee machine {CoffeeMachineUri} responded with code {code} and with message: {message}.", uri, (int)responseCode, apiMessage.Message);
+                            }
                         }
-                        else
+                        catch (JsonReaderException)
                         {
-                            _logger.LogWarning("Coffee machine {uri} responded with code {code} and with message: {message}.", uri, (int)responseCode, apiMessage.Message);
+                            _logger.LogWarning("Coffee machine {CoffeeMachineUri} responded with code {code}. The message could not be parsed.", uri, (int)responseCode);
                         }
                     }
-                    catch (JsonReaderException)
-                    {
-                        _logger.LogWarning("Coffee machine {uri} responded with code {code}. The message could not be parsed.", uri, (int)responseCode);
-                    }
-                    return false;
+                }
+                catch (HttpRequestException e)
+                {
+                    _logger.LogError("Connecting to coffee machine {CoffeeMachineUri} failed: {e}.", uri, e.Message);
                 }
             }
-            catch (HttpRequestException e)
-            {
-                _logger.LogError("Connecting to coffee machine {uri} failed: {e}.", uri, e.Message);
-                return false;
-            }
-            finally
-            {
-                content.Dispose();
-            }
+            return false;
         }
 
 

@@ -64,10 +64,10 @@ namespace Cashier
             });
 
             // Set up engine
-            services.AddScoped<IOrderEngine, OrderEngine>();
+            services.AddScoped<ICoffeeMachineService, CoffeeMachineService>();
 
             // Set up HTTP Client for the order engine
-            services.AddHttpClient<IOrderEngine, OrderEngine>();
+            services.AddHttpClient<ICoffeeMachineService, CoffeeMachineService>();
 
             // Set up correlation ID
             services.AddCorrelationId();

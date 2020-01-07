@@ -19,17 +19,15 @@ namespace Cashier.Controllers
     public class ProcessJobsController : ControllerBase
     {
         private readonly CashierDbContext _context;
-        private readonly IOrderEngine _orderEngine;
+        private readonly ICoffeeMachineService _coffeeMachineService;
 
         /// <summary>
         /// Constructor for ProcessJobsController.
         /// </summary>
-        /// <param name="context">Database Context.</param>
-        /// <param name="orderEngine">Engine to process orders.</param>
-        public ProcessJobsController(CashierDbContext context, IOrderEngine orderEngine)
+        public ProcessJobsController(CashierDbContext context, ICoffeeMachineService coffeeMachineService)
         {
             _context = context;
-            _orderEngine = orderEngine;
+            _coffeeMachineService = coffeeMachineService;
         }
 
         // POST: api/ProcessJobs
@@ -44,7 +42,7 @@ namespace Cashier.Controllers
         {
             try
             {
-                await _orderEngine.StartAllJobsAsync();
+                await _coffeeMachineService.StartAllJobsAsync();
             }
             catch (NoCoffeeMachinesException e)
             {

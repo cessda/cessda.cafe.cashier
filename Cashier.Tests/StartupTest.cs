@@ -11,7 +11,7 @@ namespace Cashier.Tests
         {
             var webHost = Program.CreateWebHostBuilder(new string[0]);
             Assert.NotNull(webHost);
-            Assert.NotNull(webHost.Services.GetRequiredService<IOrderEngine>());
+            Assert.NotNull(webHost.Services.GetRequiredService<ICoffeeMachineService>());
         }
     }
 }

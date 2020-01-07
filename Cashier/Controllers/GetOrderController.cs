@@ -19,12 +19,12 @@ namespace Cashier.Controllers
     public class GetOrderController : ControllerBase
     {
         private readonly CashierDbContext _context;
-        private readonly IOrderEngine _orderEngine;
+        private readonly ICoffeeMachineService _orderEngine;
 
         /// <summary>
         /// Constructor for GetOrderController.
         /// </summary>
-        public GetOrderController(CashierDbContext context, IOrderEngine orderEngine)
+        public GetOrderController(CashierDbContext context, ICoffeeMachineService orderEngine)
         {
             _context = context;
             _orderEngine = orderEngine;
@@ -38,7 +38,7 @@ namespace Cashier.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Order>>> GetOrders()
         {
-            return await _context.Orders.Include(b => b.Jobs).ToListAsync().ConfigureAwait(true);
+            return await _context.Orders.Include(b => b.Jobs).ToListAsync();
         }
 
         /// <summary>
@@ -56,8 +56,7 @@ namespace Cashier.Controllers
             }
             try
             {
-                var order = await _context.Orders.Include(b => b.Jobs)
-                    .SingleAsync(o => o.OrderId == id);
+                var order = await _context.Orders.Include(b => b.Jobs).SingleAsync(o => o.OrderId == id);
                 await _orderEngine.StartOrderAsync(id);
                 return Ok(order);
             }

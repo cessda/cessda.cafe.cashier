@@ -6,7 +6,7 @@ namespace Cashier.Engine
     /// <summary>
     /// Exposes the order engine, which sends coffees to remote coffee machines.
     /// </summary>
-    public interface IOrderEngine
+    public interface ICoffeeMachineService
     {
         /// <summary>
         /// Starts the jobs associated with an order.
