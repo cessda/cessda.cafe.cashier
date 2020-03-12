@@ -46,7 +46,7 @@ pipeline {
 					}					
 					post {
 						always {
-							archiveArtifacts 'Cashier/bin/Release/netcoreapp2.2/**'
+							archiveArtifacts 'Cashier/bin/Release/**'
 							recordIssues(tools: [msBuild()])
 						}
 					}
