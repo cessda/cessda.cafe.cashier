@@ -11,7 +11,7 @@ pipeline {
 		image_tag = "${docker_repo}/${product_name}-${module_name}:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
 		HOME = "/tmp"
 		build_configuration = "Release"
-		version = "1.6.0"
+		version = "1.7.0"
 	}
 
 	agent any
@@ -82,9 +82,7 @@ pipeline {
 		}
 		stage('Build Docker Container') {
 			steps {
-                dir('./Cashier/') {
-				    sh "docker build -t ${image_tag} ."
-                }
+				sh "docker build -t ${image_tag} -f Dockerfile ./Cashier/"
 			}
 			when { branch 'master' }
 		}

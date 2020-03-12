@@ -30,10 +30,6 @@ namespace Cashier.Engine
         /// <summary>
         /// Constructor for OrderEngine, used for passing the logger and the database context.
         /// </summary>
-        /// <param name="context">Coffee Database Context</param>
-        /// <param name="correlationContext">Correlation Context</param>
-        /// <param name="httpClient">HTTP Client</param>
-        /// <param name="logger">Logger</param>
         public CoffeeMachineService(CashierDbContext context, HttpClient httpClient, ILogger<CoffeeMachineService> logger, ICorrelationContextAccessor correlationContext)
         {
             _correlationContext = correlationContext;
@@ -75,13 +71,7 @@ namespace Cashier.Engine
         /// <param name="jobs">The list of jobs to start.</param>
         private async Task StartJobListAsync(List<Job> jobs)
         {
-            var taskList = new List<Task>();
-
-            foreach (var job in jobs)
-            {
-                taskList.Add(StartJobAsync(job.JobId));
-            }
-
+            var taskList = jobs.Select(job => StartJobAsync(job.JobId)).ToList();
             await Task.WhenAll(taskList);
         }
 
@@ -110,14 +100,18 @@ namespace Cashier.Engine
                     Product = job.Product
                 };
 
-                var json = JsonConvert.SerializeObject(coffeePayload, _jsonSettings);
+                string json = JsonConvert.SerializeObject(coffeePayload, _jsonSettings);
                 _logger.LogDebug("Created JSON: {json}.", json);
 
                 // Iterate through all known coffee machines
                 foreach (var machine in coffeeMachines)
                 {
                     // Break if the order has already been sent to a machine
-                    if (success) break;
+                    if (success)
+                    {
+                        break;
+                    }
+
                     success = await SendRequestAsync(json, machine);
 
                     // Update local state to mark that the coffee was sent to a remote machine
@@ -168,14 +162,18 @@ namespace Cashier.Engine
                     if (response.IsSuccessStatusCode)
                     {
                         // Read the response from the coffee machine
-                        var responseString = await response.Content.ReadAsStringAsync();
+                        string responseString = await response.Content.ReadAsStringAsync();
                         JsonConvert.DeserializeObject<Job>(responseString);
-                        if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTrace("Response from {CoffeeMachineUri}: {response}.", uri, responseString);
+                        if (_logger.IsEnabled(LogLevel.Trace))
+                        {
+                            _logger.LogTrace("Response from {CoffeeMachineUri}: {response}.", uri, responseString);
+                        }
+
                         return true;
                     }
                     else
                     {
-                        var stringResponse = await response.Content.ReadAsStringAsync();
+                        string stringResponse = await response.Content.ReadAsStringAsync();
                         var responseCode = response.StatusCode;
                         try
                         {
@@ -208,16 +206,12 @@ namespace Cashier.Engine
         /// Gets a list of known coffee machines from the database
         /// </summary>
         /// <returns>List of coffee machines</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization",
             "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         private List<Uri> GetCoffeeMachines()
         {
             // Set up web request
-            var coffeeMachines = new List<Uri>();
-            foreach (var machine in _context.Machines.ToList())
-            {
-                coffeeMachines.Add(new Uri(machine.CoffeeMachine));
-            }
+            var coffeeMachines = _context.Machines.Select(machine => new Uri(machine.CoffeeMachine)).ToList();
 
             // Make sure that there are some machines configured
             if (coffeeMachines.Count == 0)

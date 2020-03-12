@@ -37,8 +37,8 @@ namespace Cashier.Tests.Controllers
         public async Task PostCoffee_ReturnsAnApiMessage()
         {
             // Arrange
-            var processedCoffees = _context.Jobs.Count(c => !string.IsNullOrEmpty(c.Machine));
-            var queuedCoffees = _context.Jobs.Count(c => string.IsNullOrEmpty(c.Machine));
+            int processedCoffees = _context.Jobs.Count(c => !string.IsNullOrEmpty(c.Machine));
+            int queuedCoffees = _context.Jobs.Count(c => string.IsNullOrEmpty(c.Machine));
             _mock.Setup(o => o.StartAllJobsAsync());
 
             // Act

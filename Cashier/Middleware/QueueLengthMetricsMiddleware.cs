@@ -1,11 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Cashier.Contexts;
+﻿using Cashier.Contexts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Prometheus;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Cashier.Middleware
 {
@@ -15,6 +15,7 @@ namespace Cashier.Middleware
     public class QueueLengthMetricsMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly Gauge gauge = Metrics.CreateGauge("cashier_queue_length", "The current queue length.");
 
         /// <summary>
         /// DI Constructor
@@ -31,9 +32,7 @@ namespace Cashier.Middleware
         {
             ValidateParameters(context);
 
-            var gague = Metrics.CreateGauge("cashier_queue_length", "The current queue length.");
-
-            gague.Set(await context.Jobs.Where(c => string.IsNullOrEmpty(c.Machine)).CountAsync());
+            gauge.Set(await context.Jobs.Where(c => string.IsNullOrEmpty(c.Machine)).CountAsync());
 
             await _next(httpContext);
         }

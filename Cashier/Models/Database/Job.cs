@@ -12,7 +12,7 @@ namespace Cashier.Models.Database
         /// <summary>
         /// Create a new Job object with the OrderPlaced set to the current time
         /// </summary>
-        public Job() 
+        public Job()
         {
             OrderPlaced = DateTime.Now;
         }

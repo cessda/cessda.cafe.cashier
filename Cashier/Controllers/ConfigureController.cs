@@ -78,7 +78,7 @@ namespace Cashier.Controllers
         /// <param name="url">The URL of the coffee machine to remove.</param>
         /// <returns>The removed coffee machine.</returns>
         [HttpDelete("{url}")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1054:Uri parameters should not be strings", 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1054:Uri parameters should not be strings",
             Justification = "Validation is performed before any operation is performed")]
         public async Task<ActionResult<Machine>> DeleteMachines(string url)
         {

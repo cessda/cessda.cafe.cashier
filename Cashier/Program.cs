@@ -13,8 +13,7 @@ namespace Cashier
     {
         public static void Main(string[] args)
         {
-            var host = CreateWebHostBuilder(args);
-
+            using var host = CreateWebHostBuilder(args);
             using (var scope = host.Services.CreateScope())
             using (var context = scope.ServiceProvider.GetService<CashierDbContext>())
             {
@@ -24,11 +23,11 @@ namespace Cashier
             Startup.ConfigureCoffeeMachines(host);
 
             host.Run();
-            host.Dispose();
         }
 
-        public static IWebHost CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+        public static IWebHost CreateWebHostBuilder(string[] args)
+        {
+            return WebHost.CreateDefaultBuilder(args)
                 .ConfigureLogging((hostingContext, logging) =>
                 {
                     // Only configure GELF if a host is specified
@@ -46,5 +45,6 @@ namespace Cashier
                 })
                 .UseStartup<Startup>()
                 .Build();
+        }
     }
 }

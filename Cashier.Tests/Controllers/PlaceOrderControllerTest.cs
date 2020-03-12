@@ -54,7 +54,7 @@ namespace Cashier.Tests.Controllers
             _context.SaveChanges();
 
             // Make a copy of the id
-            Guid id = _context.Orders.First().OrderId;
+            var id = _context.Orders.First().OrderId;
 
             // Act
             var deleteOrder = await _controller.DeleteOrder(id);

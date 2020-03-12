@@ -1,19 +1,5 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
+# Dockerfile for Jenkins, use the Dockerfile in the root directory to run locally
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim
 WORKDIR /app
-EXPOSE 80
-
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
-WORKDIR /src
-COPY ["Cashier/Cashier.csproj", "Cashier/"]
-RUN dotnet restore "Cashier/Cashier.csproj"
-COPY . .
-WORKDIR "/src/Cashier"
-RUN dotnet build "Cashier.csproj" -c Release -o /app
-
-FROM build AS publish
-RUN dotnet publish "Cashier.csproj" -c Release -o /app
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app .
+COPY /publish .
 ENTRYPOINT ["dotnet", "Cashier.dll"]

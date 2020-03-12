@@ -2,7 +2,6 @@
 using Cashier.Engine;
 using Cashier.Exceptions;
 using Cashier.Models;
-using Cashier.Models.Database;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -50,8 +49,8 @@ namespace Cashier.Controllers
             }
 
             // Count the coffees in either state
-            var jobsDeployed = await _context.Jobs.CountAsync(c => !string.IsNullOrEmpty(c.Machine));
-            var jobsQueued = await _context.Jobs.CountAsync(c => string.IsNullOrEmpty(c.Machine));
+            int jobsDeployed = await _context.Jobs.CountAsync(c => !string.IsNullOrEmpty(c.Machine));
+            int jobsQueued = await _context.Jobs.CountAsync(c => string.IsNullOrEmpty(c.Machine));
 
             return Ok(new ApiMessage { Message = jobsDeployed + " jobs deployed, " + jobsQueued + " jobs still queued." });
         }

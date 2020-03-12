@@ -41,7 +41,7 @@ namespace Cashier.Controllers
         /// <returns>The created order, or a message if an error occurs.</returns>
         // POST: api/Orders
         [HttpPost]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization",
             "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public async Task<IActionResult> PostOrder([FromBody] CoffeeRequest request)
         {
@@ -100,7 +100,7 @@ namespace Cashier.Controllers
         /// <returns>The deleted order.</returns>
         // DELETE: api/Orders/5
         [HttpDelete("{id}")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization",
             "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public async Task<IActionResult> DeleteOrder([FromRoute] Guid id)
         {
