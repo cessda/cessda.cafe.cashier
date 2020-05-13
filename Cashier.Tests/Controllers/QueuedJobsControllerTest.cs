@@ -28,10 +28,10 @@ namespace Cashier.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetCoffees_ReturnsAnActionResult_WithAListOfCoffees()
+        public void GetCoffees_ReturnsAnActionResult_WithAListOfCoffees()
         {
             // Act
-            var coffees = await _controller.GetCoffees();
+            var coffees = _controller.GetCoffees();
 
             // Should be a list of orders
             Assert.IsType<CoffeeCount>(coffees.Value);
