@@ -29,7 +29,8 @@ pipeline {
 				stage('Start SonarQube') {
 					steps {
 						withSonarQubeEnv('cessda-sonar') {
-							sh("dotnet sonarscanner begin " + 
+							sh "dotnet tool install --global dotnet-sonarscanner"
+							sh("export PATH=\"$PATH:/tmp/.dotnet/tools\" && dotnet sonarscanner begin " + 
 							"/k:'eu.cessda.cafe:cashier' /v:${version}.${env.BUILD_NUMBER}  /n:'CESSDA Café: Cashier' " +
 							"/d:'sonar.cs.opencover.reportsPaths=Cashier.Tests/coverage.opencover.xml' " +
 							"/d:'sonar.projectDescription=Cashier implementation of the CESSDA Coffee API' " +
