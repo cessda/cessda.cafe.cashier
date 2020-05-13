@@ -8,9 +8,14 @@ using System.Reflection;
 
 namespace Cashier
 {
-#pragma warning disable CS1591
+    /// <summary>
+    /// Sets up and runs the cashier
+    /// </summary>
     public static class Program
     {
+        /// <summary>
+        /// Starts the cashier
+        /// </summary>
         public static void Main(string[] args)
         {
             using var host = CreateWebHostBuilder(args);
@@ -25,6 +30,9 @@ namespace Cashier
             host.Run();
         }
 
+        /// <summary>
+        /// Creates the web host for the cashier
+        /// </summary>
         public static IWebHost CreateWebHostBuilder(string[] args)
         {
             return WebHost.CreateDefaultBuilder(args)

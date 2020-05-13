@@ -1,6 +1,7 @@
 ﻿using Cashier.Models.Database;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Cashier.Models
 {
@@ -12,23 +13,23 @@ namespace Cashier.Models
         /// <summary>
         /// Counts the amounts of coffees held by this class.
         /// </summary>
-        public CoffeeCount(List<Job> coffees)
+        public CoffeeCount(IEnumerable<Job> coffees)
         {
             if (coffees == null)
             {
                 throw new ArgumentNullException(nameof(coffees));
             }
-            Count = coffees.Count;
-            Coffees = coffees;
+            Coffees = coffees.ToImmutableList();
+            Count = Coffees.Count;
         }
         /// <summary>
         /// Amount of coffees held.
         /// </summary>
-        public int Count { get; private set; }
+        public int Count { get; }
 
         /// <summary>
         /// Coffees to be counted.
         /// </summary>
-        public virtual List<Job> Coffees { get; } = new List<Job>();
+        public ImmutableList<Job> Coffees { get; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Cashier.Contexts;
+using Cashier.Exceptions;
 using Cashier.Models;
 using Cashier.Models.Database;
 using Cashier.Properties;
@@ -59,20 +60,20 @@ namespace Cashier.Engine
         /// <summary>
         /// Starts all jobs that haven't been started.
         /// </summary>
-        public async Task StartAllJobsAsync()
+        public Task StartAllJobsAsync()
         {
-            var jobs = await _context.Jobs.Where(j => string.IsNullOrEmpty(j.Machine)).ToListAsync();
-            await StartJobListAsync(jobs);
+            var jobs = _context.Jobs.Where(j => string.IsNullOrEmpty(j.Machine));
+            return StartJobListAsync(jobs);
         }
 
         /// <summary>
         /// Starts the jobs specified in the job list.
         /// </summary>
         /// <param name="jobs">The list of jobs to start.</param>
-        private async Task StartJobListAsync(List<Job> jobs)
+        private Task StartJobListAsync(IEnumerable<Job> jobs)
         {
-            var taskList = jobs.Select(job => StartJobAsync(job.JobId)).ToList();
-            await Task.WhenAll(taskList);
+            var taskList = jobs.Select(job => StartJobAsync(job.JobId));
+            return Task.WhenAll(taskList);
         }
 
 
@@ -83,7 +84,7 @@ namespace Cashier.Engine
         public async Task StartJobAsync(Guid id)
         {
             // Load the coffee
-            var job = _context.Jobs.Single(c => c.JobId == id);
+            var job = await _context.Jobs.SingleAsync(c => c.JobId == id);
 
             // Check if the coffee has already been sent to a machine
             if (string.IsNullOrEmpty(job.Machine))
@@ -104,7 +105,7 @@ namespace Cashier.Engine
                 _logger.LogDebug("Created JSON: {json}.", json);
 
                 // Iterate through all known coffee machines
-                foreach (var machine in coffeeMachines)
+                foreach (var machine in await coffeeMachines)
                 {
                     // Break if the order has already been sent to a machine
                     if (success)
@@ -119,8 +120,8 @@ namespace Cashier.Engine
                     {
                         // Mark the time that the order was sent
                         _logger.LogInformation("Sent job {jobId} to machine {machine}.", job.JobId, machine);
-                        job.JobStarted = DateTime.Now;
-                        job.Machine = machine.ToString();
+                        job.SetJobStarted();
+                        job.SetMachine(machine);
 
                         // Update the database
                         _context.Entry(job).State = EntityState.Modified;
@@ -162,8 +163,8 @@ namespace Cashier.Engine
                     if (response.IsSuccessStatusCode)
                     {
                         // Read the response from the coffee machine
-                        string responseString = await response.Content.ReadAsStringAsync();
-                        JsonConvert.DeserializeObject<Job>(responseString);
+                        var responseString = response.Content.ReadAsStringAsync();
+                        JsonConvert.DeserializeObject<Job>(await responseString);
                         if (_logger.IsEnabled(LogLevel.Trace))
                         {
                             _logger.LogTrace("Response from {CoffeeMachineUri}: {response}.", uri, responseString);
@@ -208,15 +209,15 @@ namespace Cashier.Engine
         /// <returns>List of coffee machines</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization",
             "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
-        private List<Uri> GetCoffeeMachines()
+        private async Task<List<Uri>> GetCoffeeMachines()
         {
             // Set up web request
-            var coffeeMachines = _context.Machines.Select(machine => new Uri(machine.CoffeeMachine)).ToList();
+            var coffeeMachines = await _context.Machines.Select(machine => new Uri(machine.CoffeeMachine)).ToListAsync();
 
             // Make sure that there are some machines configured
             if (coffeeMachines.Count == 0)
             {
-                throw new Exceptions.NoCoffeeMachinesException(Resources.NoCoffeeMachines);
+                throw new NoCoffeeMachinesException(Resources.NoCoffeeMachines);
             }
 
             // Log known coffee machines

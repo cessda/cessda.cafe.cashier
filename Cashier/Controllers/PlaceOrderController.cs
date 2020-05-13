@@ -87,7 +87,7 @@ namespace Cashier.Controllers
             await _context.SaveChangesAsync();
             _logger.LogInformation("Created order {orderId}.", order.OrderId);
 
-            await _coffeeMachineService.StartAllJobsAsync();
+            _ = _coffeeMachineService.StartAllJobsAsync();
 
             // Return the created order
             return CreatedAtRoute(nameof(GetOrderController), new { id = order.OrderId }, order);

@@ -49,10 +49,10 @@ namespace Cashier.Controllers
             }
 
             // Count the coffees in either state
-            int jobsDeployed = await _context.Jobs.CountAsync(c => !string.IsNullOrEmpty(c.Machine));
-            int jobsQueued = await _context.Jobs.CountAsync(c => string.IsNullOrEmpty(c.Machine));
+            var jobsDeployed = _context.Jobs.CountAsync(c => !string.IsNullOrEmpty(c.Machine));
+            var jobsQueued = _context.Jobs.CountAsync(c => string.IsNullOrEmpty(c.Machine));
 
-            return Ok(new ApiMessage { Message = jobsDeployed + " jobs deployed, " + jobsQueued + " jobs still queued." });
+            return Ok(new ApiMessage { Message = await jobsDeployed + " jobs deployed, " + await jobsQueued + " jobs still queued." });
         }
     }
 }
