@@ -6,4 +6,3 @@ RUN apt-get -qq install default-jre-headless
 
 # Install SonarScanner
 RUN dotnet tool install --global dotnet-sonarscanner
-ENV PATH="${PATH}:/tmp/.dotnet/tools"

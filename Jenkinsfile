@@ -29,7 +29,7 @@ pipeline {
 				stage('Start SonarQube') {
 					steps {
 						withSonarQubeEnv('cessda-sonar') {
-							sh("dotnet-sonarscanner begin " + 
+							sh("dotnet sonarscanner begin " + 
 							"/k:'eu.cessda.cafe:cashier' /v:${version}.${env.BUILD_NUMBER}  /n:'CESSDA Café: Cashier' " +
 							"/d:'sonar.cs.opencover.reportsPaths=Cashier.Tests/coverage.opencover.xml' " +
 							"/d:'sonar.projectDescription=Cashier implementation of the CESSDA Coffee API' " +
@@ -63,7 +63,7 @@ pipeline {
 				stage('Run Sonar Scan') {
 					steps {
 						withSonarQubeEnv('cessda-sonar') {
-							sh "export PATH=\"$PATH:/tmp/.dotnet/tools\" && dotnet-sonarscanner end"
+							sh "export PATH=\"$PATH:/tmp/.dotnet/tools\" && dotnet sonarscanner end"
 						}
 						timeout(time: 1, unit: 'HOURS') {
 							waitForQualityGate abortPipeline: false
