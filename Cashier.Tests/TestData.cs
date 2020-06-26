@@ -1,5 +1,6 @@
 ﻿using Cessda.Cafe.Cashier.Models;
 using Cessda.Cafe.Cashier.Models.Database;
+using System;
 using System.Collections.Generic;
 
 namespace Cessda.Cafe.Cashier.Tests
@@ -16,33 +17,30 @@ namespace Cessda.Cafe.Cashier.Tests
                     Product = ECoffeeType.COFFEE_WITH_MILK,
                     OrderSize = 1
                 },
-                new Job
+                new Job(new Uri("http://localhost:1337/"))
                 {
                     Product = ECoffeeType.ESPRESSO_CHOCOLATE,
-                    OrderSize = 3,
-                    Machine = "http://localhost:1337/"
+                    OrderSize = 3
                 },
                 new Job
                 {
                     Product = ECoffeeType.MOCCACHINO,
                     OrderSize = 2
                 },
-                new Job
+                new Job(new Uri("http://localhost:1337/"))
                 {
                     Product = ECoffeeType.HOT_WATER,
-                    OrderSize = 1,
-                    Machine = "http://localhost:1337/"
+                    OrderSize = 1
                 }
             });
 
             var order2 = new Order() { OrderSize = 1 };
             order2.Jobs.AddRange(new List<Job>()
             {
-                new Job()
+                new Job(new Uri("http://localhost:1337/"))
                 {
                     Product = ECoffeeType.KAKAO,
-                    OrderSize = 1,
-                    Machine = "http://localhost:1337/"
+                    OrderSize = 1
                 }
             });
 

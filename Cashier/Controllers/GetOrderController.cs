@@ -57,7 +57,7 @@ namespace Cessda.Cafe.Cashier.Controllers
             try
             {
                 var order = await _context.Orders.Include(b => b.Jobs).SingleAsync(o => o.OrderId == id);
-                await _orderEngine.StartOrderAsync(id);
+                _ = _orderEngine.StartOrderAsync(id);
                 return Ok(order);
             }
             catch (InvalidOperationException)

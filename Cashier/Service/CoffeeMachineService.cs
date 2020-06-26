@@ -1,4 +1,5 @@
 ﻿using Cessda.Cafe.Cashier.Contexts;
+using Cessda.Cafe.Cashier.Exceptions;
 using Cessda.Cafe.Cashier.Models;
 using Cessda.Cafe.Cashier.Models.Database;
 using Cessda.Cafe.Cashier.Properties;
@@ -59,10 +60,10 @@ namespace Cessda.Cafe.Cashier.Service
         /// <summary>
         /// Starts all jobs that haven't been started.
         /// </summary>
-        public async Task StartAllJobsAsync()
+        public Task StartAllJobsAsync()
         {
-            var jobs = await _context.Jobs.Where(j => string.IsNullOrEmpty(j.Machine)).ToListAsync();
-            await StartJobListAsync(jobs);
+            var jobs = _context.Jobs.Where(j => string.IsNullOrEmpty(j.Machine));
+            return StartJobListAsync(jobs);
         }
 
         /// <summary>
@@ -71,7 +72,7 @@ namespace Cessda.Cafe.Cashier.Service
         /// <param name="jobs">The list of jobs to start.</param>
         private Task StartJobListAsync(IEnumerable<Job> jobs)
         {
-            var taskList = jobs.Select(job => StartJobAsync(job.JobId)).ToList();
+            var taskList = jobs.Select(job => StartJobAsync(job.JobId));
             return Task.WhenAll(taskList);
         }
 
@@ -83,7 +84,7 @@ namespace Cessda.Cafe.Cashier.Service
         public async Task StartJobAsync(Guid id)
         {
             // Load the coffee
-            var job = _context.Jobs.Single(c => c.JobId == id);
+            var job = await _context.Jobs.SingleAsync(c => c.JobId == id);
 
             // Check if the coffee has already been sent to a machine
             if (string.IsNullOrEmpty(job.Machine))
@@ -119,8 +120,8 @@ namespace Cessda.Cafe.Cashier.Service
                     {
                         // Mark the time that the order was sent
                         _logger.LogInformation("Sent job {jobId} to machine {machine}.", job.JobId, machine);
-                        job.JobStarted = DateTime.Now;
-                        job.Machine = machine.ToString();
+                        job.SetJobStarted();
+                        job.SetMachine(machine);
 
                         // Update the database
                         _context.Entry(job).State = EntityState.Modified;
@@ -162,8 +163,8 @@ namespace Cessda.Cafe.Cashier.Service
                     if (response.IsSuccessStatusCode)
                     {
                         // Read the response from the coffee machine
-                        string responseString = await response.Content.ReadAsStringAsync();
-                        JsonConvert.DeserializeObject<Job>(responseString);
+                        var responseString = response.Content.ReadAsStringAsync();
+                        JsonConvert.DeserializeObject<Job>(await responseString);
                         if (_logger.IsEnabled(LogLevel.Trace))
                         {
                             _logger.LogTrace("Response from {CoffeeMachineUri}: {response}.", uri, responseString);
@@ -215,7 +216,7 @@ namespace Cessda.Cafe.Cashier.Service
             // Make sure that there are some machines configured
             if (coffeeMachines.Count == 0)
             {
-                throw new Exceptions.NoCoffeeMachinesException(Resources.NoCoffeeMachines);
+                throw new NoCoffeeMachinesException(Resources.NoCoffeeMachines);
             }
 
             // Log known coffee machines

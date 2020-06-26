@@ -23,11 +23,19 @@ using System.Threading.Tasks;
 
 namespace Cessda.Cafe.Cashier
 {
-#pragma warning disable CS1591
+    /// <summary>
+    /// Configures the cashier
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// Key/Value application properties
+        /// </summary>
         public IConfiguration Configuration { get; }
 
+        /// <summary>
+        /// Injects configuration into the startup
+        /// </summary>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -142,7 +150,7 @@ namespace Cessda.Cafe.Cashier
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization",
             "CA1303:Do not pass literals as localized parameters", Justification = "Logger")]
-        public static void ConfigureCoffeeMachines(IWebHost host)
+        internal static void ConfigureCoffeeMachines(IWebHost host)
         {
             // Validate parameters
             if (host == null)
