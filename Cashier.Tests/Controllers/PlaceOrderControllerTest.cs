@@ -1,8 +1,8 @@
-using Cashier.Contexts;
-using Cashier.Controllers;
-using Cashier.Engine;
-using Cashier.Models;
-using Cashier.Models.Database;
+using Cessda.Cafe.Cashier.Contexts;
+using Cessda.Cafe.Cashier.Controllers;
+using Cessda.Cafe.Cashier.Models;
+using Cessda.Cafe.Cashier.Models.Database;
+using Cessda.Cafe.Cashier.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -10,9 +10,8 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
-using static Cashier.Tests.TestData;
 
-namespace Cashier.Tests.Controllers
+namespace Cessda.Cafe.Cashier.Tests.Controllers
 {
     public class PlaceOrderControllerTest
     {
@@ -35,7 +34,7 @@ namespace Cashier.Tests.Controllers
         public async Task PostOrder_ReturnsCreatedOrder_ForAPostedOrder()
         {
             // Act
-            var postOrder = await _controller.PostOrder(ExampleRequest());
+            var postOrder = await _controller.PostOrder(TestData.ExampleRequest());
 
             // Should be an IActionResult
             Assert.IsType<CreatedAtRouteResult>(postOrder);
@@ -47,7 +46,7 @@ namespace Cashier.Tests.Controllers
         public async Task DeleteOrder_ReturnsDeletedOrder_OnOrderDeletion()
         {
             // Arrange
-            foreach (var order in ExampleDeletableOrders())
+            foreach (var order in TestData.ExampleDeletableOrders())
             {
                 _context.Add(order);
             }

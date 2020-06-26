@@ -1,8 +1,8 @@
-﻿using Cashier.Models.Database;
+﻿using Cessda.Cafe.Cashier.Models.Database;
 using System;
 using System.Collections.Generic;
 
-namespace Cashier.Models
+namespace Cessda.Cafe.Cashier.Models
 {
     /// <summary>
     /// Class that counts the coffees that it holds.

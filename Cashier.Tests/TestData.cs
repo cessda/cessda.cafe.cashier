@@ -1,8 +1,8 @@
-﻿using Cashier.Models;
-using Cashier.Models.Database;
+﻿using Cessda.Cafe.Cashier.Models;
+using Cessda.Cafe.Cashier.Models.Database;
 using System.Collections.Generic;
 
-namespace Cashier.Tests
+namespace Cessda.Cafe.Cashier.Tests
 {
     internal static class TestData
     {

@@ -1,4 +1,4 @@
-﻿namespace Cashier.Models.Database
+﻿namespace Cessda.Cafe.Cashier.Models.Database
 {
     /// <summary>
     /// List of allowed coffees

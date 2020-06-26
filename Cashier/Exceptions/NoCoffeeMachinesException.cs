@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Cashier.Exceptions
+namespace Cessda.Cafe.Cashier.Exceptions
 {
     [Serializable]
 #pragma warning disable CS1591

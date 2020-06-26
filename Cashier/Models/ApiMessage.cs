@@ -1,8 +1,8 @@
-﻿using Cashier.Properties;
+﻿using Cessda.Cafe.Cashier.Properties;
 using System;
 using System.Globalization;
 
-namespace Cashier.Models
+namespace Cessda.Cafe.Cashier.Models
 {
     /// <summary>
     /// Class to send and hold messages from other coffee APIs

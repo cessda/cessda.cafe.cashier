@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 
-namespace Cashier.Models.Database
+namespace Cessda.Cafe.Cashier.Models.Database
 {
     /// <summary>
     /// Class to store the list of known machines.

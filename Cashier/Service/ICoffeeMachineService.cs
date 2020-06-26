@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Cashier.Engine
+namespace Cessda.Cafe.Cashier.Service
 {
     /// <summary>
     /// Exposes the order engine, which sends coffees to remote coffee machines.

@@ -1,8 +1,9 @@
-﻿using Cashier.Contexts;
-using Cashier.Engine;
-using Cashier.Middleware;
-using Cashier.Models.Database;
+﻿using Cessda.Cafe.Cashier.Contexts;
+using Cessda.Cafe.Cashier.Middleware;
+using Cessda.Cafe.Cashier.Models.Database;
+using Cessda.Cafe.Cashier.Service;
 using CorrelationId;
+using CorrelationId.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -20,7 +21,7 @@ using Prometheus;
 using System;
 using System.Threading.Tasks;
 
-namespace Cashier
+namespace Cessda.Cafe.Cashier
 {
 #pragma warning disable CS1591
     public class Startup
@@ -71,7 +72,14 @@ namespace Cashier
             services.AddHttpClient<ICoffeeMachineService, CoffeeMachineService>();
 
             // Set up correlation ID
-            services.AddCorrelationId();
+            services.AddCorrelationId(options => new CorrelationIdOptions
+            {
+                RequestHeader = "X-Request-Id",
+                ResponseHeader = "X-Request-Id",
+                IncludeInResponse = true,
+                CorrelationIdGenerator = new Func<string>(() => Guid.NewGuid().ToString()),
+                UpdateTraceIdentifier = true
+            });
         }
 
         /// <summary>
@@ -90,13 +98,7 @@ namespace Cashier
             });
 
             // Request ID
-            app.UseCorrelationId(new CorrelationIdOptions
-            {
-                Header = "X-Request-Id",
-                IncludeInResponse = true,
-                UseGuidForCorrelationId = true,
-                UpdateTraceIdentifier = true
-            });
+            app.UseCorrelationId();
 
             if (env.IsDevelopment())
             {

@@ -1,13 +1,13 @@
-﻿using Cashier.Contexts;
-using Cashier.Models;
-using Cashier.Models.Database;
+﻿using Cessda.Cafe.Cashier.Contexts;
+using Cessda.Cafe.Cashier.Models;
+using Cessda.Cafe.Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Cashier.Controllers
+namespace Cessda.Cafe.Cashier.Controllers
 {
     /// <summary>
     /// Controller to fetch all queued jobs.

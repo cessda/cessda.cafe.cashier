@@ -1,13 +1,12 @@
-﻿using Cashier.Contexts;
-using Cashier.Controllers;
-using Cashier.Models;
-using Cashier.Models.Database;
+﻿using Cessda.Cafe.Cashier.Contexts;
+using Cessda.Cafe.Cashier.Controllers;
+using Cessda.Cafe.Cashier.Models;
+using Cessda.Cafe.Cashier.Models.Database;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
-using static Cashier.Tests.TestData;
 
-namespace Cashier.Tests.Controllers
+namespace Cessda.Cafe.Cashier.Tests.Controllers
 {
     public class QueuedJobsControllerTest
     {
@@ -23,7 +22,7 @@ namespace Cashier.Tests.Controllers
             _controller = new QueuedJobsController(_context);
 
             // Arrange
-            _context.AddRange(ExampleOrders());
+            _context.AddRange(TestData.ExampleOrders());
             _context.SaveChanges();
         }
 

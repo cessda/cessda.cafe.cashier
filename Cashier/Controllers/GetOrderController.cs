@@ -1,14 +1,14 @@
-﻿using Cashier.Contexts;
-using Cashier.Engine;
-using Cashier.Models;
-using Cashier.Models.Database;
+﻿using Cessda.Cafe.Cashier.Contexts;
+using Cessda.Cafe.Cashier.Models;
+using Cessda.Cafe.Cashier.Models.Database;
+using Cessda.Cafe.Cashier.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Cashier.Controllers
+namespace Cessda.Cafe.Cashier.Controllers
 {
     /// <summary>
     /// Read only controller to get the history of known orders.

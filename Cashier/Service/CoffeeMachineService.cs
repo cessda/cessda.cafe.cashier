@@ -1,8 +1,8 @@
-﻿using Cashier.Contexts;
-using Cashier.Models;
-using Cashier.Models.Database;
-using Cashier.Properties;
-using CorrelationId;
+﻿using Cessda.Cafe.Cashier.Contexts;
+using Cessda.Cafe.Cashier.Models;
+using Cessda.Cafe.Cashier.Models.Database;
+using Cessda.Cafe.Cashier.Properties;
+using CorrelationId.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -14,7 +14,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cashier.Engine
+namespace Cessda.Cafe.Cashier.Service
 {
     /// <summary>
     /// Class to hold the logic of contacting coffee machines.
@@ -69,10 +69,10 @@ namespace Cashier.Engine
         /// Starts the jobs specified in the job list.
         /// </summary>
         /// <param name="jobs">The list of jobs to start.</param>
-        private async Task StartJobListAsync(List<Job> jobs)
+        private Task StartJobListAsync(IEnumerable<Job> jobs)
         {
             var taskList = jobs.Select(job => StartJobAsync(job.JobId)).ToList();
-            await Task.WhenAll(taskList);
+            return Task.WhenAll(taskList);
         }
 
 
@@ -92,7 +92,7 @@ namespace Cashier.Engine
 
                 // Set up web request
                 bool success = false;
-                var coffeeMachines = GetCoffeeMachines();
+                var coffeeMachines = GetCoffeeMachinesAsync();
 
                 var coffeePayload = new CoffeePayload()
                 {
@@ -104,7 +104,7 @@ namespace Cashier.Engine
                 _logger.LogDebug("Created JSON: {json}.", json);
 
                 // Iterate through all known coffee machines
-                foreach (var machine in coffeeMachines)
+                foreach (var machine in await coffeeMachines)
                 {
                     // Break if the order has already been sent to a machine
                     if (success)
@@ -206,12 +206,11 @@ namespace Cashier.Engine
         /// Gets a list of known coffee machines from the database
         /// </summary>
         /// <returns>List of coffee machines</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization",
-            "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
-        private List<Uri> GetCoffeeMachines()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
+        private async Task<List<Uri>> GetCoffeeMachinesAsync()
         {
             // Set up web request
-            var coffeeMachines = _context.Machines.Select(machine => new Uri(machine.CoffeeMachine)).ToList();
+            var coffeeMachines = await _context.Machines.Select(machine => new Uri(machine.CoffeeMachine)).ToListAsync();
 
             // Make sure that there are some machines configured
             if (coffeeMachines.Count == 0)
@@ -226,7 +225,7 @@ namespace Cashier.Engine
                 machineSb.Append(machine).Append(", ");
             }
             string machineList = machineSb.ToString();
-            _logger.LogDebug("Configured machines are: {machines}.", machineList.TrimEnd().TrimEnd(",".ToCharArray()));
+            _logger.LogDebug("Configured machines are: {machines}.", machineList.TrimEnd().TrimEnd(','));
 
             return coffeeMachines;
         }

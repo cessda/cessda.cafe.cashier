@@ -1,4 +1,4 @@
-﻿using Cashier.Contexts;
+﻿using Cessda.Cafe.Cashier.Contexts;
 using Gelf.Extensions.Logging;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Reflection;
 
-namespace Cashier
+namespace Cessda.Cafe.Cashier
 {
 #pragma warning disable CS1591
     public static class Program

@@ -1,8 +1,8 @@
-﻿using Cashier.Contexts;
-using Cashier.Controllers;
-using Cashier.Engine;
-using Cashier.Models;
-using Cashier.Models.Database;
+﻿using Cessda.Cafe.Cashier.Contexts;
+using Cessda.Cafe.Cashier.Controllers;
+using Cessda.Cafe.Cashier.Models;
+using Cessda.Cafe.Cashier.Models.Database;
+using Cessda.Cafe.Cashier.Service;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
@@ -10,9 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
-using static Cashier.Tests.TestData;
 
-namespace Cashier.Tests.Controllers
+namespace Cessda.Cafe.Cashier.Tests.Controllers
 {
     public class GetOrderControllerTest
     {
@@ -31,7 +30,7 @@ namespace Cashier.Tests.Controllers
             _controller = new GetOrderController(_context, _orderEngine);
 
             // Arrange
-            _context.AddRange(ExampleOrders());
+            _context.AddRange(TestData.ExampleOrders());
             _context.SaveChanges();
         }
 

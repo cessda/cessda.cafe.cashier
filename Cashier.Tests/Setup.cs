@@ -1,7 +1,7 @@
-﻿using Cashier.Contexts;
+﻿using Cessda.Cafe.Cashier.Contexts;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cashier.Tests
+namespace Cessda.Cafe.Cashier.Tests
 {
     internal class Setup
     {
