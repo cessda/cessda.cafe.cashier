@@ -4,10 +4,12 @@ using Cessda.Cafe.Cashier.Models.Database;
 using Cessda.Cafe.Cashier.Service;
 using CorrelationId;
 using CorrelationId.DependencyInjection;
+using CorrelationId.HttpClient;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -74,19 +76,17 @@ namespace Cessda.Cafe.Cashier
             });
 
             // Set up engine
-            services.AddScoped<ICoffeeMachineService, CoffeeMachineService>();
+            services.AddSingleton<ICoffeeMachineService, CoffeeMachineService>();
 
             // Set up HTTP Client for the order engine
-            services.AddHttpClient<ICoffeeMachineService, CoffeeMachineService>();
+            services.AddHttpClient<ICoffeeMachineService, CoffeeMachineService>().AddCorrelationIdForwarding();
 
             // Set up correlation ID
-            services.AddCorrelationId(options => new CorrelationIdOptions
+            services.AddDefaultCorrelationId(options => 
             {
-                RequestHeader = "X-Request-Id",
-                ResponseHeader = "X-Request-Id",
-                IncludeInResponse = true,
-                CorrelationIdGenerator = new Func<string>(() => Guid.NewGuid().ToString()),
-                UpdateTraceIdentifier = true
+                options.RequestHeader = "X-Request-Id";
+                options.CorrelationIdGenerator = new Func<string>(() => Guid.NewGuid().ToString());
+                options.UpdateTraceIdentifier = true;
             });
         }
 
