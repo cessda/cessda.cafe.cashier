@@ -1,9 +1,9 @@
-﻿using Cessda.Cafe.Cashier.Models;
-using Cessda.Cafe.Cashier.Models.Database;
+﻿using CESSDA.Cafe.Cashier.Models;
+using CESSDA.Cafe.Cashier.Models.Database;
 using System;
 using System.Collections.Generic;
 
-namespace Cessda.Cafe.Cashier.Tests
+namespace CESSDA.Cafe.Cashier.Tests
 {
     internal static class TestData
     {

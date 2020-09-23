@@ -1,8 +1,8 @@
-﻿using Cessda.Cafe.Cashier.Service;
+﻿using CESSDA.Cafe.Cashier.Service;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace Cessda.Cafe.Cashier.Tests
+namespace CESSDA.Cafe.Cashier.Tests
 {
     public class StartupTest
     {

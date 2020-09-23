@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Cessda.Cafe.Cashier.Service
+namespace CESSDA.Cafe.Cashier.Service
 {
     /// <summary>
     /// Exposes the order engine, which sends coffees to remote coffee machines.

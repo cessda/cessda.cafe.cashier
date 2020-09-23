@@ -1,4 +1,4 @@
-﻿using Cessda.Cafe.Cashier.Contexts;
+﻿using CESSDA.Cafe.Cashier.Contexts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Cessda.Cafe.Cashier.Middleware
+namespace CESSDA.Cafe.Cashier.Middleware
 {
     /// <summary>
     /// Middleware to expose Prometheus metrics for the queue length of the cashier

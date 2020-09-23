@@ -1,7 +1,7 @@
-﻿using Cessda.Cafe.Cashier.Contexts;
-using Cessda.Cafe.Cashier.Middleware;
-using Cessda.Cafe.Cashier.Models.Database;
-using Cessda.Cafe.Cashier.Service;
+﻿using CESSDA.Cafe.Cashier.Contexts;
+using CESSDA.Cafe.Cashier.Middleware;
+using CESSDA.Cafe.Cashier.Models.Database;
+using CESSDA.Cafe.Cashier.Service;
 using CorrelationId;
 using CorrelationId.DependencyInjection;
 using CorrelationId.HttpClient;
@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +22,7 @@ using Prometheus;
 using System;
 using System.Threading.Tasks;
 
-namespace Cessda.Cafe.Cashier
+namespace CESSDA.Cafe.Cashier
 {
     /// <summary>
     /// Configures the cashier
@@ -82,7 +81,7 @@ namespace Cessda.Cafe.Cashier
             services.AddHttpClient<ICoffeeMachineService, CoffeeMachineService>().AddCorrelationIdForwarding();
 
             // Set up correlation ID
-            services.AddDefaultCorrelationId(options => 
+            services.AddDefaultCorrelationId(options =>
             {
                 options.RequestHeader = "X-Request-Id";
                 options.CorrelationIdGenerator = new Func<string>(() => Guid.NewGuid().ToString());

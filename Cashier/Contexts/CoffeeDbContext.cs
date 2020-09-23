@@ -1,7 +1,7 @@
-﻿using Cessda.Cafe.Cashier.Models.Database;
+﻿using CESSDA.Cafe.Cashier.Models.Database;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cessda.Cafe.Cashier.Contexts
+namespace CESSDA.Cafe.Cashier.Contexts
 {
     /// <summary>
     /// Defines the database context and options

@@ -1,8 +1,8 @@
-﻿using Cessda.Cafe.Cashier.Contexts;
-using Cessda.Cafe.Cashier.Exceptions;
-using Cessda.Cafe.Cashier.Models;
-using Cessda.Cafe.Cashier.Models.Database;
-using Cessda.Cafe.Cashier.Properties;
+﻿using CESSDA.Cafe.Cashier.Contexts;
+using CESSDA.Cafe.Cashier.Exceptions;
+using CESSDA.Cafe.Cashier.Models;
+using CESSDA.Cafe.Cashier.Models.Database;
+using CESSDA.Cafe.Cashier.Properties;
 using CorrelationId.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -15,7 +15,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cessda.Cafe.Cashier.Service
+namespace CESSDA.Cafe.Cashier.Service
 {
     /// <summary>
     /// Class to hold the logic of contacting coffee machines.

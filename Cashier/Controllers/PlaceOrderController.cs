@@ -1,13 +1,13 @@
-﻿using Cessda.Cafe.Cashier.Contexts;
-using Cessda.Cafe.Cashier.Models;
-using Cessda.Cafe.Cashier.Models.Database;
-using Cessda.Cafe.Cashier.Service;
+﻿using CESSDA.Cafe.Cashier.Contexts;
+using CESSDA.Cafe.Cashier.Models;
+using CESSDA.Cafe.Cashier.Models.Database;
+using CESSDA.Cafe.Cashier.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
-namespace Cessda.Cafe.Cashier.Controllers
+namespace CESSDA.Cafe.Cashier.Controllers
 {
     /// <summary>
     /// Write only controller to create new orders, or delete orders that have not been processed yet.

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Cessda.Cafe.Cashier.Models.Database
+namespace CESSDA.Cafe.Cashier.Models.Database
 {
     /// <summary>
     /// Defines a coffee according to https://bitbucket.org/cessda/cessda.cafe/src/master/index.md

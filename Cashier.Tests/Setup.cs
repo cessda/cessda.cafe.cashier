@@ -1,7 +1,7 @@
-﻿using Cessda.Cafe.Cashier.Contexts;
+﻿using CESSDA.Cafe.Cashier.Contexts;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cessda.Cafe.Cashier.Tests
+namespace CESSDA.Cafe.Cashier.Tests
 {
     internal class Setup
     {

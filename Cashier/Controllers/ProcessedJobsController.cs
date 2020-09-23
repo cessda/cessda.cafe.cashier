@@ -1,5 +1,5 @@
-﻿using Cessda.Cafe.Cashier.Contexts;
-using Cessda.Cafe.Cashier.Models.Database;
+﻿using CESSDA.Cafe.Cashier.Contexts;
+using CESSDA.Cafe.Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Cessda.Cafe.Cashier.Controllers
+namespace CESSDA.Cafe.Cashier.Controllers
 {
     /// <summary>
     /// Get processed jobs

@@ -1,7 +1,7 @@
-﻿using Cessda.Cafe.Cashier.Models.Database;
+﻿using CESSDA.Cafe.Cashier.Models.Database;
 using System.Collections.Generic;
 
-namespace Cessda.Cafe.Cashier.Models
+namespace CESSDA.Cafe.Cashier.Models
 {
     /// <summary>
     /// The model of the request submitted.

@@ -1,4 +1,5 @@
-﻿using Cessda.Cafe.Cashier.Contexts;
+﻿using CESSDA.Cafe.Cashier.Contexts;
+using CESSDA.Cafe.Cashier;
 using Gelf.Extensions.Logging;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -6,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Reflection;
 
-namespace Cessda.Cafe.Cashier
+namespace CESSDA.Cafe.Cashier
 {
     /// <summary>
     /// Sets up and runs the cashier

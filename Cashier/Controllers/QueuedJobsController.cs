@@ -1,12 +1,12 @@
-﻿using Cessda.Cafe.Cashier.Contexts;
-using Cessda.Cafe.Cashier.Models;
-using Cessda.Cafe.Cashier.Models.Database;
+﻿using CESSDA.Cafe.Cashier.Contexts;
+using CESSDA.Cafe.Cashier.Models;
+using CESSDA.Cafe.Cashier.Models.Database;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Cessda.Cafe.Cashier.Controllers
+namespace CESSDA.Cafe.Cashier.Controllers
 {
     /// <summary>
     /// Controller to fetch all queued jobs.

@@ -1,12 +1,12 @@
-﻿using Cessda.Cafe.Cashier.Contexts;
-using Cessda.Cafe.Cashier.Controllers;
-using Cessda.Cafe.Cashier.Models;
-using Cessda.Cafe.Cashier.Models.Database;
+﻿using CESSDA.Cafe.Cashier.Contexts;
+using CESSDA.Cafe.Cashier.Controllers;
+using CESSDA.Cafe.Cashier.Models;
+using CESSDA.Cafe.Cashier.Models.Database;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Cessda.Cafe.Cashier.Tests.Controllers
+namespace CESSDA.Cafe.Cashier.Tests.Controllers
 {
     public class QueuedJobsControllerTest
     {

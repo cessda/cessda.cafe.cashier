@@ -1,9 +1,9 @@
-﻿using Cessda.Cafe.Cashier.Models.Database;
+﻿using CESSDA.Cafe.Cashier.Models.Database;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
-namespace Cessda.Cafe.Cashier.Models
+namespace CESSDA.Cafe.Cashier.Models
 {
     /// <summary>
     /// Class that counts the coffees that it holds.
