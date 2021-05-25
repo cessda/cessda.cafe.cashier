@@ -12,7 +12,16 @@ namespace CESSDA.Cafe.Cashier.Models
         /// <summary>
         /// Message string
         /// </summary>
-        public string Message { get; set; }
+        public string Message { get; }
+
+        /// <summary>
+        /// Construct a new instance of <see cref="ApiMessage"/> with the specified message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        public ApiMessage(string message)
+        {
+            Message = message;
+        }
 
         /// <summary>
         /// Creates a message stating no coffees were found.
@@ -20,7 +29,7 @@ namespace CESSDA.Cafe.Cashier.Models
         /// <returns>The ApiMessage.</returns>
         public static ApiMessage NoCoffees()
         {
-            return new ApiMessage() { Message = Resources.NoCoffees };
+            return new ApiMessage(Resources.NoCoffees);
         }
 
         /// <summary>
@@ -30,10 +39,7 @@ namespace CESSDA.Cafe.Cashier.Models
         /// <returns>The ApiMessage.</returns>
         public static ApiMessage OrderNotFound(Guid id)
         {
-            return new ApiMessage()
-            {
-                Message = string.Format(CultureInfo.InvariantCulture, Resources.OrderNotFound, id)
-            };
+            return new ApiMessage(string.Format(CultureInfo.InvariantCulture, Resources.OrderNotFound, id));
         }
 
         /// <summary>
@@ -43,10 +49,7 @@ namespace CESSDA.Cafe.Cashier.Models
         /// <returns>The ApiMessage.</returns>
         public static ApiMessage OrderAlreadyProcessed(Guid id)
         {
-            return new ApiMessage()
-            {
-                Message = string.Format(CultureInfo.InvariantCulture, Resources.OrderAlreadyProcessed, id)
-            };
+            return new ApiMessage(string.Format(CultureInfo.InvariantCulture, Resources.OrderAlreadyProcessed, id));
         }
     }
 }

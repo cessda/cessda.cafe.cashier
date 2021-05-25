@@ -70,7 +70,7 @@ namespace CESSDA.Cafe.Cashier.Models.Database
         /// <summary>
         /// The coffee machine the order was run on.
         /// </summary>
-        public string Machine { get; private set; }
+        public string? Machine { get; private set; }
 
         /// <summary>
         /// The product specified in the job.

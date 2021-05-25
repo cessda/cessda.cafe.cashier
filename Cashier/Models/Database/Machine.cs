@@ -13,5 +13,14 @@ namespace CESSDA.Cafe.Cashier.Models.Database
         /// </summary>
         [Key]
         public string CoffeeMachine { get; set; }
+
+        /// <summary>
+        /// Construct a new instance of a <see cref="Machine"/> with the given coffee machine.
+        /// </summary>
+        /// <param name="coffeeMachine">The coffee machine.</param>
+        public Machine(string coffeeMachine)
+        {
+            CoffeeMachine = coffeeMachine;
+        }
     }
 }

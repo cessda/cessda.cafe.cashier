@@ -207,7 +207,6 @@ namespace CESSDA.Cafe.Cashier.Service
         /// Gets a list of known coffee machines from the database
         /// </summary>
         /// <returns>List of coffee machines</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         private async Task<List<Uri>> GetCoffeeMachinesAsync()
         {
             // Set up web request
@@ -225,8 +224,7 @@ namespace CESSDA.Cafe.Cashier.Service
             {
                 machineSb.Append(machine).Append(", ");
             }
-            string machineList = machineSb.ToString();
-            _logger.LogDebug("Configured machines are: {machines}.", machineList.TrimEnd().TrimEnd(','));
+            _logger.LogDebug("Configured machines are: {machines}.", machineSb.ToString().TrimEnd().TrimEnd(','));
 
             return coffeeMachines;
         }

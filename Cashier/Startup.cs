@@ -147,8 +147,6 @@ namespace CESSDA.Cafe.Cashier
             return httpContext.Response.WriteAsync(json.ToString());
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization",
-            "CA1303:Do not pass literals as localized parameters", Justification = "Logger")]
         internal static void ConfigureCoffeeMachines(IWebHost host)
         {
             // Validate parameters
@@ -170,7 +168,7 @@ namespace CESSDA.Cafe.Cashier
                 // Validate the Uri
                 if (Uri.IsWellFormedUriString(coffeeMachine.Value, UriKind.Absolute))
                 {
-                    context.Machines.Add(new Machine() { CoffeeMachine = coffeeMachine.Value });
+                    context.Machines.Add(new Machine(coffeeMachine.Value));
                     logger.LogInformation("Using coffee machine " + coffeeMachine.Value + ".");
                 }
                 else
@@ -188,7 +186,7 @@ namespace CESSDA.Cafe.Cashier
             if (context.Machines.CountAsync().Result == 0)
             {
                 const string defaultCoffeeMachine = "http://localhost:1337/";
-                context.Machines.Add(new Machine() { CoffeeMachine = defaultCoffeeMachine });
+                context.Machines.Add(new Machine(defaultCoffeeMachine));
                 logger.LogInformation("Using default coffee machine " + defaultCoffeeMachine + ".");
                 context.SaveChanges();
             }
