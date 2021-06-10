@@ -45,14 +45,14 @@ namespace CESSDA.Cafe.Cashier.Controllers
             }
             catch (NoCoffeeMachinesException e)
             {
-                return StatusCode(500, new ApiMessage { Message = e.Message });
+                return StatusCode(500, new ApiMessage(e.Message));
             }
 
             // Count the coffees in either state
             var jobsDeployed = _context.Jobs.CountAsync(c => !string.IsNullOrEmpty(c.Machine));
             var jobsQueued = _context.Jobs.CountAsync(c => string.IsNullOrEmpty(c.Machine));
 
-            return Ok(new ApiMessage { Message = await jobsDeployed + " jobs deployed, " + await jobsQueued + " jobs still queued." });
+            return Ok(new ApiMessage(await jobsDeployed + " jobs deployed, " + await jobsQueued + " jobs still queued."));
         }
     }
 }

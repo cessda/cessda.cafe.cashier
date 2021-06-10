@@ -12,6 +12,11 @@ namespace CESSDA.Cafe.Cashier.Contexts
         public DbSet<Order> Orders { get; set; }
         public DbSet<Job> Jobs { get; set; }
         public DbSet<Machine> Machines { get; set; }
-        public CashierDbContext(DbContextOptions<CashierDbContext> options) : base(options) { }
+        public CashierDbContext(DbContextOptions<CashierDbContext> options) : base(options) 
+        {
+            Orders = Set<Order>();
+            Jobs = Set<Job>();
+            Machines = Set<Machine>();
+        }
     }
 }

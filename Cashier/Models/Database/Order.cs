@@ -31,6 +31,6 @@ namespace CESSDA.Cafe.Cashier.Models.Database
         /// Coffees associated with this order.
         /// </summary>
         [Required]
-        public virtual List<Job> Jobs { get; } = new List<Job>();
+        public List<Job> Jobs { get; } = new List<Job>();
     }
 }

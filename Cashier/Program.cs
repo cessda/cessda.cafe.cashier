@@ -45,8 +45,11 @@ namespace CESSDA.Cafe.Cashier
                         logging.AddGelf(options =>
                         {
                             options.LogSource = Environment.MachineName;
-                            options.AdditionalFields["app_version"] = Assembly.GetEntryAssembly()
-                                .GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+                            var version = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+                            if (version != null)
+                            {
+                                options.AdditionalFields["app_version"] = version.InformationalVersion;
+                            }
                             options.AdditionalFields["cessda_component"] = hostingContext.HostingEnvironment.ApplicationName;
                             options.AdditionalFields["cessda_product"] = "CESSDA Café";
                         });
