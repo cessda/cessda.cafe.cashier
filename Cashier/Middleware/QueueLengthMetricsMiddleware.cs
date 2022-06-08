@@ -20,29 +20,15 @@ namespace CESSDA.Cafe.Cashier.Middleware
         /// <summary>
         /// DI Constructor
         /// </summary>
-        public QueueLengthMetricsMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
+        public QueueLengthMetricsMiddleware(RequestDelegate next) => _next = next;
 
         /// <summary>
         /// Set the queue length for the Prometheus endpoint
         /// </summary>
         public async Task InvokeAsync(HttpContext httpContext, CashierDbContext context)
         {
-            ValidateParameters(context);
-
             gauge.Set(await context.Jobs.Where(c => string.IsNullOrEmpty(c.Machine)).CountAsync());
-
             await _next(httpContext);
-        }
-
-        private static void ValidateParameters(CashierDbContext context)
-        {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
         }
     }
 
