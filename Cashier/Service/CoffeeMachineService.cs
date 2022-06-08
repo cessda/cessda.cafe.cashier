@@ -92,7 +92,6 @@ namespace CESSDA.Cafe.Cashier.Service
                 _logger.LogInformation("Starting job {jobId}.", job.JobId);
 
                 // Set up web request
-                bool success = false;
                 var coffeeMachines = GetCoffeeMachinesAsync();
 
                 var coffeePayload = new CoffeePayload()
@@ -107,16 +106,8 @@ namespace CESSDA.Cafe.Cashier.Service
                 // Iterate through all known coffee machines
                 foreach (var machine in await coffeeMachines)
                 {
-                    // Break if the order has already been sent to a machine
-                    if (success)
-                    {
-                        break;
-                    }
-
-                    success = await SendRequestAsync(json, machine);
-
                     // Update local state to mark that the coffee was sent to a remote machine
-                    if (success)
+                    if (await SendRequestAsync(json, machine))
                     {
                         // Mark the time that the order was sent
                         _logger.LogInformation("Sent job {jobId} to machine {machine}.", job.JobId, machine);
@@ -126,13 +117,12 @@ namespace CESSDA.Cafe.Cashier.Service
                         // Update the database
                         _context.Entry(job).State = EntityState.Modified;
                         _context.SaveChanges();
+                        return;
                     }
                 }
+
                 // No coffee machines could accept the coffee
-                if (!success)
-                {
-                    _logger.LogWarning("No coffee machines could accept job {jobId}.", job.JobId);
-                }
+                 _logger.LogWarning("No coffee machines could accept job {jobId}.", job.JobId);
             }
             else
             {

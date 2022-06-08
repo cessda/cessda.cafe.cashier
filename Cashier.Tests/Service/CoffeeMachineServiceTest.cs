@@ -1,14 +1,8 @@
-﻿using Castle.DynamicProxy.Generators;
-using CESSDA.Cafe.Cashier.Contexts;
+﻿using CESSDA.Cafe.Cashier.Contexts;
 using CESSDA.Cafe.Cashier.Service;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
 using Moq;
-using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 
 namespace CESSDA.Cafe.Cashier.Tests.Service
 {

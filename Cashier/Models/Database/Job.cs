@@ -12,19 +12,13 @@ namespace CESSDA.Cafe.Cashier.Models.Database
         /// <summary>
         /// Create a new Job object with the OrderPlaced set to the current time
         /// </summary>
-        public Job()
-        {
-            OrderPlaced = DateTime.Now;
-        }
+        public Job() => OrderPlaced = DateTime.Now;
 
         /// <summary>
         /// Create a new Job object with the OrderPlaced set to the specified time
         /// </summary>
         /// <param name="orderPlaced">The time the order was placed</param>
-        public Job(DateTime orderPlaced)
-        {
-            OrderPlaced = orderPlaced;
-        }
+        public Job(DateTime orderPlaced) => OrderPlaced = orderPlaced;
 
         /// <summary>
         /// Creates a new Job object with the specified coffee machine. This is for test purposes.

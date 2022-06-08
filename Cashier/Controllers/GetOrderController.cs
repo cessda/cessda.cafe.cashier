@@ -36,10 +36,7 @@ namespace CESSDA.Cafe.Cashier.Controllers
         /// <returns>List of orders.</returns>
         // GET: Orders
         [HttpGet]
-        public async Task<ActionResult<List<Order>>> GetOrders()
-        {
-            return await _context.Orders.Include(b => b.Jobs).ToListAsync();
-        }
+        public async Task<ActionResult<List<Order>>> GetOrders() => await _context.Orders.Include(b => b.Jobs).ToListAsync();
 
         /// <summary>
         /// Get the specified order.
@@ -56,7 +53,7 @@ namespace CESSDA.Cafe.Cashier.Controllers
             }
             try
             {
-                var order = await _context.Orders.Include(b => b.Jobs).SingleAsync(o => o.OrderId == id);
+                var order = await _context.Orders.Include(b => b.Jobs).FirstAsync(o => o.OrderId == id);
                 _ = _orderEngine.StartOrderAsync(id);
                 return Ok(order);
             }

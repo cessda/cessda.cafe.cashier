@@ -1,5 +1,4 @@
 ﻿using CESSDA.Cafe.Cashier.Contexts;
-using CESSDA.Cafe.Cashier;
 using Gelf.Extensions.Logging;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -23,7 +22,7 @@ namespace CESSDA.Cafe.Cashier
             using (var scope = host.Services.CreateScope())
             using (var context = scope.ServiceProvider.GetService<CashierDbContext>())
             {
-                context.Database.EnsureCreated();
+                context!.Database.EnsureCreated();
             }
 
             Startup.ConfigureCoffeeMachines(host);

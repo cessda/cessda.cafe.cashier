@@ -84,7 +84,7 @@ namespace CESSDA.Cafe.Cashier
             services.AddDefaultCorrelationId(options =>
             {
                 options.RequestHeader = "X-Request-Id";
-                options.CorrelationIdGenerator = new Func<string>(() => Guid.NewGuid().ToString());
+                options.CorrelationIdGenerator = () => Guid.NewGuid().ToString();
                 options.UpdateTraceIdentifier = true;
             });
         }
@@ -169,13 +169,13 @@ namespace CESSDA.Cafe.Cashier
                 if (Uri.IsWellFormedUriString(coffeeMachine.Value, UriKind.Absolute))
                 {
                     context.Machines.Add(new Machine(coffeeMachine.Value));
-                    logger.LogInformation("Using coffee machine " + coffeeMachine.Value + ".");
+                    logger!.LogInformation("Using coffee machine {coffeeMachine}.", coffeeMachine.Value);
                 }
                 else
                 {
                     if (!string.IsNullOrEmpty(coffeeMachine.Value))
                     {
-                        logger.LogWarning(coffeeMachine.Value + " is not a valid URI, not configuring.");
+                        logger!.LogWarning("{coffeeMachine} is not a valid URI, not configuring.", coffeeMachine.Value);
                     }
                 }
             }
@@ -187,7 +187,7 @@ namespace CESSDA.Cafe.Cashier
             {
                 const string defaultCoffeeMachine = "http://localhost:1337/";
                 context.Machines.Add(new Machine(defaultCoffeeMachine));
-                logger.LogInformation("Using default coffee machine " + defaultCoffeeMachine + ".");
+                logger!.LogInformation("Using default coffee machine {defaultCoffeeMachine}.", defaultCoffeeMachine);
                 context.SaveChanges();
             }
         }

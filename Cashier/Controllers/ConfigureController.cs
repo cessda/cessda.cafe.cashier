@@ -37,10 +37,7 @@ namespace CESSDA.Cafe.Cashier.Controllers
         /// </summary>
         /// <returns>List of all configured coffee machines.</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Machine>>> GetMachines()
-        {
-            return await _context.Machines.ToListAsync();
-        }
+        public async Task<ActionResult<List<Machine>>> GetMachines() => await _context.Machines.ToListAsync();
 
         // POST: api/Configure
         /// <summary>
@@ -63,7 +60,7 @@ namespace CESSDA.Cafe.Cashier.Controllers
                 _context.Machines.Add(machine);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation("Added coffee machine " + machine.CoffeeMachine + ".");
+                _logger.LogInformation("Added coffee machine {coffeeMachine}.", machine.CoffeeMachine);
 
                 return CreatedAtAction("GetMachines", new { id = machine.CoffeeMachine }, machine);
             }
@@ -78,8 +75,6 @@ namespace CESSDA.Cafe.Cashier.Controllers
         /// <param name="url">The URL of the coffee machine to remove.</param>
         /// <returns>The removed coffee machine.</returns>
         [HttpDelete("{url}")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1054:Uri parameters should not be strings",
-            Justification = "Validation is performed before any operation is performed")]
         public async Task<ActionResult<Machine>> DeleteMachines(string url)
         {
             if (!ModelState.IsValid)
@@ -104,7 +99,7 @@ namespace CESSDA.Cafe.Cashier.Controllers
 
             _context.Machines.Remove(machines);
             await _context.SaveChangesAsync();
-            _logger.LogInformation("Removed coffee machine " + url + ".");
+            _logger.LogInformation("Removed coffee machine {url}.", url);
 
             return machines;
         }
