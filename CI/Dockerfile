@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster
+FROM mcr.microsoft.com/dotnet/sdk:6.0-buster
 
 # Install Java for SonarScanner
 RUN apt-get -qq update
