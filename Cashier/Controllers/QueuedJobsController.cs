@@ -53,7 +53,7 @@ namespace CESSDA.Cafe.Cashier.Controllers
             var coffee = await _context.Jobs.FindAsync(id);
 
             // Only return coffees that are queued
-            if (string.IsNullOrEmpty(coffee.Machine))
+            if (coffee != null && string.IsNullOrEmpty(coffee.Machine))
             {
                 return coffee;
             }
