@@ -34,7 +34,7 @@ pipeline {
 							"/k:'eu.cessda.cafe:cashier' /v:${version}.${env.BUILD_NUMBER}  /n:'CESSDA Café: Cashier' " +
 							"/d:'sonar.cs.opencover.reportsPaths=Cashier.Tests/coverage.opencover.xml' " +
 							"/d:'sonar.projectDescription=Cashier implementation of the CESSDA Coffee API' " +
-							"/d:'sonar.links.ci=https://jenkins-dev.cessda.eu/' " +
+							"/d:'sonar.links.ci=https://jenkins.cessda.eu/' " +
 							"/d:'sonar.links.scm=https://bitbucket.org/cessda/cessda.cafe.cashier/'")
 						}
 					}
