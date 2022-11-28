@@ -21,7 +21,7 @@ pipeline {
 			agent {
 				dockerfile {
 					dir 'CI'
-					filename 'Dockerfile'
+					filename 'build.Dockerfile'
 					reuseNode true
 				}
 			}
@@ -82,7 +82,7 @@ pipeline {
 		}
 		stage('Build Docker Container') {
 			steps {
-				sh "docker build -t ${image_tag} ."
+				sh "docker build --file=CI/publish.Dockerfile --tag=${image_tag} ."
 			}
 			when { branch 'master' }
 		}
