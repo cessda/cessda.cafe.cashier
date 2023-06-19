@@ -1,6 +1,6 @@
 # CESSDA Café: Cashier
 
-[![Build Status](https://jenkins-dev.cessda.eu/buildStatus/icon?job=CESSDA.Cafe.Cashier%2Fmaster)](https://jenkins-dev.cessda.eu/job/CESSDA.Cafe.Cashier/job/master/)
+[![Build Status](https://jenkins.cessda.eu/buildStatus/icon?job=CESSDA.Cafe.Cashier%2Fmaster)](https://jenkins.cessda.eu/job/CESSDA.Cafe.Cashier/job/master/)
 
 This project is an implementation of the CESSDA Café Cashier specification using ASP.NET Core.
 
