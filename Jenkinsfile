@@ -1,14 +1,9 @@
 pipeline {
-	options {
-		ansiColor('xterm')
-		buildDiscarder logRotator(artifactNumToKeepStr: '5', numToKeepStr: '20')
-	}
-
 	environment {
 		project_name = "${GCP_PROJECT}"
 		product_name = "cafe"
 		module_name = "cashier"
-		image_tag = "${DOCKER_ARTIFACT_REGISTRY}/${product_name}-${module_name}:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+		image_tag = "${DOCKER_ARTIFACT_REGISTRY}/${product_name}-${module_name}:${env.BUILD_NUMBER}"
 		HOME = "/tmp"
 		build_configuration = "Release"
 		version = "1.8.0"
