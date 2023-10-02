@@ -8,7 +8,7 @@ pipeline {
 		project_name = "${GCP_PROJECT}"
 		product_name = "cafe"
 		module_name = "cashier"
-		image_tag = "${docker_repo}/${product_name}-${module_name}:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+		image_tag = "${DOCKER_ARTIFACT_REGISTRY}/${product_name}-${module_name}:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
 		HOME = "/tmp"
 		build_configuration = "Release"
 		version = "1.8.0"
@@ -88,9 +88,9 @@ pipeline {
 		}
 		stage('Push Docker Container') {
 			steps {
-				sh "gcloud auth configure-docker"
+				sh "gcloud auth configure-docker ${ARTIFACT_REGISTRY_HOST}"
 				sh "docker push ${image_tag}"
-				sh "gcloud container images add-tag ${image_tag} ${docker_repo}/${product_name}-${module_name}:${env.BRANCH_NAME}-latest"
+				sh "gcloud artifacts docker tags add ${image_tag} ${DOCKER_ARTIFACT_REGISTRY}/${product_name}-${module_name}:latest"
 			}
 			when { branch 'master' }
 		}
