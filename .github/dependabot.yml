@@ -9,3 +9,8 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
+    groups:
+      # Groups EntityFrameworkCore dependencies together
+      entity-framework:
+        patterns:
+          - "*EntityFramework*"
