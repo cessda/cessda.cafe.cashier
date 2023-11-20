@@ -17,3 +17,7 @@ updates:
       entity-framework:
         patterns:
           - "*EntityFramework*"
+      # Groups XUnit dependencies together
+      xunit:
+        patterns:
+          - "xunit*"
