@@ -26,7 +26,6 @@ namespace CESSDA.Cafe.Cashier.Models.Database
         /// <param name="machine"></param>
         public Job(Uri machine)
         {
-            ValidateMachine(machine);
             OrderPlaced = DateTime.Now;
             Machine = machine.ToString();
         }
@@ -76,11 +75,16 @@ namespace CESSDA.Cafe.Cashier.Models.Database
         /// Sets the job as started, indicating it has been sent to a coffee machine.
         /// If the job has already been sent this method does nothing.
         /// </summary>
-        public void SetJobStarted()
+        public bool SetJobStarted()
         {
             if (JobStarted == null)
             {
-                JobStarted = DateTime.Now;
+
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -88,20 +92,18 @@ namespace CESSDA.Cafe.Cashier.Models.Database
         /// Set the coffee machine to the string form of the given Uri.
         /// If the machine is already set this method does nothing.
         /// </summary>
-        public void SetMachine(Uri machine)
+        /// <returns>true if the job was started, false if the job has already been started</returns>
+        public bool SetMachine(Uri machine)
         {
-            ValidateMachine(machine);
-            if (string.IsNullOrEmpty(Machine))
+            if (JobStarted == null)
             {
                 Machine = machine.ToString();
+                JobStarted = DateTime.Now;
+                return true;
             }
-        }
-
-        private static void ValidateMachine(Uri machine)
-        {
-            if (machine == null)
+            else
             {
-                throw new ArgumentNullException(nameof(machine));
+                return false;
             }
         }
     }

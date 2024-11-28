@@ -62,7 +62,7 @@ namespace CESSDA.Cafe.Cashier.Service
         /// </summary>
         public Task StartAllJobsAsync()
         {
-            var jobs = _context.Jobs.Where(j => string.IsNullOrEmpty(j.Machine));
+            var jobs = _context.Jobs.Where(j => string.IsNullOrEmpty(j.Machine)).ToList();
             return StartJobListAsync(jobs);
         }
 
@@ -110,19 +110,18 @@ namespace CESSDA.Cafe.Cashier.Service
                     if (await SendRequestAsync(json, machine))
                     {
                         // Mark the time that the order was sent
-                        _logger.LogInformation("Sent job {jobId} to machine {machine}.", job.JobId, machine);
-                        job.SetJobStarted();
                         job.SetMachine(machine);
+                        _logger.LogInformation("Sent job {jobId} to machine {machine}.", job.JobId, job.Machine);
 
                         // Update the database
-                        _context.Entry(job).State = EntityState.Modified;
                         _context.SaveChanges();
+
                         return;
                     }
                 }
 
                 // No coffee machines could accept the coffee
-                 _logger.LogWarning("No coffee machines could accept job {jobId}.", job.JobId);
+                _logger.LogWarning("No coffee machines could accept job {jobId}.", job.JobId);
             }
             else
             {
@@ -139,55 +138,53 @@ namespace CESSDA.Cafe.Cashier.Service
         private async Task<bool> SendRequestAsync(string payload, Uri uri)
         {
             // Create a new WebRequest
-            using (var content = new StringContent(payload, Encoding.UTF8, "application/json"))
+            using var content = new StringContent(payload, Encoding.UTF8, "application/json");
+
+            // Forward the request id
+            content.Headers.Add("X-Request-Id", _correlationContext.CorrelationContext.CorrelationId);
+
+            try
             {
-                // Forward the request id
-                content.Headers.Add("X-Request-Id", _correlationContext.CorrelationContext.CorrelationId);
-
                 // Submit the coffee to the coffee machine
-                HttpResponseMessage response;
-                try
+                HttpResponseMessage response = await _httpClient.PostAsync(new Uri(uri, "start-job"), content);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    response = await _httpClient.PostAsync(new Uri(uri, "start-job"), content);
-
-                    if (response.IsSuccessStatusCode)
+                    // Read the response from the coffee machine
+                    var responseString = response.Content.ReadAsStringAsync();
+                    JsonConvert.DeserializeObject<Job>(await responseString);
+                    if (_logger.IsEnabled(LogLevel.Trace))
                     {
-                        // Read the response from the coffee machine
-                        var responseString = response.Content.ReadAsStringAsync();
-                        JsonConvert.DeserializeObject<Job>(await responseString);
-                        if (_logger.IsEnabled(LogLevel.Trace))
-                        {
-                            _logger.LogTrace("Response from {CoffeeMachineUri}: {response}.", uri, responseString);
-                        }
-
-                        return true;
+                        _logger.LogTrace("Response from {CoffeeMachineUri}: {response}.", uri, responseString);
                     }
-                    else
+
+                    return true;
+                }
+                else
+                {
+                    string stringResponse = await response.Content.ReadAsStringAsync();
+                    var responseCode = response.StatusCode;
+                    try
                     {
-                        string stringResponse = await response.Content.ReadAsStringAsync();
-                        var responseCode = response.StatusCode;
-                        try
+                        var apiMessage = JsonConvert.DeserializeObject<ApiMessage>(stringResponse);
+                        if (stringResponse == "Machine busy!")
                         {
-                            var apiMessage = JsonConvert.DeserializeObject<ApiMessage>(stringResponse);
-                            if (stringResponse == "Machine busy!")
-                            {
-                                _logger.LogInformation("Coffee machine {CoffeeMachineUri} is busy.", uri);
-                            }
-                            else
-                            {
-                                _logger.LogWarning("Coffee machine {CoffeeMachineUri} responded with code {code} and with message: {message}.", uri, (int)responseCode, apiMessage.Message);
-                            }
+                            _logger.LogInformation("Coffee machine {CoffeeMachineUri} is busy.", uri);
                         }
-                        catch (JsonReaderException)
+                        else
                         {
-                            _logger.LogWarning("Coffee machine {CoffeeMachineUri} responded with code {code}. The message could not be parsed.", uri, (int)responseCode);
+                            _logger.LogWarning("Coffee machine {CoffeeMachineUri} responded with code {code} and with message: {message}.", uri, (int)responseCode, apiMessage?.Message);
                         }
                     }
+                    catch (JsonReaderException)
+                    {
+                        _logger.LogWarning("Coffee machine {CoffeeMachineUri} responded with code {code}. The message could not be parsed.", uri, (int)responseCode);
+                    }
                 }
-                catch (HttpRequestException e)
-                {
-                    _logger.LogError("Connecting to coffee machine {CoffeeMachineUri} failed: {e}.", uri, e.Message);
-                }
+            }
+            catch (HttpRequestException e)
+            {
+                _logger.LogError("Connecting to coffee machine {CoffeeMachineUri} failed: {e}.", uri, e.Message);
             }
             return false;
         }

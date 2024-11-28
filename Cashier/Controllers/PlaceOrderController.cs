@@ -77,10 +77,10 @@ namespace CESSDA.Cafe.Cashier.Controllers
             }
 
             _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             _logger.LogInformation("Created order {orderId}.", order.OrderId);
 
-            _ = _coffeeMachineService.StartAllJobsAsync();
+            await _coffeeMachineService.StartOrderAsync(order.OrderId);
 
             // Return the created order
             return CreatedAtRoute(nameof(GetOrderController), new { id = order.OrderId }, order);
